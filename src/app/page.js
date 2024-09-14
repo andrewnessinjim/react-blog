@@ -2,15 +2,15 @@ import React from "react";
 
 import BlogSummaryCard from "@/components/BlogSummaryCard";
 
-import styles from "./homepage.module.css";
 import { getBlogPostList } from "@/helpers/file-helpers";
+import { Heading, Wrapper } from "./page.styled";
 
 async function Home() {
   const blogPostList = await getBlogPostList();
 
   return (
-    <div className={styles.wrapper}>
-      <h1 className={styles.mainHeading}>Latest Content:</h1>
+    <Wrapper>
+      <Heading>Latest Content:</Heading>
 
       {blogPostList.map(({ slug, title, abstract, publishedOn }) => (
         <BlogSummaryCard
@@ -21,7 +21,7 @@ async function Home() {
           publishedOn={publishedOn}
         />
       ))}
-    </div>
+    </Wrapper>
   );
 }
 

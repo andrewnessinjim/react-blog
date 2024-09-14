@@ -1,13 +1,12 @@
 import React from 'react';
 import { Loader } from 'react-feather';
-
-import styles from './Spinner.module.css';
+import { Wrapper } from './Spinner.styled';
 
 const Spinner = ({ color, size }) => {
   return (
-    <div className={styles.wrapper}>
+    <Wrapper >
       <Loader color={color} size={size} />
-    </div>
+    </Wrapper>
   );
 };
 

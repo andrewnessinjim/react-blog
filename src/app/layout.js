@@ -6,9 +6,10 @@ import { BLOG_TITLE } from "@/constants";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import "./styles.css";
 import RespectMotionPreferences from "@/components/RespectMotionPreferences";
 import ThemedHtml from "./ThemedHtml";
+import StyledComponentsRegistry from "@/components/StyledComponentsRegistry";
+import GlobalStyles from "@/components/GlobalStyles";
 
 export const metadata = {
   title: {
@@ -32,21 +33,21 @@ const monoFont = Spline_Sans_Mono({
 });
 
 function RootLayout({ children }) {
-  const theme = "dark";
-
   return (
     <RespectMotionPreferences>
+      <StyledComponentsRegistry>
         <ThemedHtml
           lang="en"
           className={clsx(mainFont.variable, monoFont.variable)}
-          data-color-theme={theme}
         >
           <body>
-            <Header theme={theme} />
+            <Header />
             <main>{children}</main>
             <Footer />
+            <GlobalStyles/>
           </body>
         </ThemedHtml>
+      </StyledComponentsRegistry>
     </RespectMotionPreferences>
   );
 }

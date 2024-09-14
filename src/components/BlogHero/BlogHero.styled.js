@@ -1,4 +1,8 @@
-.wrapper {
+"use client";
+
+import styled from "styled-components";
+
+export const Wrapper = styled.header`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -7,32 +11,31 @@
   width: 100%;
   max-width: var(--outer-content-width);
   margin: 0 auto;
-}
+`;
 
-.content {
+export const Content = styled.div`
   position: relative;
   width: 100%;
   max-width: var(--content-width);
   padding: var(--viewport-padding);
   padding-top: calc(48px + 8vw);
   padding-bottom: 64px;
-}
+`;
 
-.content h1 {
+export const Heading = styled.h1`
   margin-bottom: 0.5rem;
-}
-.content p {
+`;
+
+export const PublishedContainer = styled.p`
   font-size: 1.125rem;
   color: var(--color-decorative-900);
   margin-bottom: 0px;
   font-weight: 400;
-}
-.content time {
-  font-weight: 500;
-}
-
-@media (min-width: 35rem) {
-  .content p {
+  @media (min-width: 35rem) {
     font-size: 1.25rem;
   }
-}
+`;
+
+export const PublishedTime = styled.time`
+  font-weight: 500;
+`;

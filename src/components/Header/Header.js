@@ -1,37 +1,31 @@
-import React from 'react';
-import clsx from 'clsx';
-import { Rss, Sun, Moon } from 'react-feather';
+import React from "react";
+import { Rss } from "react-feather";
 
-import Logo from '@/components/Logo';
-import VisuallyHidden from '@/components/VisuallyHidden';
+import Logo from "@/components/Logo";
+import VisuallyHidden from "@/components/VisuallyHidden";
 
-import styles from './Header.module.css';
-import ThemeToggle from './ThemeToggle';
+import ThemeToggle from "./ThemeToggle";
+import { Action, Actions, Wrapper } from "./Header.styled";
 
-function Header({ theme, className, ...delegated }) {
+function Header({ ...delegated }) {
   return (
-    <header
-      className={clsx(styles.wrapper, className)}
-      {...delegated}
-    >
+    <Wrapper {...delegated}>
       <Logo />
 
-      <div className={styles.actions}>
-        <button className={styles.action}>
+      <Actions>
+        <Action>
           <Rss
             size="1.5rem"
             style={{
               // Optical alignment
-              transform: 'translate(2px, -2px)',
+              transform: "translate(2px, -2px)",
             }}
           />
-          <VisuallyHidden>
-            View RSS feed
-          </VisuallyHidden>
-        </button>
-        <ThemeToggle/>
-      </div>
-    </header>
+          <VisuallyHidden>View RSS feed</VisuallyHidden>
+        </Action>
+        <ThemeToggle />
+      </Actions>
+    </Wrapper>
   );
 }
 

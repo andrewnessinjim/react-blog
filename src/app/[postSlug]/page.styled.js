@@ -1,10 +1,14 @@
-.wrapper {
+"use client";
+
+import styled from "styled-components";
+
+export const Wrapper = styled.article`
   padding-bottom: 64px;
   position: relative;
   z-index: 2;
-}
+`;
 
-.page {
+export const Page = styled.div`
   position: relative;
   display: grid;
   grid-template-columns:
@@ -15,16 +19,13 @@
   padding: 64px var(--viewport-padding) 32px;
   background: var(--color-page-background);
   box-shadow: var(--shadow-page);
-}
 
-.page > * {
-  grid-column: 2;
-}
+  & > * {
+    grid-column: 2;
+  }
 
-@media (min-width: 80rem) {
-  .page {
+  @media (min-width: 80rem) {
     border: 1px solid var(--color-page-border);
-
     border-radius: 8px;
   }
-}
+`;

@@ -1,40 +1,30 @@
-import React from 'react';
-import Link from 'next/link';
-import { format } from 'date-fns';
+import React from "react";
+import { format } from "date-fns";
 
-import Card from '@/components/Card';
+import {
+  Arrow,
+  ContinueReadingLink,
+  PublishedTime,
+  TextPreview,
+  TitleLink,
+  Wrapper,
+} from "./BlogSummaryCard.styled";
 
-import styles from './BlogSummaryCard.module.css';
-
-function BlogSummaryCard({
-  slug,
-  title,
-  publishedOn,
-  abstract,
-}) {
+function BlogSummaryCard({ slug, title, publishedOn, abstract }) {
   const href = `/${slug}`;
-  const humanizedDate = format(
-    new Date(publishedOn),
-    'MMMM do, yyyy'
-  );
+  const humanizedDate = format(new Date(publishedOn), "MMMM do, yyyy");
 
   return (
-    <Card className={styles.wrapper}>
-      <Link href={href} className={styles.title}>
-        {title}
-      </Link>
-      <time dateTime={publishedOn}>{humanizedDate}</time>
-      <p>
-        {abstract}{' '}
-        <Link
-          href={href}
-          className={styles.continueReadingLink}
-        >
-          Continue reading{' '}
-          <span className={styles.arrow}>→</span>
-        </Link>
-      </p>
-    </Card>
+    <Wrapper>
+      <TitleLink href={href}>{title}</TitleLink>
+      <PublishedTime dateTime={publishedOn}>{humanizedDate}</PublishedTime>
+      <TextPreview>
+        {abstract}{" "}
+        <ContinueReadingLink href={href}>
+          Continue reading <Arrow>→</Arrow>
+        </ContinueReadingLink>
+      </TextPreview>
+    </Wrapper>
   );
 }
 

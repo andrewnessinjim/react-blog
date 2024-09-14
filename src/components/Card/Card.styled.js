@@ -1,4 +1,8 @@
-.wrapper {
+'use client';
+
+import styled from "styled-components";
+
+export const Wrapper = styled.div`
   padding: var(--viewport-padding);
   margin-left: calc(var(--viewport-padding) * -1);
   margin-right: calc(var(--viewport-padding) * -1);
@@ -6,10 +10,8 @@
   background: var(--color-card-background);
   border: 1px solid var(--color-card-border);
   box-shadow: var(--shadow-card);
-}
 
-@media (min-width: 56rem) {
-  .wrapper {
+  @media (min-width: 56rem) {
     border-radius: 8px !important;
   }
-}
+`;

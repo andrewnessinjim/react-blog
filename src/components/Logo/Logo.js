@@ -1,19 +1,14 @@
-import React from 'react';
-import Link from 'next/link';
+import React from "react";
 
-import { BLOG_TITLE } from '@/constants';
+import { BLOG_TITLE } from "@/constants";
 
-import styles from './Logo.module.css';
+import { Wrapper } from "./Logo.styled";
 
-function Logo({ mobileAlignment = 'left' }) {
+function Logo({ mobileAlignment = "left" }) {
   return (
-    <Link
-      href="/"
-      className={styles.wrapper}
-      data-mobile-alignment={mobileAlignment}
-    >
+    <Wrapper href="/" data-mobile-alignment={mobileAlignment}>
       {BLOG_TITLE}
-    </Link>
+    </Wrapper>
   );
 }
 

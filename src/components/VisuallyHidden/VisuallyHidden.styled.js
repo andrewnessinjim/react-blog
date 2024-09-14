@@ -1,4 +1,8 @@
-.wrapper {
+"use client";
+
+import styled from "styled-components";
+
+export const Wrapper = styled.div`
   position: absolute;
   overflow: hidden;
   clip: rect(0 0 0 0);
@@ -7,4 +11,4 @@
   margin: -1px;
   padding: 0;
   border: 0;
-}
+`;

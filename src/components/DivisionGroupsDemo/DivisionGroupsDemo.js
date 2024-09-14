@@ -9,6 +9,7 @@ import SliderControl from "@/components/SliderControl";
 import Equation from "./Equation";
 import styles from "./DivisionGroupsDemo.module.css";
 import { LayoutGroup, motion } from "framer-motion";
+import { DemoArea, DemoWrapper, Group, Header, Item, RemainderArea, RemainderHeading, Wrapper } from "./DivisionGroupsDemo.styled";
 
 function DivisionGroupsDemo({
   numOfItems = 12,
@@ -36,8 +37,8 @@ function DivisionGroupsDemo({
 
   return (
     <LayoutGroup>
-      <Card as="section" className={styles.wrapper}>
-        <header className={styles.header}>
+      <Wrapper>
+        <Header>
           <SliderControl
             label="Number of Groups"
             className={styles.slider}
@@ -47,31 +48,31 @@ function DivisionGroupsDemo({
             value={numOfGroups}
             onChange={(ev) => setNumOfGroups(Number(ev.target.value))}
           />
-        </header>
+        </Header>
 
-        <div className={styles.demoWrapper}>
-          <div className={clsx(styles.demoArea)} style={gridStructure}>
+        <DemoWrapper>
+          <DemoArea style={gridStructure}>
             {range(numOfGroups).map((groupIndex) => (
-              <motion.div key={groupIndex} className={styles.group}>
+              <Group key={groupIndex} className={styles.group}>
                 {range(numOfItemsPerGroup).map((index) => {
                   const totalInPrevGroups = groupIndex * numOfItemsPerGroup;
                   const layoutId = `${itemId}-${totalInPrevGroups + index}`;
                   return (
-                    <motion.div
+                    <Item
                       layoutId={layoutId}
                       key={layoutId}
                       className={styles.item}
                     />
                   );
                 })}
-              </motion.div>
+              </Group>
             ))}
-          </div>
-        </div>
+          </DemoArea>
+        </DemoWrapper>
 
         {includeRemainderArea && (
-          <div className={styles.remainderArea}>
-            <p className={styles.remainderHeading}>Remainder Area</p>
+          <RemainderArea>
+            <RemainderHeading>Remainder Area</RemainderHeading>
 
             {range(remainder).map((index) => {
               const totalItemsInGroups = numOfGroups * numOfItemsPerGroup;
@@ -79,14 +80,14 @@ function DivisionGroupsDemo({
               const reverseIndex = remainder - index - 1; //because we need animation to stack in reverse
               const layoutId = `${itemId}-${totalItemsInGroups + reverseIndex}`;
               return (
-                <motion.div
+                <Item
                   layoutId={layoutId}
                   key={layoutId}
                   className={styles.item}
                 />
               );
             })}
-          </div>
+          </RemainderArea>
         )}
 
         <Equation
@@ -94,7 +95,7 @@ function DivisionGroupsDemo({
           divisor={numOfGroups}
           remainder={remainder}
         />
-      </Card>
+      </Wrapper>
     </LayoutGroup>
   );
 }

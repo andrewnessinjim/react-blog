@@ -4,13 +4,13 @@ import Link from 'next/link';
 import Logo from '@/components/Logo';
 
 import DecorativeSwoops from './DecorativeSwoops';
-import styles from './Footer.module.css';
+import { Attribution, Content, LinkHeading, LinkList, Wrapper } from './Footer.styled';
 
 function Footer() {
   return (
-    <div className={styles.wrapper}>
+    <Wrapper>
       <DecorativeSwoops />
-      <div className={styles.content}>
+      <Content>
         <div>
           <Logo mobileAlignment="center" />
           {/*
@@ -19,7 +19,7 @@ function Footer() {
             this paragraph untouched. Check out LICENSE.md
             for more information.
           */}
-          <p className={styles.attribution}>
+          <Attribution>
             Blog template created by{' '}
             <a href="https://www.joshwcomeau.com/">
               Josh W. Comeau
@@ -30,11 +30,11 @@ function Footer() {
             </a>{' '}
             to learn how to build dynamic React apps like
             this one!
-          </p>
+          </Attribution>
         </div>
         <nav>
-          <h2 className={styles.linkHeading}>Links</h2>
-          <ul className={styles.linkList}>
+          <LinkHeading>Links</LinkHeading>
+          <LinkList>
             <li>
               <Link href="/rss">RSS feed</Link>
             </li>
@@ -49,10 +49,10 @@ function Footer() {
                 Twitter
               </a>
             </li>
-          </ul>
+          </LinkList>
         </nav>
-      </div>
-    </div>
+      </Content>
+    </Wrapper>
   );
 }
 
