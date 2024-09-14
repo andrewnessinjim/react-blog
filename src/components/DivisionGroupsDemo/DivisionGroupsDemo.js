@@ -58,6 +58,7 @@ function DivisionGroupsDemo({
                   const layoutId = `${itemId}-${totalInPrevGroups + index}`;
                   return (
                     <motion.div
+                      data-layoutId={layoutId}
                       layoutId={layoutId}
                       key={layoutId}
                       className={styles.item}
@@ -74,7 +75,18 @@ function DivisionGroupsDemo({
             <p className={styles.remainderHeading}>Remainder Area</p>
 
             {range(remainder).map((index) => {
-              return <div key={index} className={styles.item} />;
+              const totalItemsInGroups = numOfGroups * numOfItemsPerGroup;
+
+              const reverseIndex = remainder - index - 1; //because we need animation to stack in reverse
+              const layoutId = `${itemId}-${totalItemsInGroups + reverseIndex}`;
+              return (
+                <motion.div
+                  data-layoutId={layoutId}
+                  layoutId={layoutId}
+                  key={layoutId}
+                  className={styles.item}
+                />
+              );
             })}
           </div>
         )}
