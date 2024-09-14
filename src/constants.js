@@ -1,5 +1,7 @@
 export const BLOG_TITLE = 'Bits & Bytes';
 
+export const THEME_COOKIE_NAME = 'color-theme';
+
 export const LIGHT_COLORS = {
   '--color-text': 'hsl(0deg 0% 5%)',
   '--color-primary-100': 'hsl(240deg 100% 90%)',
