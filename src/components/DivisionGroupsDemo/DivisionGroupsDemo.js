@@ -58,7 +58,6 @@ function DivisionGroupsDemo({
                   const layoutId = `${itemId}-${totalInPrevGroups + index}`;
                   return (
                     <motion.div
-                      data-layoutId={layoutId}
                       layoutId={layoutId}
                       key={layoutId}
                       className={styles.item}
@@ -81,7 +80,6 @@ function DivisionGroupsDemo({
               const layoutId = `${itemId}-${totalItemsInGroups + reverseIndex}`;
               return (
                 <motion.div
-                  data-layoutId={layoutId}
                   layoutId={layoutId}
                   key={layoutId}
                   className={styles.item}
