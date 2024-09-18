@@ -55,6 +55,9 @@ const Thumb = styled(Slider.Thumb)`
   &:hover {
     background-color: var(--color-primary-300);
   }
+  &[data-disabled] {
+    background-color: var(--color-gray-300);
+  }
 `;
 
 export default Scrollbar;

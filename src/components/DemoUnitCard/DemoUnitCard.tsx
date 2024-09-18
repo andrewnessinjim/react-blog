@@ -26,7 +26,7 @@ const Wrapper = styled.div`
 `;
 
 const ContentWrapper = styled.div`
-  --spacing: clamp(16px, 5.8cqw, 56px);
+  --spacing: clamp(16px, 4.5cqw, 56px);
   display: flex;
   flex-direction: column;
   gap: var(--spacing);
