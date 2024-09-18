@@ -13,6 +13,7 @@ import {
 } from "./constants";
 import { ObservedElement, PageRect } from "./Page";
 import { ViewportRect } from "./BrowserViewport";
+import { MEDIA_QUERIES } from "@/constants";
 
 function IntersectionObserverVisualizer({ caption }: Props) {
   const [scrollPosition, setScrollPosition] = React.useState(100);
@@ -36,7 +37,6 @@ function IntersectionObserverVisualizer({ caption }: Props) {
   const observedElementX = 114;
   const observedElementY = pageY + PAGE_HEIGHT - 28;
 
-  // const isObservedElementInViewport = scrollPosition <= 30;
 
   const emojiAnimationSettings = {
     initial: {
@@ -162,10 +162,17 @@ const Wrapper = styled.figure`
   display: flex;
   align-items: center;
   justify-content: center;
+  --aside-display: revert;
+
+  @media ${MEDIA_QUERIES.tabletAndBelow} {
+    flex-direction: column-reverse;
+    --aside-display: none;
+  }
 `;
 
 const Aside = styled.div`
   flex: 1;
+  display: var(--aside-display);
 `;
 
 const ControlsSection = styled.div`
