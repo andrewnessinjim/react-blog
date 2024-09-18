@@ -136,7 +136,7 @@ const GlobalStyles = createGlobalStyle`
   }
   h3 {
     font-size: 1.25rem;
-    margin-top: 2em;
+    /* margin-top: 2em; */
     margin-bottom: 0.5em;
     font-weight: 500;
   }
@@ -165,6 +165,16 @@ const GlobalStyles = createGlobalStyle`
   }
   button {
     padding: 0;
+  }
+
+  ul, ol {
+    font-size: 1.25rem;
+    margin-bottom: 1.5em;
+    line-height: 1.5;
+  }
+
+  li {
+    margin-bottom: 0.75rem;
   }
 
   @media (min-width: 35rem) {

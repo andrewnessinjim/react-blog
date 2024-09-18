@@ -1,4 +1,4 @@
-export const BLOG_TITLE = 'Bits & Bytes';
+export const BLOG_TITLE = 'Andrew Nessin';
 
 export const THEME_COOKIE_NAME = 'color-theme';
 

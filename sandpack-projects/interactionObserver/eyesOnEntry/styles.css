@@ -1,0 +1,39 @@
+@keyframes zoomIn{
+  from {
+    transform: scale(0.1);
+  }
+  to {
+    transform: scale(1.0);
+  }
+}
+
+body {
+  padding: 0;
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+.wrapper {
+  height: 200vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px;
+}
+
+.reactEmoji {
+  position: fixed;
+  top: 20px;
+  left: 0;
+  animation-name: zoomIn;
+  animation-duration: 250ms;
+  font-size: 2.5rem;
+}
+
+.observedElement {
+  font-size: 2.5rem;
+  line-height: 1;
+}

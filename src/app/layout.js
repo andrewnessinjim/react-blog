@@ -10,6 +10,7 @@ import RespectMotionPreferences from "@/components/RespectMotionPreferences";
 import ThemedHtml from "./ThemedHtml";
 import StyledComponentsRegistry from "@/components/StyledComponentsRegistry";
 import GlobalStyles from "@/components/GlobalStyles";
+import SandPackCSS from "@/components/SandpackCSSRegistry";
 
 export const metadata = {
   title: {
@@ -40,11 +41,14 @@ function RootLayout({ children }) {
           lang="en"
           className={clsx(mainFont.variable, monoFont.variable)}
         >
+          <head>
+            <SandPackCSS />
+          </head>
           <body>
             <Header />
             <main>{children}</main>
             <Footer />
-            <GlobalStyles/>
+            <GlobalStyles />
           </body>
         </ThemedHtml>
       </StyledComponentsRegistry>

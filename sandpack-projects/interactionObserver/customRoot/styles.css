@@ -1,0 +1,51 @@
+@keyframes zoomIn {
+  from {
+    transform: scale(0.1);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+body {
+  padding: 0;
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+.wrapper {
+  height: 200vh;
+  padding: 16px;
+}
+
+.scrollArea {
+  height: 70vh;
+  overflow-y: scroll;
+  max-width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px dashed black;
+}
+
+.scrollContent {
+  height: 180vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.reactEmoji {
+  position: fixed;
+  top: 20px;
+  left: 0;
+  animation-name: zoomIn;
+  animation-duration: 250ms;
+}
+
+.reactEmoji, .observedElement {
+  font-size: 2.5rem;
+  line-height: 1;
+}
