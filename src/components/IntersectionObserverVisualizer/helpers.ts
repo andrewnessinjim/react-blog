@@ -36,7 +36,7 @@ function observedElemYFromPageY(pageY: number) {
   return pageY + PAGE_HEIGHT + OBSERVED_ELEM_OFFSET_FROM_BOTTOM;
 }
 
-export function hasExitedViewport(
+function hasExitedViewport(
   prevObservedElemY: number,
   nextObservedElemY: number
 ) {
@@ -46,7 +46,7 @@ export function hasExitedViewport(
   );
 }
 
-export function hasEnteredViewPort(
+function hasEnteredViewPort(
   prevObservedElemY: number,
   nextObservedElemY: number
 ) {
