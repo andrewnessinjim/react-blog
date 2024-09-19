@@ -1,3 +1,5 @@
+import { YPositions } from "./YPositionScroller";
+
 export const VIEWPORT_WIDTH = 280;
 export const VIEWPORT_HEIGHT = 180;
 export const PAGE_WIDTH = VIEWPORT_WIDTH - 10;
@@ -15,14 +17,22 @@ export const OBSERVED_ELEM_OFFSET_FROM_BOTTOM = -64;
 
 export const MAX_SCROLLBAR_VAL = 100;
 
-export function pageYFromScrollPos(scrollPos: number) {
+export function yPositionsFromScrollPos(scrollPos:number):YPositions {
+  const pageY = pageYFromScrollPos(scrollPos);
+  return {
+    pageY,
+    observedElemY: observedElemYFromPageY(pageY)
+  }
+}
+
+function pageYFromScrollPos(scrollPos: number) {
   return (
     INIT_PAGE_Y -
     (scrollPos / MAX_SCROLLBAR_VAL) * (PAGE_HEIGHT - VIEWPORT_HEIGHT + 8)
   );
 }
 
-export function observedElemYFromPageY(pageY: number) {
+function observedElemYFromPageY(pageY: number) {
   return pageY + PAGE_HEIGHT + OBSERVED_ELEM_OFFSET_FROM_BOTTOM;
 }
 

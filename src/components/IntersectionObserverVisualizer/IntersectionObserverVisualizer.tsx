@@ -3,46 +3,33 @@
 import * as React from "react";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
-import Scrollbar from "./Scrollbar";
 import DemoUnitCard from "../DemoUnitCard";
 import {
   VIEWPORT_HEIGHT,
   VIEWPORT_WIDTH,
   PAGE_HEIGHT,
   PAGE_WIDTH,
-  INIT_PAGE_Y,
-  VIEWPORT_BOTTOM_Y,
   VIEW_BOX_WIDTH,
   VIEW_BOX_HEIGHT,
   VIEWPORT_X,
   VIEWPORT_Y,
   PAGE_X,
   OBSERVED_ELEMENT_X,
-  pageYFromScrollPos,
-  observedElemYFromPageY,
   hasEnteredOrExitedViewPort,
-  MAX_SCROLLBAR_VAL,
+  yPositionsFromScrollPos,
 } from "./helpers";
 import { ObservedElement, PageRect } from "./Page";
 import { ViewportRect } from "./BrowserViewport";
 import { MEDIA_QUERIES } from "@/constants";
+import YPositionScroller, { YPositions } from "./YPositionScroller";
 
-interface YPositions {
-  pageY: number;
-  observedElemY: number;
-}
-
+const DEFAULT_SCROLL_POSITION = 0;
 function IntersectionObserverVisualizer({ caption }: Props) {
-  const [scrollPosition, setScrollPosition] = React.useState(0);
   const [isObserving, setIsObserving] = React.useState(false);
   const [isAnimatingEmoji, setIsAnimatingEmoji] = React.useState(false);
-  const [yPositions, setYPositions] = React.useState<YPositions>(() => {
-    const pageY = pageYFromScrollPos(scrollPosition);
-    return {
-      pageY,
-      observedElemY: observedElemYFromPageY(pageY),
-    };
-  });
+  const [yPositions, setYPositions] = React.useState<YPositions>(() =>
+    yPositionsFromScrollPos(DEFAULT_SCROLL_POSITION)
+  );
 
   const emojiAnimationSettings = {
     initial: {
@@ -63,6 +50,16 @@ function IntersectionObserverVisualizer({ caption }: Props) {
       },
     },
   };
+
+  function shouldAnimateEmoji(
+    prevObservedElemY: number,
+    nextObservedElemY: number
+  ) {
+    return (
+      isObserving &&
+      hasEnteredOrExitedViewPort(prevObservedElemY, nextObservedElemY)
+    );
+  }
 
   return (
     <WidthRestrict>
@@ -115,32 +112,17 @@ function IntersectionObserverVisualizer({ caption }: Props) {
                 height="60"
               />
             </Svg>
-            <Scrollbar
-              orientation="vertical"
-              inverted
+            <YPositionScroller
+              defaultScrollPosition={DEFAULT_SCROLL_POSITION}
               disabled={isAnimatingEmoji}
-              value={[scrollPosition]}
-              step={10}
-              max={MAX_SCROLLBAR_VAL}
-              onValueChange={([nextScrollPosition]) => {
-                setScrollPosition(nextScrollPosition);
+              onYPositionChange={(nextYPositions) => {
                 setYPositions((prevYPositions) => {
-                  const nextPageY = pageYFromScrollPos(nextScrollPosition);
-
-                  const nextYPositions = {
-                    pageY: nextPageY,
-                    observedElemY: observedElemYFromPageY(nextPageY),
-                  };
-
-                  if (
-                    isObserving &&
-                    hasEnteredOrExitedViewPort(
+                  setIsAnimatingEmoji(
+                    shouldAnimateEmoji(
                       prevYPositions.observedElemY,
                       nextYPositions.observedElemY
                     )
-                  ) {
-                    setIsAnimatingEmoji(true);
-                  }
+                  );
                   return nextYPositions;
                 });
               }}
