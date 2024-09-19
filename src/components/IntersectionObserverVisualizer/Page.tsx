@@ -2,8 +2,8 @@
 
 import styled from "styled-components";
 import DemoUnitCard from "../DemoUnitCard";
-import { PAGE_HEIGHT, PAGE_WIDTH } from "./constants";
-import { ComponentProps, ReactNode } from "react";
+import { PAGE_HEIGHT, PAGE_WIDTH } from "./helpers";
+import React, { ComponentProps, ReactNode } from "react";
 
 //Constants used in this component is to accommodate the
 //thickness of the lines.
@@ -45,11 +45,16 @@ interface IndependentPageProps {
   caption: ReactNode;
 }
 
-export function ObservedElement(delegated: ComponentProps<"text">) {
-  return <ObservedElementWrapper {...delegated}>🎁</ObservedElementWrapper>;
-}
+export const ObservedElement = React.forwardRef<
+  SVGImageElement,
+  ComponentProps<"image">
+>((delegated: ComponentProps<"image">, ref) => (
+  <ObservedElementWrapper {...delegated} ref={ref}>
+    🎁
+  </ObservedElementWrapper>
+));
 
-const ObservedElementWrapper = styled.text`
+const ObservedElementWrapper = styled.image`
   font-size: 44px;
 `;
 

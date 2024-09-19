@@ -6,37 +6,43 @@ import { motion, AnimatePresence } from "framer-motion";
 import Scrollbar from "./Scrollbar";
 import DemoUnitCard from "../DemoUnitCard";
 import {
-  MONITOR_HEIGHT,
-  MONITOR_WIDTH,
+  VIEWPORT_HEIGHT,
+  VIEWPORT_WIDTH,
   PAGE_HEIGHT,
   PAGE_WIDTH,
-} from "./constants";
+  INIT_PAGE_Y,
+  VIEWPORT_BOTTOM_Y,
+  VIEW_BOX_WIDTH,
+  VIEW_BOX_HEIGHT,
+  VIEWPORT_X,
+  VIEWPORT_Y,
+  PAGE_X,
+  OBSERVED_ELEMENT_X,
+  pageYFromScrollPos,
+  observedElemYFromPageY,
+  hasEnteredOrExitedViewPort,
+  MAX_SCROLLBAR_VAL,
+} from "./helpers";
 import { ObservedElement, PageRect } from "./Page";
 import { ViewportRect } from "./BrowserViewport";
 import { MEDIA_QUERIES } from "@/constants";
 
+interface YPositions {
+  pageY: number;
+  observedElemY: number;
+}
+
 function IntersectionObserverVisualizer({ caption }: Props) {
-  const [scrollPosition, setScrollPosition] = React.useState(100);
+  const [scrollPosition, setScrollPosition] = React.useState(0);
   const [isObserving, setIsObserving] = React.useState(false);
-  const [isAnimatingCallback, setIsAnimatingCallback] = React.useState(false);
-
-  const viewBoxWidth = 288;
-  const viewBoxHeight = 600;
-
-  const monitorX = 4;
-  const monitorY = 210;
-
-  const pageX = monitorX + 5;
-
-  const MIN_PAGE_Y = 26;
-  const MAX_PAGE_Y = 214;
-  const observedElementVisibilityPoint = 30;
-
-  const pageY = MIN_PAGE_Y + (scrollPosition / 100) * (MAX_PAGE_Y - MIN_PAGE_Y);
-
-  const observedElementX = 114;
-  const observedElementY = pageY + PAGE_HEIGHT - 28;
-
+  const [isAnimatingEmoji, setIsAnimatingEmoji] = React.useState(false);
+  const [yPositions, setYPositions] = React.useState<YPositions>(() => {
+    const pageY = pageYFromScrollPos(scrollPosition);
+    return {
+      pageY,
+      observedElemY: observedElemYFromPageY(pageY),
+    };
+  });
 
   const emojiAnimationSettings = {
     initial: {
@@ -58,20 +64,6 @@ function IntersectionObserverVisualizer({ caption }: Props) {
     },
   };
 
-  function hasExitedView(prevScrollPos: number, nextScrollPos: number) {
-    return (
-      prevScrollPos <= observedElementVisibilityPoint &&
-      nextScrollPos > observedElementVisibilityPoint
-    );
-  }
-
-  function hasEnteredView(prevScrollPos: number, nextScrollPos: number) {
-    return (
-      prevScrollPos > observedElementVisibilityPoint &&
-      nextScrollPos <= observedElementVisibilityPoint
-    );
-  }
-
   return (
     <WidthRestrict>
       <DemoUnitCard caption={caption}>
@@ -81,10 +73,10 @@ function IntersectionObserverVisualizer({ caption }: Props) {
             <AnimatePresence>
               {isObserving && (
                 <ReactionWrapper>
-                  {isAnimatingCallback ? (
+                  {isAnimatingEmoji ? (
                     <ReactingEmoji
                       {...emojiAnimationSettings}
-                      onAnimationComplete={() => setIsAnimatingCallback(false)}
+                      onAnimationComplete={() => setIsAnimatingEmoji(false)}
                     >
                       😍
                     </ReactingEmoji>
@@ -97,41 +89,59 @@ function IntersectionObserverVisualizer({ caption }: Props) {
               )}
             </AnimatePresence>
             <Svg
-              width={viewBoxWidth}
-              height={viewBoxHeight}
-              viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
+              id="svg"
+              width={VIEW_BOX_WIDTH}
+              height={VIEW_BOX_HEIGHT}
+              viewBox={`0 0 ${VIEW_BOX_WIDTH} ${VIEW_BOX_HEIGHT}`}
             >
               <ViewportRect
-                width={MONITOR_WIDTH}
-                height={MONITOR_HEIGHT}
-                x={monitorX}
-                y={monitorY}
+                width={VIEWPORT_WIDTH}
+                height={VIEWPORT_HEIGHT}
+                x={VIEWPORT_X}
+                y={VIEWPORT_Y}
+                id="viewport"
               />
-
               <PageRect
                 width={PAGE_WIDTH}
                 height={PAGE_HEIGHT}
-                x={pageX}
-                y={pageY}
+                x={PAGE_X}
+                y={yPositions.pageY}
               />
-              <ObservedElement x={observedElementX} y={observedElementY}>
-                🎁
-              </ObservedElement>
+              <ObservedElement
+                x={OBSERVED_ELEMENT_X}
+                y={yPositions.observedElemY}
+                href="/images/balloon.png"
+                width="60"
+                height="60"
+              />
             </Svg>
             <Scrollbar
-              disabled={isAnimatingCallback}
+              orientation="vertical"
+              inverted
+              disabled={isAnimatingEmoji}
               value={[scrollPosition]}
+              step={10}
+              max={MAX_SCROLLBAR_VAL}
               onValueChange={([nextScrollPosition]) => {
-                setScrollPosition((prevScrollPosition) => {
-                  if (isObserving) {
-                    if (
-                      hasEnteredView(prevScrollPosition, nextScrollPosition) ||
-                      hasExitedView(prevScrollPosition, nextScrollPosition)
-                    ) {
-                      setIsAnimatingCallback(true);
-                    }
+                setScrollPosition(nextScrollPosition);
+                setYPositions((prevYPositions) => {
+                  const nextPageY = pageYFromScrollPos(nextScrollPosition);
+
+                  const nextYPositions = {
+                    pageY: nextPageY,
+                    observedElemY: observedElemYFromPageY(nextPageY),
+                  };
+
+                  if (
+                    isObserving &&
+                    hasEnteredOrExitedViewPort(
+                      prevYPositions.observedElemY,
+                      nextYPositions.observedElemY
+                    )
+                  ) {
+                    setIsAnimatingEmoji(true);
                   }
-                  return nextScrollPosition;
+                  return nextYPositions;
                 });
               }}
             />
@@ -139,7 +149,7 @@ function IntersectionObserverVisualizer({ caption }: Props) {
           <ControlsSection>
             <ControlButton
               onClick={() => {
-                setIsAnimatingCallback(true);
+                setIsAnimatingEmoji(true);
                 setIsObserving(true);
               }}
             >

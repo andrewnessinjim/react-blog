@@ -5,10 +5,7 @@ import styled from "styled-components";
 function Scrollbar(delegated: ComponentProps<typeof Slider.Root>) {
   return (
     <Root
-      defaultValue={[0]}
-      max={100}
-      step={10}
-      orientation="vertical"
+      defaultValue={[0]} 
       {...delegated}
     >
       <Track>
@@ -31,6 +28,9 @@ const Root = styled(Slider.Root)`
 `;
 
 const Track = styled(Slider.Track)`
+  &[data-disabled] {
+    background-color: var(--color-gray-500);
+  }
   background-color: var(--color-primary-900);
   position: relative;
   flex-grow: 1;
@@ -41,8 +41,6 @@ const Track = styled(Slider.Track)`
 const Range = styled(Slider.Range)`
   position: absolute;
   width: 100%;
-  /* border-radius: 9999px; */
-  /* height: 100%; */
 `;
 
 const Thumb = styled(Slider.Thumb)`

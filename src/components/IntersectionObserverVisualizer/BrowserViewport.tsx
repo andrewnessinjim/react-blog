@@ -1,9 +1,9 @@
 "use client";
 
-import { ComponentProps, ReactNode } from "react";
+import React, { ComponentProps, ReactNode } from "react";
 import styled from "styled-components";
 import DemoUnitCard from "../DemoUnitCard";
-import { MONITOR_HEIGHT, MONITOR_WIDTH } from "./constants";
+import { VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "./helpers";
 
 export function IndependentViewport({ caption }: IndependentViewportProps) {
   const svgPadding = 6;
@@ -11,15 +11,15 @@ export function IndependentViewport({ caption }: IndependentViewportProps) {
     <WidthRestrict>
       <DemoUnitCard caption={caption}>
         <Svg
-          width={MONITOR_WIDTH + svgPadding}
-          height={MONITOR_HEIGHT + svgPadding}
-          viewBox={`0 0 ${MONITOR_WIDTH + svgPadding} ${
-            MONITOR_HEIGHT + svgPadding
+          width={VIEWPORT_WIDTH + svgPadding}
+          height={VIEWPORT_HEIGHT + svgPadding}
+          viewBox={`0 0 ${VIEWPORT_WIDTH + svgPadding} ${
+            VIEWPORT_HEIGHT + svgPadding
           }`}
         >
           <ViewportRect
-            width={MONITOR_WIDTH}
-            height={MONITOR_HEIGHT}
+            width={VIEWPORT_WIDTH}
+            height={VIEWPORT_HEIGHT}
             x={svgPadding / 2}
             y={svgPadding / 2}
           />
@@ -43,9 +43,12 @@ const Svg = styled.svg`
 interface IndependentViewportProps {
   caption: ReactNode;
 }
-export function ViewportRect(delegated: ComponentProps<"rect">) {
-  return <ViewportRectWrapper {...delegated} />;
-}
+export const ViewportRect = React.forwardRef<
+  SVGRectElement,
+  ComponentProps<"rect">
+>((delegated, ref) => {
+  return <ViewportRectWrapper {...delegated} ref={ref} />;
+});
 
 const ViewportRectWrapper = styled.rect`
   stroke: var(--color-primary-500);
