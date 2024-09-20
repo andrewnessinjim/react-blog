@@ -2,6 +2,8 @@
 
 import * as React from "react";
 import styled from "styled-components";
+import { motion } from "framer-motion";
+
 import DemoUnitCard from "../DemoUnitCard";
 import {
   VIEWPORT_HEIGHT,
@@ -14,8 +16,8 @@ import {
   VIEWPORT_Y,
   PAGE_X,
   OBSERVED_ELEMENT_X,
+  PAGE_TRANSITION,
 } from "./constants";
-import { ObservedElement, PageRect } from "./Page";
 import { ViewportRect } from "./Viewport";
 import { MEDIA_QUERIES } from "@/constants";
 import YPositionScroller from "./YPositionScroller";
@@ -23,24 +25,42 @@ import AnimatingEmoji from "./AnimatingEmoji";
 import useDidEnterOrExitViewport from "./useDidEnterOrExitViewport";
 import ControlPanel from "./ControlPanel";
 
+import { PageRect } from "./Page";
+import ObservedElement from "./ObservedElement";
+
 function IntersectionObserverVisualizer({ caption }: Props) {
-  const { yPositions, updateYPositions, didEnterOrExitViewport } =
-    useDidEnterOrExitViewport();
+  const {
+    yPositions,
+    updateYPositions,
+    didEnterViewport,
+    didExitViewport,
+    threshold,
+    setThreshold,
+    rootMargin,
+    setRootMargin,
+  } = useDidEnterOrExitViewport();
+
   const [scrollerDisabled, setScrollerDisabled] = React.useState(false);
   const [showEmoji, setShowEmoji] = React.useState(false);
   const [showReaction, setShowReaction] = React.useState(false);
+  const [animateThresholdLine, setAnimateThresholdLine] = React.useState(true);
 
   React.useEffect(() => {
-    if (didEnterOrExitViewport) {
+    if (didEnterViewport) {
       setShowReaction(true);
     }
-  }, [didEnterOrExitViewport]);
+  }, [didEnterViewport]);
+
+  React.useEffect(() => {
+    if (didExitViewport) {
+      setShowReaction(true);
+    }
+  }, [didExitViewport]);
 
   return (
     <WidthRestrict>
       <DemoUnitCard caption={caption}>
         <Wrapper>
-          <Aside />
           <InteractiveSection>
             <AnimatingEmoji
               show={showEmoji}
@@ -65,26 +85,54 @@ function IntersectionObserverVisualizer({ caption }: Props) {
                 x={VIEWPORT_X}
                 y={VIEWPORT_Y}
               />
+              <motion.rect
+                initial={false}
+                transition={{
+                  type: "spring",
+                  damping: 30,
+                  stiffness: 150,
+                }}
+                animate={{
+                  width: VIEWPORT_WIDTH,
+                  height: VIEWPORT_HEIGHT + rootMargin,
+                  x: VIEWPORT_X,
+                  y: VIEWPORT_Y,
+                }}
+                fill="var(--color-primary-500)"
+                fillOpacity={0.25}
+              />
               <PageRect
                 width={PAGE_WIDTH}
                 height={PAGE_HEIGHT}
-                x={PAGE_X}
-                y={yPositions.pageY}
+                animate={{
+                  x: PAGE_X,
+                  y: yPositions.pageY,
+                }}
+                transition={PAGE_TRANSITION}
               />
               <ObservedElement
                 x={OBSERVED_ELEMENT_X}
                 y={yPositions.observedElemY}
-                href="/images/balloon.png"
-                width="60"
-                height="60"
+                threshold={threshold}
+                animateThresholdLine={animateThresholdLine}
               />
             </Svg>
             <YPositionScroller
               disabled={scrollerDisabled}
-              onYPositionChange={updateYPositions}
+              onYPositionChange={(nextYPositions) => {
+                setAnimateThresholdLine(false);
+                updateYPositions(nextYPositions);
+              }}
             />
           </InteractiveSection>
           <ControlPanel
+            onThresholdChange={(nextThreshold) => {
+              setAnimateThresholdLine(true);
+              setThreshold(nextThreshold);
+            }}
+            threshold={threshold}
+            rootMargin={rootMargin}
+            onRootMarginChange={setRootMargin}
             onStartObserve={() => {
               setShowReaction(true);
               setShowEmoji(true);
@@ -101,21 +149,16 @@ const WidthRestrict = styled.div`
   min-width: 350px;
 `;
 
-const Wrapper = styled.figure`
+const Wrapper = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-evenly;
   --aside-display: revert;
 
   @media ${MEDIA_QUERIES.tabletAndBelow} {
     flex-direction: column-reverse;
     --aside-display: none;
   }
-`;
-
-const Aside = styled.div`
-  flex: 1;
-  display: var(--aside-display);
 `;
 
 const InteractiveSection = styled.div`

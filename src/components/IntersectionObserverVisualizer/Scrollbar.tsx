@@ -4,10 +4,7 @@ import styled from "styled-components";
 
 function Scrollbar(delegated: ComponentProps<typeof Slider.Root>) {
   return (
-    <Root
-      defaultValue={[0]} 
-      {...delegated}
-    >
+    <Root defaultValue={[0]} {...delegated}>
       <Track>
         <Range />
       </Track>

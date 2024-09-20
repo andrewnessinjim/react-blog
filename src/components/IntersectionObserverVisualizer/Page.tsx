@@ -2,9 +2,14 @@
 
 import styled from "styled-components";
 import DemoUnitCard from "../DemoUnitCard";
-import { OBSERVED_ELEMENT_X, PAGE_HEIGHT, PAGE_WIDTH } from "./constants";
+import {
+  OBSERVED_ELEMENT_X,
+  PAGE_HEIGHT,
+  PAGE_WIDTH,
+} from "./constants";
 import React, { ComponentProps, ReactNode } from "react";
-import { INITIAL_Y_POSITIONS } from "./YPositionScroller";
+import ObservedElement from "./ObservedElement";
+import { motion } from "framer-motion";
 
 //Constants used in this component is to accommodate the
 //thickness of the lines.
@@ -24,13 +29,7 @@ function IndependentPage({ caption }: IndependentPageProps) {
             x={svgPadding / 2}
             y={svgPadding / 2}
           />
-          <ObservedElement
-            x={OBSERVED_ELEMENT_X}
-            y={300}
-            href="/images/balloon.png"
-            width="60"
-            height="60"
-          />
+          <ObservedElement x={OBSERVED_ELEMENT_X} y={300} />
         </Svg>
       </DemoUnitCard>
     </WidthRestrict>
@@ -52,22 +51,11 @@ interface IndependentPageProps {
   caption: ReactNode;
 }
 
-export const ObservedElement = React.forwardRef<
-  SVGImageElement,
-  ComponentProps<"image">
->((delegated: ComponentProps<"image">, ref) => (
-  <ObservedElementWrapper {...delegated} ref={ref} />
-));
-
-const ObservedElementWrapper = styled.image`
-  font-size: 44px;
-`;
-
 export function PageRect(delegated: ComponentProps<"rect">) {
   return <PageRectWrapper {...delegated} />;
 }
 
-const PageRectWrapper = styled.rect`
+const PageRectWrapper = styled(motion.rect)`
   stroke: var(--color-primary-700);
   fill: none;
   stroke-width: 2;

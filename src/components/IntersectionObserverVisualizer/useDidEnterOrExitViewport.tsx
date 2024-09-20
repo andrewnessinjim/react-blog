@@ -1,23 +1,25 @@
 import React from "react";
-import {
-  VIEWPORT_BOTTOM_Y,
-} from "./constants";
+import { OBSERVED_ELEM_HEIGHT, VIEWPORT_BOTTOM_Y } from "./constants";
 import { INITIAL_Y_POSITIONS, YPositions } from "./YPositionScroller";
 
 export default function useDidEnterOrExitViewport() {
-  const [yPositions, setYPositions] = React.useState<YPositions>(
-    INITIAL_Y_POSITIONS
-  );
-  const [didEnterOrExitViewport, setDidEnterOrExitViewport] =
-    React.useState(false);
+  const [yPositions, setYPositions] =
+    React.useState<YPositions>(INITIAL_Y_POSITIONS);
+  const [threshold, setThreshold] = React.useState(0);
+  const [rootMargin, setRootMargin] = React.useState(0);
+
+  const [didEnterViewport, setDidEnterViewport] = React.useState(false);
+  const [didExitViewport, setDidExitViewport] = React.useState(false);
 
   function hasExitedViewport(
     prevObservedElemY: number,
     nextObservedElemY: number
   ) {
     return (
-      VIEWPORT_BOTTOM_Y > prevObservedElemY &&
-      VIEWPORT_BOTTOM_Y < nextObservedElemY
+      VIEWPORT_BOTTOM_Y + rootMargin >
+        prevObservedElemY + OBSERVED_ELEM_HEIGHT * threshold &&
+      VIEWPORT_BOTTOM_Y + rootMargin <
+        nextObservedElemY + OBSERVED_ELEM_HEIGHT * threshold
     );
   }
 
@@ -25,10 +27,14 @@ export default function useDidEnterOrExitViewport() {
     prevObservedElemY: number,
     nextObservedElemY: number
   ) {
-    return (
-      VIEWPORT_BOTTOM_Y < prevObservedElemY &&
-      VIEWPORT_BOTTOM_Y > nextObservedElemY
-    );
+    const result =
+      VIEWPORT_BOTTOM_Y + rootMargin <
+        prevObservedElemY + OBSERVED_ELEM_HEIGHT * threshold &&
+      VIEWPORT_BOTTOM_Y + rootMargin >
+        nextObservedElemY + OBSERVED_ELEM_HEIGHT * threshold;
+
+    console.log({ hasEnteredViewPort: result });
+    return result;
   }
 
   function hasEnteredOrExitedViewPort(
@@ -43,20 +49,31 @@ export default function useDidEnterOrExitViewport() {
 
   function updateYPositions(nextYPositions: YPositions) {
     setYPositions((prevYPositions) => {
-      setDidEnterOrExitViewport(
-        hasEnteredOrExitedViewPort(
+      setDidEnterViewport(
+        hasEnteredViewPort(
           prevYPositions.observedElemY,
           nextYPositions.observedElemY
         )
       );
 
+      setDidExitViewport(
+        hasExitedViewport(
+          prevYPositions.observedElemY,
+          nextYPositions.observedElemY
+        )
+      );
       return nextYPositions;
     });
   }
 
   return {
     yPositions,
-    didEnterOrExitViewport,
+    didEnterViewport,
+    didExitViewport,
     updateYPositions,
+    threshold,
+    setThreshold,
+    rootMargin,
+    setRootMargin,
   };
 }
