@@ -21,12 +21,13 @@ import { MEDIA_QUERIES } from "@/constants";
 import YPositionScroller from "./YPositionScroller";
 import AnimatingEmoji from "./AnimatingEmoji";
 import useDidEnterOrExitViewport from "./useDidEnterOrExitViewport";
+import useToggle from "@/hooks/useToggle";
 
 function IntersectionObserverVisualizer({ caption }: Props) {
   const { yPositions, updateYPositions, didEnterOrExitViewport } =
     useDidEnterOrExitViewport();
   const [scrollerDisabled, setScrollerDisabled] = React.useState(false);
-  const [isObserving, setIsObserving] = React.useState(false);
+  const [isObserving, toggleIsObserving] = useToggle(false);
   const [showReaction, setShowReaction] = React.useState(false);
 
   React.useEffect(() => {
@@ -85,19 +86,15 @@ function IntersectionObserverVisualizer({ caption }: Props) {
           </InteractiveSection>
           <ControlsSection>
             <ControlButton
-              disabled={isObserving}
               onClick={() => {
-                setShowReaction(true);
-                setIsObserving(true);
+                if (!isObserving) {
+                  //Because its about to begin observing
+                  setShowReaction(true);
+                }
+                toggleIsObserving();
               }}
             >
-              Start Observing
-            </ControlButton>
-            <ControlButton
-              onClick={() => setIsObserving(false)}
-              disabled={!isObserving}
-            >
-              Stop Observing
+              {isObserving ? "Stop Observing" : "🤨 Start Observing"}
             </ControlButton>
           </ControlsSection>
         </Wrapper>
@@ -136,7 +133,7 @@ const ControlsSection = styled.div`
 
 const ControlButton = styled.button`
   padding: 6px 12px;
-  width: 150px;
+  width: 180px;
 `;
 
 const InteractiveSection = styled.div`
