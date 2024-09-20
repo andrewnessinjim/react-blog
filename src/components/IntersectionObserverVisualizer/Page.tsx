@@ -2,8 +2,9 @@
 
 import styled from "styled-components";
 import DemoUnitCard from "../DemoUnitCard";
-import { PAGE_HEIGHT, PAGE_WIDTH } from "./constants";
+import { OBSERVED_ELEMENT_X, PAGE_HEIGHT, PAGE_WIDTH } from "./constants";
 import React, { ComponentProps, ReactNode } from "react";
+import { INITIAL_Y_POSITIONS } from "./YPositionScroller";
 
 //Constants used in this component is to accommodate the
 //thickness of the lines.
@@ -23,7 +24,13 @@ function IndependentPage({ caption }: IndependentPageProps) {
             x={svgPadding / 2}
             y={svgPadding / 2}
           />
-          <ObservedElement x={114 - 6} y={PAGE_HEIGHT - 28} />
+          <ObservedElement
+            x={OBSERVED_ELEMENT_X}
+            y={300}
+            href="/images/balloon.png"
+            width="60"
+            height="60"
+          />
         </Svg>
       </DemoUnitCard>
     </WidthRestrict>
@@ -49,9 +56,7 @@ export const ObservedElement = React.forwardRef<
   SVGImageElement,
   ComponentProps<"image">
 >((delegated: ComponentProps<"image">, ref) => (
-  <ObservedElementWrapper {...delegated} ref={ref}>
-    🎁
-  </ObservedElementWrapper>
+  <ObservedElementWrapper {...delegated} ref={ref} />
 ));
 
 const ObservedElementWrapper = styled.image`
