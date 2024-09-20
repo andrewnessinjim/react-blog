@@ -2,14 +2,10 @@
 
 import styled from "styled-components";
 import DemoUnitCard from "../DemoUnitCard";
-import {
-  OBSERVED_ELEMENT_X,
-  PAGE_HEIGHT,
-  PAGE_WIDTH,
-} from "./constants";
+import { OBSERVED_ELEMENT_X, PAGE_HEIGHT, PAGE_WIDTH } from "./constants";
 import React, { ComponentProps, ReactNode } from "react";
 import ObservedElement from "./ObservedElement";
-import { motion } from "framer-motion";
+import { motion, SVGMotionProps } from "framer-motion";
 
 //Constants used in this component is to accommodate the
 //thickness of the lines.
@@ -51,11 +47,11 @@ interface IndependentPageProps {
   caption: ReactNode;
 }
 
-export function PageRect(delegated: ComponentProps<"rect">) {
+export function PageRect(delegated: SVGMotionProps<SVGRectElement>) {
   return <PageRectWrapper {...delegated} />;
 }
 
-const PageRectWrapper = styled(motion.rect)`
+const PageRectWrapper = styled(motion.rect)<SVGMotionProps<SVGRectElement>>`
   stroke: var(--color-primary-700);
   fill: none;
   stroke-width: 2;
