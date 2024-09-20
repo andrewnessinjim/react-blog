@@ -166,7 +166,7 @@ const Wrapper = styled.div`
   justify-content: space-evenly;
   --aside-display: revert;
 
-  @media ${MEDIA_QUERIES.tabletAndBelow} {
+  @media ${MEDIA_QUERIES.phoneAndBelow} {
     flex-direction: column-reverse;
     --aside-display: none;
   }
