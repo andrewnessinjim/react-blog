@@ -10,25 +10,24 @@ import {
 
 import { motion } from "framer-motion";
 
-function ObservedElement({ x, y, threshold, animateThresholdLine }: Props) {
-  const [isMounted, setIsMounted] = React.useState(false);
-  React.useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
+function ObservedElement({ x, y, threshold }: Props) {
   return (
     <>
       <motion.image
+        initial={{
+          attrX: x,
+          attrY: y,
+        }}
         animate={{
-          x,
-          y,
+          attrX: x,
+          attrY: y,
         }}
         transition={PAGE_TRANSITION}
         href="/images/balloon.png"
         width={OBSERVED_ELEM_WIDTH}
         height={OBSERVED_ELEM_HEIGHT}
       />
-      {threshold !== undefined && isMounted && (
+      {threshold !== undefined && (
         <ThresholdMarker x={x} y={y} threshold={threshold} />
       )}
     </>
@@ -45,9 +44,13 @@ function ThresholdMarker({ y, threshold }: MarkerProps) {
   return (
     <>
       <motion.rect
+        initial={{
+          attrX: OBSERVED_ELEMENT_X,
+          attrY: y,
+        }}
         animate={{
-          x: OBSERVED_ELEMENT_X,
-          y: y,
+          attrX: OBSERVED_ELEMENT_X,
+          attrY: y,
         }}
         transition={PAGE_TRANSITION}
         stroke="var(--color-primary-500)"
@@ -57,6 +60,12 @@ function ThresholdMarker({ y, threshold }: MarkerProps) {
         height={OBSERVED_ELEM_HEIGHT}
       />
       <motion.line
+        initial={{
+          x1: markerLineX1,
+          y1: markerLineY,
+          x2: markerLineX2,
+          y2: markerLineY,
+        }}
         animate={{
           x1: markerLineX1,
           y1: markerLineY,
@@ -68,10 +77,13 @@ function ThresholdMarker({ y, threshold }: MarkerProps) {
         strokeWidth={2}
       />
       <motion.text
-        initial={false}
+        initial={{
+          attrX: markerLineX2 + MARKER_TEXT_OFFSET_X,
+          attrY: markerLineY,
+        }}
         animate={{
-          x: markerLineX2 + MARKER_TEXT_OFFSET_X,
-          y: markerLineY,
+          attrX: markerLineX2 + MARKER_TEXT_OFFSET_X,
+          attrY: markerLineY,
         }}
         transition={PAGE_TRANSITION}
         dominantBaseline={"middle"}
@@ -86,7 +98,6 @@ type Props = ComponentProps<"image"> & {
   x: number;
   y: number;
   threshold?: number;
-  animateThresholdLine?: boolean;
 };
 
 type MarkerProps = {

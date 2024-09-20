@@ -33,7 +33,6 @@ export default function useDidEnterOrExitViewport() {
       VIEWPORT_BOTTOM_Y + rootMargin >
         nextObservedElemY + OBSERVED_ELEM_HEIGHT * threshold;
 
-    console.log({ hasEnteredViewPort: result });
     return result;
   }
 

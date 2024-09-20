@@ -43,7 +43,6 @@ function IntersectionObserverVisualizer({ caption }: Props) {
   const [scrollerDisabled, setScrollerDisabled] = React.useState(false);
   const [showEmoji, setShowEmoji] = React.useState(false);
   const [showReaction, setShowReaction] = React.useState(false);
-  const [animateThresholdLine, setAnimateThresholdLine] = React.useState(true);
 
   React.useEffect(() => {
     if (didEnterViewport) {
@@ -86,7 +85,6 @@ function IntersectionObserverVisualizer({ caption }: Props) {
                 y={VIEWPORT_Y}
               />
               <motion.rect
-                initial={false}
                 transition={{
                   type: "spring",
                   damping: 30,
@@ -95,8 +93,14 @@ function IntersectionObserverVisualizer({ caption }: Props) {
                 animate={{
                   width: VIEWPORT_WIDTH,
                   height: VIEWPORT_HEIGHT + rootMargin,
-                  x: VIEWPORT_X,
-                  y: VIEWPORT_Y,
+                  attrX: VIEWPORT_X,
+                  attrY: VIEWPORT_Y,
+                }}
+                initial={{
+                  width: VIEWPORT_WIDTH,
+                  height: VIEWPORT_HEIGHT + rootMargin,
+                  attrX: VIEWPORT_X,
+                  attrY: VIEWPORT_Y,
                 }}
                 fill="var(--color-primary-500)"
                 fillOpacity={0.25}
@@ -105,8 +109,12 @@ function IntersectionObserverVisualizer({ caption }: Props) {
                 width={PAGE_WIDTH}
                 height={PAGE_HEIGHT}
                 animate={{
-                  x: PAGE_X,
-                  y: yPositions.pageY,
+                  attrX: PAGE_X,
+                  attrY: yPositions.pageY,
+                }}
+                initial={{
+                  attrX: PAGE_X,
+                  attrY: yPositions.pageY,
                 }}
                 transition={PAGE_TRANSITION}
               />
@@ -114,22 +122,15 @@ function IntersectionObserverVisualizer({ caption }: Props) {
                 x={OBSERVED_ELEMENT_X}
                 y={yPositions.observedElemY}
                 threshold={threshold}
-                animateThresholdLine={animateThresholdLine}
               />
             </Svg>
             <YPositionScroller
               disabled={scrollerDisabled}
-              onYPositionChange={(nextYPositions) => {
-                setAnimateThresholdLine(false);
-                updateYPositions(nextYPositions);
-              }}
+              onYPositionChange={updateYPositions}
             />
           </InteractiveSection>
           <ControlPanel
-            onThresholdChange={(nextThreshold) => {
-              setAnimateThresholdLine(true);
-              setThreshold(nextThreshold);
-            }}
+            onThresholdChange={setThreshold}
             threshold={threshold}
             rootMargin={rootMargin}
             onRootMarginChange={setRootMargin}
