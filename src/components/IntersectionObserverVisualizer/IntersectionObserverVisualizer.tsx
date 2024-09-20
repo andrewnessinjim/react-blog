@@ -21,13 +21,13 @@ import { MEDIA_QUERIES } from "@/constants";
 import YPositionScroller from "./YPositionScroller";
 import AnimatingEmoji from "./AnimatingEmoji";
 import useDidEnterOrExitViewport from "./useDidEnterOrExitViewport";
-import useToggle from "@/hooks/useToggle";
+import ControlPanel from "./ControlPanel";
 
 function IntersectionObserverVisualizer({ caption }: Props) {
   const { yPositions, updateYPositions, didEnterOrExitViewport } =
     useDidEnterOrExitViewport();
   const [scrollerDisabled, setScrollerDisabled] = React.useState(false);
-  const [isObserving, toggleIsObserving] = useToggle(false);
+  const [showEmoji, setShowEmoji] = React.useState(false);
   const [showReaction, setShowReaction] = React.useState(false);
 
   React.useEffect(() => {
@@ -43,7 +43,7 @@ function IntersectionObserverVisualizer({ caption }: Props) {
           <Aside />
           <InteractiveSection>
             <AnimatingEmoji
-              show={isObserving}
+              show={showEmoji}
               showReaction={showReaction}
               onAnimationStart={() => {
                 setScrollerDisabled(true);
@@ -84,24 +84,19 @@ function IntersectionObserverVisualizer({ caption }: Props) {
               onYPositionChange={updateYPositions}
             />
           </InteractiveSection>
-          <ControlsSection>
-            <ControlButton
-              onClick={() => {
-                if (!isObserving) {
-                  //Because its about to begin observing
-                  setShowReaction(true);
-                }
-                toggleIsObserving();
-              }}
-            >
-              {isObserving ? "Stop Observing" : "🤨 Start Observing"}
-            </ControlButton>
-          </ControlsSection>
+          <ControlPanel
+            onStartObserve={() => {
+              setShowReaction(true);
+              setShowEmoji(true);
+            }}
+            onEndObserve={() => setShowEmoji(false)}
+          />
         </Wrapper>
       </DemoUnitCard>
     </WidthRestrict>
   );
 }
+
 const WidthRestrict = styled.div`
   min-width: 350px;
 `;
@@ -121,19 +116,6 @@ const Wrapper = styled.figure`
 const Aside = styled.div`
   flex: 1;
   display: var(--aside-display);
-`;
-
-const ControlsSection = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  align-items: center;
-`;
-
-const ControlButton = styled.button`
-  padding: 6px 12px;
-  width: 180px;
 `;
 
 const InteractiveSection = styled.div`
