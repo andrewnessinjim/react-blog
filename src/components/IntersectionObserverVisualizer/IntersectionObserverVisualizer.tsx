@@ -23,13 +23,15 @@ import AnimatingEmoji from "./AnimatingEmoji";
 import useDidEnterOrExitViewport from "./useDidEnterOrExitViewport";
 
 function IntersectionObserverVisualizer({ caption }: Props) {
-  const [emojiStatus, setEmojiStatus] = React.useState("idle");
-  const { yPositions, didEnterOrExitViewport, updateYPositions } =
+  const { yPositions, updateYPositions, didEnterOrExitViewport } =
     useDidEnterOrExitViewport();
+  const [scrollerDisabled, setScrollerDisabled] = React.useState(false);
+  const [isObserving, setIsObserving] = React.useState(false);
+  const [showReaction, setShowReaction] = React.useState(false);
 
   React.useEffect(() => {
-    if (emojiStatus === "observe" && didEnterOrExitViewport) {
-      setEmojiStatus("react");
+    if (didEnterOrExitViewport) {
+      setShowReaction(true);
     }
   }, [didEnterOrExitViewport]);
 
@@ -40,8 +42,15 @@ function IntersectionObserverVisualizer({ caption }: Props) {
           <Aside />
           <InteractiveSection>
             <AnimatingEmoji
-              emojiStatus={emojiStatus}
-              onAnimationEnd={() => setEmojiStatus("observe")}
+              show={isObserving}
+              showReaction={showReaction}
+              onAnimationStart={() => {
+                setScrollerDisabled(true);
+              }}
+              onAnimationComplete={() => {
+                setShowReaction(false);
+                setScrollerDisabled(false);
+              }}
             />
             <Svg
               id="svg"
@@ -70,22 +79,23 @@ function IntersectionObserverVisualizer({ caption }: Props) {
               />
             </Svg>
             <YPositionScroller
-              disabled={emojiStatus === "react"}
+              disabled={scrollerDisabled}
               onYPositionChange={updateYPositions}
             />
           </InteractiveSection>
           <ControlsSection>
             <ControlButton
-              disabled={emojiStatus !== "idle"}
+              disabled={isObserving}
               onClick={() => {
-                setEmojiStatus("react");
+                setShowReaction(true);
+                setIsObserving(true);
               }}
             >
               Start Observing
             </ControlButton>
             <ControlButton
-              onClick={() => setEmojiStatus("idle")}
-              disabled={emojiStatus === "idle"}
+              onClick={() => setIsObserving(false)}
+              disabled={!isObserving}
             >
               Stop Observing
             </ControlButton>

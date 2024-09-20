@@ -1,4 +1,5 @@
 import { AnimatePresence, motion, MotionProps } from "framer-motion";
+import React from "react";
 import styled from "styled-components";
 
 const emojiAnimationSettings: MotionProps = {
@@ -21,17 +22,21 @@ const emojiAnimationSettings: MotionProps = {
   },
 };
 
-function AnimatingEmoji({ emojiStatus, onAnimationEnd }: Props) {
-  const showEmoji = emojiStatus !== "idle";
-  const shouldReact = emojiStatus === 'react';
+function AnimatingEmoji({
+  show,
+  showReaction,
+  onAnimationStart,
+  onAnimationComplete,
+}: Props) {
   return (
     <AnimatePresence>
-      {showEmoji && (
+      {show && (
         <ReactionWrapper>
-          {shouldReact ? (
+          {showReaction ? (
             <ReactingEmoji
               {...emojiAnimationSettings}
-              onAnimationComplete={onAnimationEnd}
+              onAnimationComplete={onAnimationComplete}
+              onAnimationStart={onAnimationStart}
             >
               😍
             </ReactingEmoji>
@@ -60,8 +65,10 @@ const ReactingEmoji = styled(motion.p)`
 `;
 
 interface Props {
-  emojiStatus: string;
-  onAnimationEnd: () => void;
+  show: boolean;
+  showReaction: boolean;
+  onAnimationComplete: () => void;
+  onAnimationStart: () => void;
 }
 
 export default AnimatingEmoji;
