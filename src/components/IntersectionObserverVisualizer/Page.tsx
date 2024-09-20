@@ -2,7 +2,7 @@
 
 import styled from "styled-components";
 import DemoUnitCard from "../DemoUnitCard";
-import { PAGE_HEIGHT, PAGE_WIDTH } from "./helpers";
+import { PAGE_HEIGHT, PAGE_WIDTH } from "./constants";
 import React, { ComponentProps, ReactNode } from "react";
 
 //Constants used in this component is to accommodate the

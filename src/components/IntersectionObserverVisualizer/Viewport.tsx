@@ -3,7 +3,7 @@
 import React, { ComponentProps, ReactNode } from "react";
 import styled from "styled-components";
 import DemoUnitCard from "../DemoUnitCard";
-import { VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "./helpers";
+import { VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "./constants";
 
 export function IndependentViewport({ caption }: IndependentViewportProps) {
   const svgPadding = 6;

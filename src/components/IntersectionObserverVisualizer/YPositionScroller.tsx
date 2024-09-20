@@ -1,14 +1,21 @@
 import React, { ComponentProps } from "react";
-import { MAX_SCROLLBAR_VAL, yPositionsFromScrollPos } from "./helpers";
+import {
+  INIT_PAGE_Y,
+  MAX_SCROLLBAR_VAL,
+  OBSERVED_ELEM_OFFSET_FROM_BOTTOM,
+  PAGE_HEIGHT,
+  VIEWPORT_HEIGHT,
+} from "./constants";
 import Scrollbar from "./Scrollbar";
 
-function YPositionScroller({
-  onYPositionChange,
-  defaultScrollPosition,
-  ...delegated
-}: Props) {
+const INITIAL_SCROLL_POSITION = 0;
+export const INITIAL_Y_POSITIONS = yPositionsFromScrollPos(
+  INITIAL_SCROLL_POSITION
+);
+
+function YPositionScroller({ onYPositionChange, ...delegated }: Props) {
   const [scrollPosition, setScrollPosition] = React.useState(
-    defaultScrollPosition
+    INITIAL_SCROLL_POSITION
   );
 
   return (
@@ -31,8 +38,26 @@ function YPositionScroller({
 
 type Props = ComponentProps<typeof Scrollbar> & {
   onYPositionChange: (yPositions: YPositions) => void;
-  defaultScrollPosition: number;
 };
+
+function yPositionsFromScrollPos(scrollPos: number): YPositions {
+  const pageY = pageYFromScrollPos(scrollPos);
+  return {
+    pageY,
+    observedElemY: observedElemYFromPageY(pageY),
+  };
+}
+
+function pageYFromScrollPos(scrollPos: number) {
+  return (
+    INIT_PAGE_Y -
+    (scrollPos / MAX_SCROLLBAR_VAL) * (PAGE_HEIGHT - VIEWPORT_HEIGHT + 8)
+  );
+}
+
+function observedElemYFromPageY(pageY: number) {
+  return pageY + PAGE_HEIGHT + OBSERVED_ELEM_OFFSET_FROM_BOTTOM;
+}
 
 export interface YPositions {
   pageY: number;
