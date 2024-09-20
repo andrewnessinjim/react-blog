@@ -2,7 +2,12 @@
 
 import styled from "styled-components";
 import DemoUnitCard from "../DemoUnitCard";
-import { OBSERVED_ELEMENT_X, PAGE_HEIGHT, PAGE_WIDTH } from "./constants";
+import {
+  OBSERVED_ELEM_OFFSET_FROM_BOTTOM,
+  OBSERVED_ELEMENT_X,
+  PAGE_HEIGHT,
+  PAGE_WIDTH,
+} from "./constants";
 import React, { ComponentProps, ReactNode } from "react";
 import ObservedElement from "./ObservedElement";
 import { motion, SVGMotionProps } from "framer-motion";
@@ -25,7 +30,11 @@ function IndependentPage({ caption }: IndependentPageProps) {
             x={svgPadding / 2}
             y={svgPadding / 2}
           />
-          <ObservedElement x={OBSERVED_ELEMENT_X} y={300} threshold={1}/>
+          <ObservedElement
+            x={OBSERVED_ELEMENT_X}
+            y={PAGE_HEIGHT + OBSERVED_ELEM_OFFSET_FROM_BOTTOM}
+            threshold={1}
+          />
         </Svg>
       </DemoUnitCard>
     </WidthRestrict>
