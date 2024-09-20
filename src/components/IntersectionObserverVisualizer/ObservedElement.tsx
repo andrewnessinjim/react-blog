@@ -10,7 +10,7 @@ import {
 
 import { motion } from "framer-motion";
 
-function ObservedElement({ x, y, threshold }: Props) {
+function ObservedElement({ x, y, threshold, showConfigurator = false }: Props) {
   return (
     <>
       <motion.image
@@ -27,7 +27,7 @@ function ObservedElement({ x, y, threshold }: Props) {
         width={OBSERVED_ELEM_WIDTH}
         height={OBSERVED_ELEM_HEIGHT}
       />
-      {threshold !== undefined && (
+      {showConfigurator && (
         <ThresholdMarker x={x} y={y} threshold={threshold} />
       )}
     </>
@@ -97,7 +97,8 @@ function ThresholdMarker({ y, threshold }: MarkerProps) {
 type Props = ComponentProps<"image"> & {
   x: number;
   y: number;
-  threshold?: number;
+  threshold: number;
+  showConfigurator?: boolean;
 };
 
 type MarkerProps = {

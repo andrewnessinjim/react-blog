@@ -25,7 +25,7 @@ function IndependentPage({ caption }: IndependentPageProps) {
             x={svgPadding / 2}
             y={svgPadding / 2}
           />
-          <ObservedElement x={OBSERVED_ELEMENT_X} y={300} />
+          <ObservedElement x={OBSERVED_ELEMENT_X} y={300} threshold={1}/>
         </Svg>
       </DemoUnitCard>
     </WidthRestrict>

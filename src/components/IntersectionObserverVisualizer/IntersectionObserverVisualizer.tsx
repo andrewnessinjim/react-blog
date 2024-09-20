@@ -28,7 +28,10 @@ import ControlPanel from "./ControlPanel";
 import { PageRect } from "./Page";
 import ObservedElement from "./ObservedElement";
 
-function IntersectionObserverVisualizer({ caption }: Props) {
+function IntersectionObserverVisualizer({
+  caption,
+  showConfigurator = false,
+}: Props) {
   const {
     yPositions,
     updateYPositions,
@@ -84,27 +87,32 @@ function IntersectionObserverVisualizer({ caption }: Props) {
                 x={VIEWPORT_X}
                 y={VIEWPORT_Y}
               />
-              <motion.rect
-                transition={{
-                  type: "spring",
-                  damping: 30,
-                  stiffness: 150,
-                }}
-                animate={{
-                  width: VIEWPORT_WIDTH,
-                  height: VIEWPORT_HEIGHT + rootMargin,
-                  attrX: VIEWPORT_X,
-                  attrY: VIEWPORT_Y,
-                }}
-                initial={{
-                  width: VIEWPORT_WIDTH,
-                  height: VIEWPORT_HEIGHT + rootMargin,
-                  attrX: VIEWPORT_X,
-                  attrY: VIEWPORT_Y,
-                }}
-                fill="var(--color-primary-500)"
-                fillOpacity={0.25}
-              />
+              {showConfigurator && (
+                <>
+                  <motion.rect
+                    transition={{
+                      type: "spring",
+                      damping: 30,
+                      stiffness: 150,
+                    }}
+                    animate={{
+                      width: VIEWPORT_WIDTH,
+                      height: VIEWPORT_HEIGHT + rootMargin,
+                      attrX: VIEWPORT_X,
+                      attrY: VIEWPORT_Y,
+                    }}
+                    initial={{
+                      width: VIEWPORT_WIDTH,
+                      height: VIEWPORT_HEIGHT + rootMargin,
+                      attrX: VIEWPORT_X,
+                      attrY: VIEWPORT_Y,
+                    }}
+                    fill="var(--color-primary-500)"
+                    fillOpacity={0.25}
+                  />
+                </>
+              )}
+
               <PageRect
                 width={PAGE_WIDTH}
                 height={PAGE_HEIGHT}
@@ -122,6 +130,7 @@ function IntersectionObserverVisualizer({ caption }: Props) {
                 x={OBSERVED_ELEMENT_X}
                 y={yPositions.observedElemY}
                 threshold={threshold}
+                showConfigurator={showConfigurator}
               />
             </Svg>
             <YPositionScroller
@@ -130,6 +139,7 @@ function IntersectionObserverVisualizer({ caption }: Props) {
             />
           </InteractiveSection>
           <ControlPanel
+          showConfigurator={showConfigurator}
             onThresholdChange={setThreshold}
             threshold={threshold}
             rootMargin={rootMargin}
@@ -174,6 +184,7 @@ const Svg = styled.svg`
 
 interface Props {
   caption: React.ReactNode;
+  showConfigurator: boolean;
 }
 
 export default IntersectionObserverVisualizer;
