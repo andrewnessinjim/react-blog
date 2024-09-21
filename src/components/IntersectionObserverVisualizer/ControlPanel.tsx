@@ -11,7 +11,7 @@ function ControlPanel({
   onThresholdChange,
   rootMargin,
   onRootMarginChange,
-  showConfigurator
+  showConfigurator,
 }: Props) {
   const [isObserving, toggleIsObserving] = useToggle(false);
   const id = React.useId();
@@ -70,6 +70,15 @@ function ControlPanel({
       >
         {isObserving ? "Stop Observing" : "🤨 Start Observing"}
       </ControlButton>
+      <ObserveStatusWrapper>
+        <ObserveStatusLabel>
+          Status
+          <ObserveStatusIndicator $on={isObserving} />
+        </ObserveStatusLabel>
+        <ObserveStatusValue>
+          {isObserving ? "Observing" : "Not Observing"}
+        </ObserveStatusValue>
+      </ObserveStatusWrapper>
     </Wrapper>
   );
 }
@@ -79,7 +88,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   gap: 32px;
   align-items: flex-start;
-  padding-left: 32px;
+  min-width: 200px;
   @media ${MEDIA_QUERIES.tabletAndBelow} {
     padding-left: revert;
   }
@@ -125,6 +134,43 @@ const ControlButton = styled.button`
   align-self: center;
 `;
 
+const ObserveStatusWrapper = styled.div`
+  margin: 0;
+  display: flex;
+  align-self: center;
+  gap: 16px;
+  width: 100%;
+  justify-content: space-between;
+`;
+
+const ObserveStatusLabel = styled.div`
+  font-weight: 600;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+`;
+
+const ObserveStatusValue = styled.div``;
+
+const ObserveStatusIndicator = styled.span<{ $on: boolean }>`
+  &::after {
+    content: " ";
+    display: block;
+    height: 12px;
+    aspect-ratio: 1/1;
+    --light-color: ${(p) => (p.$on ? "green" : "var(--color-gray-700)")};
+    background: var(--light-color);
+    border-radius: 100%;
+    border: 1.5px solid white;
+    box-shadow: ${(p) =>
+      p.$on
+        ? `2px 2px 5px var(--light-color),
+        -2px -2px 5px var(--light-color),
+        -2px 2px 5px var(--light-color),
+        2px -2px 5px var(--light-color)`
+        : undefined};
+  }
+`;
 interface Props {
   onStartObserve?: () => void;
   onEndObserve?: () => void;
