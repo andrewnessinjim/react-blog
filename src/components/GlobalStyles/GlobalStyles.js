@@ -171,13 +171,10 @@ const GlobalStyles = createGlobalStyle`
     font-size: 1.25rem;
     margin-bottom: 1.5em;
     line-height: 1.5;
-    padding: 0;
-    margin: 0;
-    list-style: none;
   }
 
   li {
-    margin-bottom: 0;
+    margin-bottom: 0.75rem;
   }
 
   @media (min-width: 35rem) {

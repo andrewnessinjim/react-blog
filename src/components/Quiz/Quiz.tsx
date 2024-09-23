@@ -70,6 +70,9 @@ const Scroller = styled.div`
 const QuestionList = styled(motion.ul)`
   white-space: nowrap;
   display: flex;
+  padding: 0;
+  margin: 0;
+  list-style: none;
 `;
 
 const QuestionWrapper = styled.li`

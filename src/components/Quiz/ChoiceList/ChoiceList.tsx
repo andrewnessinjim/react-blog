@@ -11,6 +11,9 @@ const Wrapper = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 24px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
 `;
 
 interface Props {

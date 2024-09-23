@@ -97,6 +97,7 @@ const ChoiceWrapper = styled.li`
   display: flex;
   gap: 24px;
   align-items: center;
+  margin: 0;
 `;
 
 const CheckboxRoot = styled(Checkbox.Root)`
