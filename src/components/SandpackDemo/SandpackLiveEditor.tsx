@@ -11,9 +11,10 @@ import {
 import { Wrapper } from "./SandpackDemo.styled";
 import { ThemeContext } from "../ThemeProvider";
 
-function SandpackLiveEditor({ files }: Props) {
+function SandpackLiveEditor({ files, ...delegated }: Props) {
   const { isDarkMode } = React.useContext(ThemeContext);
 
+  console.log(files);
   return (
     <Wrapper>
       <Sandpack
@@ -25,6 +26,7 @@ function SandpackLiveEditor({ files }: Props) {
           showConsole: true,
         }}
         files={files}
+        {...delegated}
       />
     </Wrapper>
   );

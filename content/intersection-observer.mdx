@@ -4,37 +4,83 @@ abstract: One of the most commonly-misunderstood operators is Modulo (%). In thi
 publishedOn: "2023-09-06T12:00:00-0400"
 ---
 
-We can use [the browser's native IntersectionObserver API][1] to observe an element in the DOM and do something asynchronously when that element enters the viewport as the user is scrolling. In this blog post, I'll explain the concept behind this API and how the API can be used. I'll also show a real-world use case in React - infinite scrolling.
+We can use [the browser's native IntersectionObserver API][1] to observe an element in the DOM and do something asynchronously when that element enters the viewport as the user is scrolling. In this blog post, I'll explain the concept behind this API and how to use it. I'll also show a real-world use case in React - infinite scrolling.
 
 ## Visualizing The Concept
 
-To understand how the intersection observer works, imagine a web page as a box with a dashed outline. Within it, we have an element represented by a present 🎁 at the end.
+Imagine a web page as the box with a dashed outline as below. Within it, we have an element represented by a balloon 🎈 at the end.
 
 <IndependentPage caption={<NoMarginParagraph>A webpage.</NoMarginParagraph>} />
 
-Also, imagine the browser's viewport as a box with a solid outline. We need a scrollbar to visualize how this works, hence I've made the page longer than the viewport.
+Also, imagine the browser's viewport as a box with a solid outline as below. We need a scrollbar to visualize how this works, hence I've made the page longer than the viewport.
 
 <IndependentViewport
   caption={<NoMarginParagraph>The viewport.</NoMarginParagraph>}
 />
 
-Now, imagine placing the webpage within the viewport, visualized in the following interactive demo. If you drag the slider on the right, you can see the emoji change when the present enters the viewport.
+Now, imagine viewing the webpage within the viewport, depicted in the demo below. As you scroll, you can see the emoji change at different times. Play around with it and see what you can make out of it.
 
 <IntersectionObserverVisualizer
   caption={
     <NoMarginParagraph>
-      Drag the slider on the right to scroll the page within the viewport.
+      Drag the slider on the right to scroll the page within the viewport. You
+      can see the emoji reaction only after you click the "Start Observing"
+      button.
     </NoMarginParagraph>
   }
 />
+Based on your observation, see if you can answer the quiz below.
+<Quiz>
+  <MultipleChoiceQuestion
+    answerType="multiple"
+    question={<p>Which of the following are true? (Check all that apply)</p>}
+    correctAnswerFeedback={
+      <p>
+        Now that you tried exploring the behaviour, it will be easier to
+        understand the explanation that follows. 😊
+      </p>
+    }
+    incorrectAnswerFeedback={
+      <p>
+        Now that you tried exploring the behaviour, it will be easier to
+        understand the explanation that follows. 😊
+      </p>
+    }
+  >
+    <Choice>😍 appears when I stop observing.</Choice>
+    <Choice correct={true}>😍 appears when I start observing.</Choice>
+    <Choice correct={true}>
+      When the status is observing, 😍 appears once when the balloon enters the
+      viewport.
+    </Choice>
+    <Choice>
+      When the status is not observing, 😍 appears once when the balloon enters
+      the viewport.
+    </Choice>
+    <Choice correct={true}>
+      When the status is observing, 😍 appears once when the balloon exits the
+      viewport.
+    </Choice>
+  </MultipleChoiceQuestion>
+</Quiz>
+<Spacer size="32" />
 
-In technical terms, this state indicates an intersection where at least one pixel of the element being observed (called as the `target`) overlaps with the viewport. You can think of the change in emoji as the thing we want to do when an intersection occurs.
+The 😍 emoji appears at 3 distinct states:
 
-We can also say the target is _visible_ when at least one pixel of the target intersects with the viewport and its _invisible_ when there's no intersection. Let's look at some code!
+- As soon as we start observing.
+- When the balloon first enters the viewport while we're in the observing state.
+- When the ballon first exits the viewport while we're in the observing state.
+
+In technical terms, the last two states indicate an intersection where at least one
+pixel of the element being observed (called as the `target`, the balloon in our example) overlaps with the viewport. You can think of the change in emoji as the thing we want to do when an intersection occurs.
+
+We can use the first state when we want to know if the element is inside or outside the viewport the moment we start obsersving without waiting for the user to scroll.
+
+Let's look at some code!
 
 ## The API
 
-Here's an implementation of the above behaviour in React. Play around by scrolling the page and see if you can figure out what's going on. I'll break down the parts right below the playground. Try scrolling the present in and out of view several times and compare it with the interactive demo above.
+Here's an implementation of the above behaviour in React. Play around by scrolling the page and see if you can figure out what's going on. I'll break down the parts right below the playground. Try scrolling the balloon in and out of view and compare it with the interactive demo above. Clear the console and reload the page to observe the behavior from the beginning.
 
 <SandpackDemo projectSubDir="interactionObserver/basic" />
 
@@ -44,7 +90,7 @@ We create an `InteractionObserver` by calling its contructor and passing in a ca
 const observer = new IntersectionObserver(callback);
 ```
 
-This `callback` will be invoked by the `observer` every time something interesting happens. Our callback simply logs "Interesting":
+This `callback` will be invoked by the `observer` every time something interesting happens. Our callback simply logs "Interesting". In the interactive demo, this event was represented by the emoji 😍 appearing.
 
 ```js
 () => {
@@ -52,39 +98,40 @@ This `callback` will be invoked by the `observer` every time something interesti
 };
 ```
 
-How does the observer know what is interesting to us? We have two knobs to control this. The first one is to specify the element we want to observe (we'll come back to the other knob shortly):
+How does the observer know what is interesting to us? We have two knobs to control the observer. The first one is to specify the element we want to observe (we'll come back to the other knob shortly):
 
 ```js
-observer.observe(observedElemRef.current); //This is the 🎁
+observer.observe(observedElemRef.current); //This is the balloon
 ```
 
 With this, the observer knows the element we're interested in. That covers all the parts in our minimal example. We can make the following observations from this example:
 
 - "Interesting" is logged when the page first loads. (This actually happen when we first call the `observe` function on the `observer`. It just appears to happen on page load.)
-- It's logged when the first pixel of the observed element 🎁 enters the viewport.
-- It's also logged when the observed element exits the viewport.
+- It's logged when the first pixel of the observed element enters the viewport.
+- It's also logged when last pixel of the observed element exits the viewport.
 
-This is the default behaviour of the IntersectionObserver when we do not use the second knob. Before looking at the second knob, let's see an example of what we can do with just the fist knob, i.e., just specifying the element we want to observe!
+This is the default behaviour of the `IntersectionObserver` when we do not use the second knob. This is also the behavior depicted in the interactive demo. Before looking at the second knob, let's see an example of what we can do with just the fist knob, i.e., just specifying the element we want to observe!
 
-The Intersection Observer's callback is given the `entries` argument. The Observer collects all the interesting events and passes them along to our callback in the form of the `entries` array. In the previous example, we ignored the events. In this next example, we will look at the events and check if it says the observed element just entered the viewport and do something when it enters.
+The Intersection Observer's callback is given the `entries` argument. The Observer passes the interesting events to our callback through the `entries` array. In the previous example, we ignored the events. In this next example, we will check `entries` array to see if the observed element just entered the viewport and do something only when it enters (in this example, we're triggering an animation when the observed element enters the viewport).
 
-<SandpackDemo projectSubDir="interactionObserver/eyesOnEntry" />
+<SandpackDemo projectSubDir="interactionObserver/scaleOnEntry" />
 
 Let's look at the `entries` argument:
 
 ```js
 const observer = new IntersectionObserver((entries) => {
   const [entry] = entries;
-  setIsPresentVisible(entry.isIntersecting);
+  setIsBalloonVisible(entry.isIntersecting);
 });
 ```
 
 We're plucking the one and only item from the `entries` argument. How do we know it has only one element? Because we have _observed_ only one element. When we observe multiple elements or tweak the second knob in certain ways, the Observer can pass along multiple events in a single callback invocation.
 
-Each event in the array holds properties describing the event. For example, the `isIntersecting` property tells us if the observed element entered the viewport.
+Each item in the array holds properties describing the corresponding event. For example, the `isIntersecting` property tells us if the observed element entered the viewport when the event occured. We're conditionally applying `scaleUp` CSS class whenever the balloon is visible. This triggers the animation just as the balloon enters the viewport so the user can see it!
 
 ### The Second Knob: The Options Object
-The second knob to control what we're interested in the second argument to the `IntersectionObserver' constructor. It's object with three optional properties.
+
+The second knob to control what we're interested in is the second argument to the `IntersectionObserver` constructor. It's an object with three optional properties.
 
 ```js
 const options = {
@@ -97,14 +144,90 @@ const options = {
 We'll look at them in turn.
 
 ### `root`
-Root is the element that acts as the viewport for checking the visibility of the target. In the above examples we never set the root explicitly; the default root is the browser viewport. In the context of the playground, the default root ended up being the iframe's viewport. The below sandbox shows an example with a custom root.
+
+Root is the element that acts as the viewport for the intersection calculation. In the above examples we never set the root explicitly; the default root is the browser viewport. In the context of the playground, the default root ended up being the iframe's viewport. The below sandbox shows an example with a custom root.
 
 <SandpackDemo projectSubDir="interactionObserver/customRoot" />
 
-### `rootMargin`
-To customize the root element's edges to be used in intersection calculations. The above examples used the default margins, which is zeroes on all sides.
+### `rootMargin and threshold`
 
-### `threshold`
-to customize the percentage of the observed element's visibility that we're interested in. The above examples used the default threshold, which is `0`.
+`rootMargin` and `threshold` shift the edges of the viewport and the observed element only for the purposes of the intesection calculation. I have added additional controls to the following demo to show how these two properties work.
+
+<IntersectionObserverVisualizer
+  showConfigurator={true}
+  caption={
+    <NoMarginParagraph>
+      Tweak the root margin and the threshold values before observing to alter
+      the edges used in the intersection calculation. Root margin can take
+      values for all 4 edges like the normal `margin` property, I've showed only
+      the bottom edge to keep it simple. The threshold can also be set to any
+      decimal value between 0 and 1. I have restricted it to keep it simple.
+    </NoMarginParagraph>
+  }
+/>
+<Spacer size={32} />
+
+In our previous examples, the default `rootMargin` was `0` on all sides and the default `threshold` was `0`. Let's consider a different example using the above demo. Set the threshold to `1.0` (leaving the `rootMargin` at `0`) and start observing. Now if you scroll, we won't see a reaction when the first pixel of the balloon enters the viewport. Instead, we see a reaction when the last pixel enters the viewport.
+
+As another example, stop observing, set the `rootMargin` to `40px`, `threshold` to `0` and scroll the page to the top. Now start observing and start scrolling the balloon into view. The reaction will trigger way before the balloon enters the viewport. More specifically, the reaction triggers when the first pixel of the balloon touches the `40px` margin's edge.
+
+## An Exercise
+
+In our previous example the balloon scaled up too early, before it was fully in view. It appears as though the balloon is peeking from below.
+
+<InlineVideo src="/videos/balloon_scaling_too_early.mp4" />
+
+What if our goal is to clearly show the balloon is scaling up?
+
+<InlineVideo src="/videos/balloon_scaling_on_time.mp4" />
+
+I've added the same sandbox below. Can you try to use the `options` we just learned about to achieve this?
+
+<SandpackDemo projectSubDir="interactionObserver/scaleOnEntry" />
+
+### Solution
+
+The solution is to add a threshold when creating the IntersectionObserver:
+
+```js
+const observer = new IntersectionObserver(
+  (entries) => {
+    const [entry] = entries;
+    setIsBalloonVisible(entry.isIntersecting);
+  },
+  //use the second argument to set the threshold
+  {
+    threshold: 1,
+  }
+);
+```
+
+<SandpackDemo projectSubDir="interactionObserver/exerciseSolution" />
+
+## Infinite Scrolling
+
+Here's an example of how we can achieve the infinite scrolling effect using the intersection observer.
+
+<SandpackDemo
+  projectSubDir="interactionObserver/infiniteScrolling"
+  customSetup={{
+    dependencies: {
+      "react-feather": "2.0.10",
+    },
+  }}
+/>
+
+Here, we observe a zero-height element that is positioned at the end of the viewport:
+
+<img
+  alt="A browser snapshot showing the zero-height element at the end of the viewport and its corresponding div element in the developer tools console"
+  src="/images/infinite-scrolling-zero-height-element.jpg"
+/>
+
+<Spacer size={32} />
+
+We can position this element anywhere in the DOM to control when we want to make the network request.
+
+This example only shows how you can use the Intersection Observer API. In the real-world, we also have to handle error states and ensure we don't make network requests repeatedly in spite of errors. This can be done by hiding the observed element in error states.
 
 [1]: https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API

@@ -3,12 +3,12 @@ import "./styles.css";
 
 function App() {
   const observedElemRef = React.useRef();
-  const [isPresentVisible, setIsPresentVisible] = React.useState(false);
+  const [isBalloonVisible, setIsBalloonVisible] = React.useState(false);
 
   React.useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       const [entry] = entries;
-      setIsPresentVisible(entry.isIntersecting);
+      setIsBalloonVisible(entry.isIntersecting);
     });
 
     observer.observe(observedElemRef.current);
@@ -18,14 +18,16 @@ function App() {
 
   return (
     <div className="wrapper">
-      {isPresentVisible && <p className="reactEmoji">😍</p>}
       <p>
-        Scroll down till you see the present and have eye on the top-left
-        corner!
+        Scroll down till you see the balloon and have an eye on the balloon's size!
       </p>
-      <p ref={observedElemRef} className="observedElement">
-        🎁
-      </p>
+      <img
+        ref={observedElemRef}
+        src="http://localhost:3000/images/balloon.png"
+        width={60}
+        height={60}
+        className={isBalloonVisible ? "scaledUp" : "normal"}
+      />
     </div>
   );
 }
