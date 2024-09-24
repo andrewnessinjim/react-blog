@@ -4,11 +4,19 @@ abstract: One of the most commonly-misunderstood operators is Modulo (%). In thi
 publishedOn: "2023-09-06T12:00:00-0400"
 ---
 
-We can use [the browser's native IntersectionObserver API][1] to observe an element in the DOM and do something asynchronously when that element enters the viewport as the user is scrolling. In this blog post, I'll explain the concept behind this API and how to use it. I'll also show a real-world use case in React - infinite scrolling.
+In this post, I'll explain the concept behind [the browser's native IntersectionObserver API][1] and how to use it. I'll also show a real-world use case in React - infinite scrolling.
+
+## Prerequisites
+
+This post assumes famaliarity with the following topics:
+1) React, particularly the hooks - [useEffect][2] and [useRef][3].
+2) Basic understanding of [viewports][4].
+3) [Callbacks in JavaScript][5].
+4) Basic CSS.
 
 ## Visualizing The Concept
 
-Imagine a web page as the box with a dashed outline as below. Within it, we have an element represented by a balloon 🎈 at the end.
+Imagine a web page as the box with a dashed outline as below. Within it, we have an element represented by a balloon.
 
 <IndependentPage caption={<NoMarginParagraph>A webpage.</NoMarginParagraph>} />
 
@@ -235,3 +243,7 @@ This example only focuses on the Intersection Observer API. In the real-world, w
 I hope this helped you get a hold on how the API works! Head on to [the official docs][1] to dig deeper. The API supports specifying multiple threshold levels, knowing the exact intersection ratio and much more! You can also find a list of use cases for this API at the beginning of the page; the infinite scrolling example was one of them.
 
 [1]: https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
+[2]: https://react.dev/reference/react/useEffect
+[3]: https://react.dev/reference/react/useRef
+[4]: https://developer.mozilla.org/en-US/docs/Web/CSS/Viewport_concepts#what_is_a_viewport
+[5]: https://developer.mozilla.org/en-US/docs/Glossary/Callback_function
