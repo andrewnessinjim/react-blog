@@ -28,12 +28,12 @@ p {
   justify-content: space-between;
 }
 
-.scaledUp {
-  transform-origin: bottom;
-  transform: scale(3);
+.balloon {
+  transform-origin: bottom left;
+  transform: scale(1);
   transition: 300ms transform ease-in;
 }
 
-.normal {
-  transform: scale(1);
+.scaledUp {
+  transform: scale(2);
 }

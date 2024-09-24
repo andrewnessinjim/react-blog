@@ -19,14 +19,15 @@ function App() {
   return (
     <div className="wrapper">
       <p>
-        Scroll down till you see the balloon and have an eye on the balloon's size!
+        Scroll down till you see the balloon and have an eye on the balloon's
+        size!
       </p>
       <img
         ref={observedElemRef}
-        src="http://localhost:3000/images/balloon.png"
+        src="{{HOSTNAME}}/images/balloon.png"
         width={60}
         height={60}
-        className={isBalloonVisible ? "scaledUp" : "normal"}
+        className={`balloon ${isBalloonVisible ? "scaledUp" : ""}`}
       />
     </div>
   );

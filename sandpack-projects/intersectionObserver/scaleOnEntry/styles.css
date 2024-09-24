@@ -16,12 +16,12 @@ p {
   padding: 24px;
 }
 
-.scaledUp {
+.balloon {
   transform-origin: bottom;
-  transform: scale(2.0);
+  transform: scale(1);
   transition: 300ms transform ease-in;
 }
 
-.normal {
-  transform: scale(1.0);
+.scaledUp {
+  transform: scale(2);
 }
