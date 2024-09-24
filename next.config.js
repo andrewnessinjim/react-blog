@@ -4,7 +4,7 @@ module.exports = {
   },
   experimental: {
     outputFileTracingIncludes: {
-      "/*": ["./content/**/*"],
+      "/*": ["./content/**/*", "./sandpack-projects/**/*"],
     },
   },
 };
