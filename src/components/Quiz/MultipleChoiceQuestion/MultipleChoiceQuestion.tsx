@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import styled from "styled-components";
+import styled, { CSSProperties } from "styled-components";
 import SingleAnswerMCQ from "../SingleAnswerMCQ";
 import MultiAnswerMCQ from "../MultiAnswerMCQ";
 import { MultipleChoiceQuestionProps } from "../types";
@@ -48,7 +48,7 @@ function MultipleChoiceQuestion({
         }}
         style={{
           ...FEEDBACK_COLORS[isCorrect ? "correct" : "incorrect"],
-        }}
+        } as CSSProperties}
       >
         {showFeedback && (
           <>

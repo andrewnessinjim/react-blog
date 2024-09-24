@@ -2,14 +2,15 @@ import fs from "fs/promises";
 import path from "path";
 import matter from "gray-matter";
 import React from "react";
+import { SandpackFiles } from "@codesandbox/sandpack-react";
 
-export async function getProjectFiles(projectSubDir) {
+export async function getProjectFiles(projectSubDir: string) {
   const projectDir = "/sandpack-projects/" + projectSubDir;
   const fileNames = await readDirectory(projectDir);
-  const filesContents = {};
+  const filesContents: SandpackFiles = {};
 
   for (let fileName of fileNames) {
-    const rawContent = await readFile(`${projectDir}/${fileName}`)
+    const rawContent = await readFile(`${projectDir}/${fileName}`);
     filesContents[fileName] = rawContent;
   }
 
@@ -32,10 +33,11 @@ export async function getBlogPostList() {
     });
   }
 
+  // @ts-ignore
   return blogPosts.sort((p1, p2) => (p1.publishedOn < p2.publishedOn ? 1 : -1));
 }
 
-export const loadBlogPost = React.cache(async (slug) => {
+export const loadBlogPost = React.cache(async (slug: string) => {
   const rawContent = await readFile(`/content/${slug}.mdx`);
 
   const { data: frontmatter, content } = matter(rawContent);
@@ -43,10 +45,10 @@ export const loadBlogPost = React.cache(async (slug) => {
   return { frontmatter, content };
 });
 
-function readFile(localPath) {
+function readFile(localPath: string) {
   return fs.readFile(path.join(process.cwd(), localPath), "utf8");
 }
 
-function readDirectory(localPath) {
+function readDirectory(localPath: string) {
   return fs.readdir(path.join(process.cwd(), localPath));
 }

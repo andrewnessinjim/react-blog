@@ -49,6 +49,7 @@ export const ViewportRect = React.forwardRef<
 >((delegated, ref) => {
   return <ViewportRectWrapper {...delegated} ref={ref} />;
 });
+ViewportRect.displayName = "ViewportRect";
 
 const ViewportRectWrapper = styled.rect`
   stroke: var(--color-primary-500);
