@@ -14,7 +14,6 @@ import { ThemeContext } from "../ThemeProvider";
 function SandpackLiveEditor({ files, ...delegated }: Props) {
   const { isDarkMode } = React.useContext(ThemeContext);
 
-  console.log(files);
   return (
     <Wrapper>
       <Sandpack
