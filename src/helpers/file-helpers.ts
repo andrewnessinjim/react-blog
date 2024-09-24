@@ -2,12 +2,13 @@ import fs from "fs/promises";
 import path from "path";
 import matter from "gray-matter";
 import React from "react";
-import { SandpackFiles } from "@codesandbox/sandpack-react";
 
-export async function getProjectFiles(projectSubDir: string) {
+export async function getProjectFiles(
+  projectSubDir: string
+): Promise<{ [x: string]: string }> {
   const projectDir = "/sandpack-projects/" + projectSubDir;
   const fileNames = await readDirectory(projectDir);
-  const filesContents: SandpackFiles = {};
+  const filesContents: { [x: string]: string } = {};
 
   for (let fileName of fileNames) {
     const rawContent = await readFile(`${projectDir}/${fileName}`);

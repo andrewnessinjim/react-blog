@@ -22,7 +22,7 @@ function App() {
       </p>
       <img
         ref={observedElemRef}
-        src="http://localhost:3000/images/balloon.png"
+        src="{{HOSTNAME}}/images/balloon.png"
         width={60}
         height={60}
       />
