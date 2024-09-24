@@ -4,7 +4,6 @@ import React from "react";
 
 import {
   Sandpack,
-  SandpackFile,
   SandpackFiles,
 } from "@codesandbox/sandpack-react";
 

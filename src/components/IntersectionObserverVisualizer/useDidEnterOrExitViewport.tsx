@@ -36,16 +36,6 @@ export default function useDidEnterOrExitViewport() {
     return result;
   }
 
-  function hasEnteredOrExitedViewPort(
-    prevObservedElemY: number,
-    nextObservedElemY: number
-  ) {
-    return (
-      hasEnteredViewPort(prevObservedElemY, nextObservedElemY) ||
-      hasExitedViewport(prevObservedElemY, nextObservedElemY)
-    );
-  }
-
   function updateYPositions(nextYPositions: YPositions) {
     setYPositions((prevYPositions) => {
       setDidEnterViewport(
