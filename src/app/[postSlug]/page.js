@@ -31,4 +31,12 @@ async function BlogPost({ params }) {
   );
 }
 
+export function generateStaticParams() {
+  return [
+    {
+      postSlug: "intersection-observer",
+    },
+  ];
+}
+
 export default BlogPost;
