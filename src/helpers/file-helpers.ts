@@ -18,7 +18,7 @@ export async function getProjectFiles(
   return filesContents;
 }
 
-export async function getBlogPostList() {
+async function readBlogPosts() {
   const fileNames = await readDirectory("/content");
 
   const blogPosts = [];
@@ -28,16 +28,25 @@ export async function getBlogPostList() {
 
     const { data: frontmatter } = matter(rawContent);
 
-    if (frontmatter.publishedOn !== undefined) {
-      blogPosts.push({
-        slug: fileName.replace(".mdx", ""),
-        ...frontmatter,
-      });
-    }
+    blogPosts.push({
+      slug: fileName.replace(".mdx", ""),
+      ...frontmatter,
+    });
   }
 
   // @ts-ignore
   return blogPosts.sort((p1, p2) => (p1.publishedOn < p2.publishedOn ? 1 : -1));
+}
+
+export async function getAllBlogPostList() {
+  return await readBlogPosts();
+}
+
+export async function getPublishedBlogPostList() {
+  const allPosts = await readBlogPosts();
+
+  // @ts-ignore
+  return allPosts.filter((post) => post.publishedOn !== undefined);
 }
 
 export const loadBlogPost = React.cache(async (slug: string) => {

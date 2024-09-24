@@ -2,7 +2,7 @@ import React from "react";
 
 import BlogHero from "@/components/BlogHero";
 
-import { loadBlogPost } from "@/helpers/file-helpers";
+import { getAllBlogPostList, loadBlogPost } from "@/helpers/file-helpers";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import COMPONENTS from "@/helpers/mdx-component";
 import { Page, Wrapper } from "./page.styled";
@@ -31,12 +31,12 @@ async function BlogPost({ params }) {
   );
 }
 
-export function generateStaticParams() {
-  return [
-    {
-      postSlug: "intersection-observer",
-    },
-  ];
+export async function generateStaticParams() {
+  const blogPosts = await getAllBlogPostList();
+  
+  return blogPosts.map((blogPost) => ({
+    postSlug: blogPost.slug,
+  }));
 }
 
 export default BlogPost;

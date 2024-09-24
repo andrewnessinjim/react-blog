@@ -2,11 +2,11 @@ import React from "react";
 
 import BlogSummaryCard from "@/components/BlogSummaryCard";
 
-import { getBlogPostList } from "@/helpers/file-helpers";
+import { getPublishedBlogPostList } from "@/helpers/file-helpers";
 import { Heading, Wrapper } from "./page.styled";
 
 async function Home() {
-  const blogPostList = await getBlogPostList();
+  const blogPostList = await getPublishedBlogPostList();
 
   return (
     <Wrapper>
