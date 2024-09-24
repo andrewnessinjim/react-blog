@@ -28,10 +28,12 @@ export async function getBlogPostList() {
 
     const { data: frontmatter } = matter(rawContent);
 
-    blogPosts.push({
-      slug: fileName.replace(".mdx", ""),
-      ...frontmatter,
-    });
+    if (frontmatter.publishedOn !== undefined) {
+      blogPosts.push({
+        slug: fileName.replace(".mdx", ""),
+        ...frontmatter,
+      });
+    }
   }
 
   // @ts-ignore

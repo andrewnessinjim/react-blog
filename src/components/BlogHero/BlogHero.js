@@ -9,7 +9,7 @@ import {
   Wrapper,
 } from "./BlogHero.styled";
 
-function BlogHero({ title, publishedOn, ...delegated }) {
+function BlogHero({ title, publishedOn = new Date(), ...delegated }) {
   const humanizedDate = format(new Date(publishedOn), "MMMM do, yyyy");
 
   return (
