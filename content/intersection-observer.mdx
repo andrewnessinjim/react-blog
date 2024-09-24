@@ -228,6 +228,10 @@ Here, we observe a zero-height element that is positioned at the end of the view
 
 We can position this element anywhere in the DOM to control when we want to make the network request.
 
-This example only shows how you can use the Intersection Observer API. In the real-world, we also have to handle error states and ensure we don't make network requests repeatedly in spite of errors. This can be done by hiding the observed element in error states.
+This example only focuses on the Intersection Observer API. In the real-world, we also have to handle error states and ensure we don't make network requests repeatedly in spite of errors. This can be done by hiding the observed element in error states. We can also avoid funky behaviors by hiding the observed element during the loading state.
+
+## Conclusion
+
+I hope this helped you get a hold on how the API works! Head on to [the official docs][1] to dig deeper. The API supports specifying multiple threshold levels, knowing the exact intersection ratio and much more! You can also find a list of use cases for this API at the beginning of the page; the infinite scrolling example was one of them.
 
 [1]: https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
