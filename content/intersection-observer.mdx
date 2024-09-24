@@ -82,9 +82,9 @@ Let's look at some code!
 
 Here's an implementation of the above behaviour in React. Play around by scrolling the page and see if you can figure out what's going on. I'll break down the parts right below the playground. Try scrolling the balloon in and out of view and compare it with the interactive demo above. Clear the console and reload the page to observe the behavior from the beginning.
 
-<SandpackDemo projectSubDir="interactionObserver/basic" />
+<SandpackDemo projectSubDir="intersectionObserver/basic" />
 
-We create an `InteractionObserver` by calling its contructor and passing in a callback:
+We create an `intersectionObserver` by calling its contructor and passing in a callback:
 
 ```js
 const observer = new IntersectionObserver(callback);
@@ -114,7 +114,7 @@ This is the default behaviour of the `IntersectionObserver` when we do not use t
 
 The Intersection Observer's callback is given the `entries` argument. The Observer passes the interesting events to our callback through the `entries` array. In the previous example, we ignored the events. In this next example, we will check `entries` array to see if the observed element just entered the viewport and do something only when it enters (in this example, we're triggering an animation when the observed element enters the viewport).
 
-<SandpackDemo projectSubDir="interactionObserver/scaleOnEntry" />
+<SandpackDemo projectSubDir="intersectionObserver/scaleOnEntry" />
 
 Let's look at the `entries` argument:
 
@@ -147,7 +147,7 @@ We'll look at them in turn.
 
 Root is the element that acts as the viewport for the intersection calculation. In the above examples we never set the root explicitly; the default root is the browser viewport. In the context of the playground, the default root ended up being the iframe's viewport. The below sandbox shows an example with a custom root.
 
-<SandpackDemo projectSubDir="interactionObserver/customRoot" />
+<SandpackDemo projectSubDir="intersectionObserver/customRoot" />
 
 ### `rootMargin and threshold`
 
@@ -183,7 +183,7 @@ What if our goal is to clearly show the balloon is scaling up?
 
 I've added the same sandbox below. Can you try to use the `options` we just learned about to achieve this?
 
-<SandpackDemo projectSubDir="interactionObserver/scaleOnEntry" />
+<SandpackDemo projectSubDir="intersectionObserver/scaleOnEntry" />
 
 ### Solution
 
@@ -202,14 +202,14 @@ const observer = new IntersectionObserver(
 );
 ```
 
-<SandpackDemo projectSubDir="interactionObserver/exerciseSolution" />
+<SandpackDemo projectSubDir="intersectionObserver/exerciseSolution" />
 
 ## Infinite Scrolling
 
 Here's an example of how we can achieve the infinite scrolling effect using the intersection observer.
 
 <SandpackDemo
-  projectSubDir="interactionObserver/infiniteScrolling"
+  projectSubDir="intersectionObserver/infiniteScrolling"
   customSetup={{
     dependencies: {
       "react-feather": "2.0.10",
