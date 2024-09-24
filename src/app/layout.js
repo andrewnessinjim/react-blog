@@ -1,4 +1,6 @@
 import React from "react";
+import { Analytics } from "@vercel/analytics/react";
+
 import { Work_Sans, Spline_Sans_Mono } from "next/font/google";
 import clsx from "clsx";
 
@@ -49,6 +51,7 @@ function RootLayout({ children }) {
             <main>{children}</main>
             <Footer />
             <GlobalStyles />
+            <Analytics />
           </body>
         </ThemedHtml>
       </StyledComponentsRegistry>
