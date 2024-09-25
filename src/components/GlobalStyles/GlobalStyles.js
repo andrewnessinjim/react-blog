@@ -136,7 +136,13 @@ const GlobalStyles = createGlobalStyle`
   }
   h3 {
     font-size: 1.25rem;
-    /* margin-top: 2em; */
+    margin-top: 2em;
+    margin-bottom: 0.5em;
+    font-weight: 500;
+  }
+  h4 {
+    font-size: 1.25rem;
+    margin-top: 1.25em;
     margin-bottom: 0.5em;
     font-weight: 500;
   }
@@ -187,6 +193,10 @@ const GlobalStyles = createGlobalStyle`
     }
     h3 {
       font-size: 1.5rem;
+    }
+
+    h4 {
+      font-size: 1.25rem;
     }
   }
 
