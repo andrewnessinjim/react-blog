@@ -1,5 +1,6 @@
 import React from "react";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import { Work_Sans, Spline_Sans_Mono } from "next/font/google";
 import clsx from "clsx";
@@ -52,6 +53,7 @@ function RootLayout({ children }) {
             <Footer />
             <GlobalStyles />
             <Analytics />
+            <SpeedInsights />
           </body>
         </ThemedHtml>
       </StyledComponentsRegistry>
