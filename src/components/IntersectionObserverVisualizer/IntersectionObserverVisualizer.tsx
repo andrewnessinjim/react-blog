@@ -21,12 +21,13 @@ import {
 import { ViewportRect } from "./Viewport";
 import { MEDIA_QUERIES } from "@/constants";
 import YPositionScroller from "./YPositionScroller";
-import AnimatingEmoji from "./AnimatingEmoji";
+import { HeartEmoji, ObserverEmoji } from "./Emoji";
 import useDidEnterOrExitViewport from "./useDidEnterOrExitViewport";
 import ControlPanel from "./ControlPanel";
 
 import { PageRect } from "./Page";
 import ObservedElement from "./ObservedElement";
+import _ from "lodash-es";
 
 function IntersectionObserverVisualizer({
   caption,
@@ -43,19 +44,18 @@ function IntersectionObserverVisualizer({
     setRootMargin,
   } = useDidEnterOrExitViewport();
 
-  const [scrollerDisabled, setScrollerDisabled] = React.useState(false);
-  const [showEmoji, setShowEmoji] = React.useState(false);
-  const [showReaction, setShowReaction] = React.useState(false);
+  const [isObserving, setIsObserving] = React.useState(false);
+  const [numHeartReactions, setNumHeartReactions] = React.useState(0);
 
   React.useEffect(() => {
-    if (didEnterViewport) {
-      setShowReaction(true);
+    if (didEnterViewport && isObserving) {
+      setNumHeartReactions((numHeartReactions) => numHeartReactions + 1);
     }
   }, [didEnterViewport]);
 
   React.useEffect(() => {
-    if (didExitViewport) {
-      setShowReaction(true);
+    if (didExitViewport && isObserving) {
+      setNumHeartReactions((numHeartReactions) => numHeartReactions + 1);
     }
   }, [didExitViewport]);
 
@@ -64,17 +64,21 @@ function IntersectionObserverVisualizer({
       <DemoUnitCard caption={caption}>
         <Wrapper>
           <InteractiveSection>
-            <AnimatingEmoji
-              show={showEmoji}
-              showReaction={showReaction}
-              onAnimationStart={() => {
-                setScrollerDisabled(true);
-              }}
-              onAnimationComplete={() => {
-                setShowReaction(false);
-                setScrollerDisabled(false);
-              }}
-            />
+            <HeartEmojisWrapper>
+              {_.range(numHeartReactions).map((index) => (
+                <HeartEmoji
+                  key={index}
+                  onExit={() => {
+                    setNumHeartReactions(
+                      (numHeartReactions) => numHeartReactions - 1
+                    );
+                  }}
+                />
+              ))}
+            </HeartEmojisWrapper>
+            <ObserverEmojiWrapper>
+              <ObserverEmoji show={isObserving} />
+            </ObserverEmojiWrapper>
             <Svg
               id="svg"
               width={VIEW_BOX_WIDTH}
@@ -88,44 +92,10 @@ function IntersectionObserverVisualizer({
                 y={VIEWPORT_Y}
               />
               {showConfigurator && (
-                <>
-                  <motion.rect
-                    transition={{
-                      type: "spring",
-                      damping: 30,
-                      stiffness: 150,
-                    }}
-                    animate={{
-                      width: VIEWPORT_WIDTH,
-                      height: VIEWPORT_HEIGHT + rootMargin,
-                      attrX: VIEWPORT_X,
-                      attrY: VIEWPORT_Y,
-                    }}
-                    initial={{
-                      width: VIEWPORT_WIDTH,
-                      height: VIEWPORT_HEIGHT + rootMargin,
-                      attrX: VIEWPORT_X,
-                      attrY: VIEWPORT_Y,
-                    }}
-                    fill="var(--color-primary-500)"
-                    fillOpacity={0.25}
-                  />
-                </>
+                <RootMarginHighlighter rootMargin={rootMargin} />
               )}
 
-              <PageRect
-                width={PAGE_WIDTH}
-                height={PAGE_HEIGHT}
-                animate={{
-                  attrX: PAGE_X,
-                  attrY: yPositions.pageY,
-                }}
-                initial={{
-                  attrX: PAGE_X,
-                  attrY: yPositions.pageY,
-                }}
-                transition={PAGE_TRANSITION}
-              />
+              <WebPage y={yPositions.pageY}/>
               <ObservedElement
                 x={OBSERVED_ELEMENT_X}
                 y={yPositions.observedElemY}
@@ -133,26 +103,63 @@ function IntersectionObserverVisualizer({
                 showConfigurator={showConfigurator}
               />
             </Svg>
-            <YPositionScroller
-              disabled={scrollerDisabled}
-              onYPositionChange={updateYPositions}
-            />
+            <YPositionScroller onYPositionChange={updateYPositions} />
           </InteractiveSection>
           <ControlPanel
-          showConfigurator={showConfigurator}
+            showConfigurator={showConfigurator}
             onThresholdChange={setThreshold}
             threshold={threshold}
             rootMargin={rootMargin}
             onRootMarginChange={setRootMargin}
             onStartObserve={() => {
-              setShowReaction(true);
-              setShowEmoji(true);
+              setNumHeartReactions(
+                (numHeartReactions) => numHeartReactions + 1
+              );
+              setIsObserving(true);
             }}
-            onEndObserve={() => setShowEmoji(false)}
+            onEndObserve={() => setIsObserving(false)}
           />
         </Wrapper>
       </DemoUnitCard>
     </WidthRestrict>
+  );
+}
+
+function RootMarginHighlighter({ rootMargin }: { rootMargin: number }) {
+  const animationSettings = {
+    width: VIEWPORT_WIDTH,
+    height: VIEWPORT_HEIGHT + rootMargin,
+    attrX: VIEWPORT_X,
+    attrY: VIEWPORT_Y,
+  };
+  return (
+    <motion.rect
+      transition={{
+        type: "spring",
+        damping: 30,
+        stiffness: 150,
+      }}
+      animate={animationSettings}
+      initial={animationSettings}
+      fill="var(--color-primary-500)"
+      fillOpacity={0.25}
+    />
+  );
+}
+
+function WebPage({ y }: { y: number }) {
+  const animationSettings = {
+    attrX: PAGE_X,
+    attrY: y,
+  };
+  return (
+    <PageRect
+      width={PAGE_WIDTH}
+      height={PAGE_HEIGHT}
+      animate={animationSettings}
+      initial={animationSettings}
+      transition={PAGE_TRANSITION}
+    />
   );
 }
 
@@ -176,6 +183,19 @@ const InteractiveSection = styled.div`
   display: flex;
   align-items: center;
   position: relative;
+`;
+
+const HeartEmojisWrapper = styled.div`
+  position: absolute;
+  display: flex;
+  left: 10px;
+  top: 140px;
+`;
+
+const ObserverEmojiWrapper = styled.div`
+  position: absolute;
+  left: 10px;
+  top: 208px;
 `;
 
 const Svg = styled.svg`
