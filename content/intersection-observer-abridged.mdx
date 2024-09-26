@@ -1,7 +1,6 @@
 ---
 title: "Understanding The Intersection Observer API"
 abstract: In this post, I'll explain the concept behind the browser's native IntersectionObserver API and how to use it.
-
 ---
 
 In this post, I'll explain the concept behind [the browser's native IntersectionObserver API][1] and how to use it.
@@ -9,10 +8,11 @@ In this post, I'll explain the concept behind [the browser's native Intersection
 ## Prerequisites
 
 This post assumes familiarity with the following topics:
-1) React, particularly the hooks - [useEffect][2] and [useRef][3].
-2) Basic understanding of [viewports][4].
-3) [Callbacks in JavaScript][5].
-4) Basic CSS.
+
+1. React, particularly the hooks - [useEffect][2] and [useRef][3].
+2. Basic understanding of [viewports][4].
+3. [Callbacks in JavaScript][5].
+4. Basic CSS.
 
 ## Visualizing The Concept
 
@@ -21,9 +21,10 @@ I have built an interactive demo below to help me explain the Intersection Obser
 <IntersectionObserverVisualizer
   caption={
     <NoMarginParagraph>
-      Drag the slider on the right to scroll the page within the viewport. You
-      can see the emoji reaction only after you click the "Start Observing"
-      button.
+      Click the "Start Observing" button to begin. The 🤨 emoji will appear,
+      indicating that we're in the observing state. Now, use the slider on the
+      right to scroll the page and watch for the 😍 emoji to appear at key
+      moments. Take note of the exact states when it shows up.
     </NoMarginParagraph>
   }
 />
@@ -36,30 +37,27 @@ Based on your observation, see if you can answer the quiz below. You don't have 
     question={<p>Which of the following are true? (Check all that apply)</p>}
     correctAnswerFeedback={
       <p>
-        Now that you tried exploring the behaviour, it will be easier to
+        Great job! Now that you've explored the behavior, it will be easier to
         understand the explanation that follows. 😊
       </p>
     }
     incorrectAnswerFeedback={
       <p>
-        Now that you tried exploring the behaviour, it will be easier to
-        understand the explanation that follows. 😊
+        Almost there! Now that you've explored the behavior, the explanation
+        that follows will help clarify things. 😊
       </p>
     }
   >
-    <Choice>😍 appears when I stop observing.</Choice>
-    <Choice correct={true}>😍 appears when I start observing.</Choice>
+    <Choice>😍 appears when we stop observing.</Choice>
+    <Choice correct={true}>😍 appears as soon as we start observing.</Choice>
     <Choice correct={true}>
-      When the status is observing, 😍 appears once when the balloon enters the
-      viewport.
+      When we're observing, 😍 appears when the balloon enters the viewport.
     </Choice>
     <Choice>
-      When the status is not observing, 😍 appears once when the balloon enters
-      the viewport.
+      When we're not observing, 😍 appears when the balloon enters the viewport.
     </Choice>
     <Choice correct={true}>
-      When the status is observing, 😍 appears once when the balloon exits the
-      viewport.
+      When we're observing, 😍 appears when the balloon exits the viewport.
     </Choice>
   </MultipleChoiceQuestion>
 </Quiz>
@@ -68,8 +66,8 @@ Based on your observation, see if you can answer the quiz below. You don't have 
 The 😍 emoji appears at 3 distinct states:
 
 - As soon as we start observing (we won't cover this in this blog post).
-- When the balloon first enters the viewport while we're in the observing state.
-- When the balloon first exits the viewport while we're in the observing state.
+- When the balloon first enters the viewport when we're observing.
+- When the balloon first exits the viewport when we're observing.
 
 Technically, the balloon in our example is called the _target_ (it's the element we want to observe), and the viewport is called the _root_.
 
@@ -89,16 +87,18 @@ We create an Intersection Observer using its constructor:
 const observer = new IntersectionObserver(callback);
 ```
 
-The `callback` will be invoked by the `observer` when something _interesting_ happens. Our callback simply logs "Interesting". In the interactive demo, this callback invocation is represented by the emoji 😍 appearing.
+The `callback` will be invoked by the `observer` when something _interesting_ happens. Our callback simply logs "Interesting". In the interactive demo, this callback invocation was represented by the emoji 😍 appearing.
 
 ```js
 () => {
   console.log("Interesting");
 };
 ```
+How does the `observer` know what is interesting? We have two knobs to tell the observer what we are interested in.
+
 ### The First Knob: Specifying the target
 
-How does the `observer` know what is interesting? We have two knobs to tell the observer what we are interested in. The first one is to specify the target (I'll come back to the second knob shortly):
+The first one is to specify the target:
 
 ```js
 observer.observe(observedElemRef.current); //This is the balloon
@@ -106,7 +106,7 @@ observer.observe(observedElemRef.current); //This is the balloon
 
 Now that the `observer` is made aware of the target, it starts observing it. This is represented by the "🤨 Start Observing" button in the interactive demo.
 
-We can make the same three observations from this code as in the interactive demo:
+We can make the same three observations from this code as in the interactive demo. The 😍 emoji from the demo is replaced with logs in the code example:
 
 - "Interesting" is logged when the page first loads. (This actually happen when we first call the `observe` function on the `observer`. It just appears to happen on page load.)
 - It's logged when the first pixel of the target enters the viewport.
@@ -115,6 +115,7 @@ We can make the same three observations from this code as in the interactive dem
 This is the default behaviour of the `IntersectionObserver` when we do not use the second knob.
 
 ### The `entries` Argument
+
 Our `callback` is invoked with the `entries` argument by the `observer`. This argument is an array where each item describes the intersection event that caused the `callback` to be invoked. We ignored the event in the previous example. In the following example, we use it to trigger an animation when the target enters the viewport.
 
 <SandpackDemo projectSubDir="intersectionObserver/scaleOnEntry" />
@@ -130,7 +131,7 @@ const observer = new IntersectionObserver((entries) => {
 
 We pluck the one and only item from the `entries` array. How do we know it has only one element? Because we have _observed_ only one element. (When we observe multiple elements or tweak the second knob in certain ways, the `entries` argument can have multiple events. We won't cover that in this blog post.)
 
-Each intersection event is described by a set of properties. For example, the `isIntersecting` property tells us if the target entered or exited the viewport when the event occured. We conditionally apply the `scaleUp` CSS class whenever the target (the balloon in our case) is visible. This triggers the animation exactly when the target enters the viewport! We detect visibility by checking if `isIntersecting` is `true`. When it's `false`, it means the target is not visible (in other words, it's not intersecting). 
+Each intersection event comes with a set of properties. For instance, the `isIntersecting` property tells us whether the target has intersected with the root at the moment the event occurred. We use this to conditionally apply the `scaleUp` CSS class whenever the target (in this case, the balloon) becomes visible. This triggers the animation as soon as the target enters the root (in this case, the viewport)! We determine visibility by checking if `isIntersecting` is `true`. When it's `false`, it means the target is not visible—i.e., it's outside the viewport  and not intersecting.
 
 ### The Second Knob: The Options Object
 
