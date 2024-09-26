@@ -60,68 +60,64 @@ function IntersectionObserverVisualizer({
   }, [didExitViewport]);
 
   return (
-    <WidthRestrict>
-      <DemoUnitCard caption={caption}>
-        <Wrapper>
-          <InteractiveSection>
-            <HeartEmojisWrapper>
-              {_.range(numHeartReactions).map((index) => (
-                <HeartEmoji
-                  key={index}
-                  onExit={() => {
-                    setNumHeartReactions(
-                      (numHeartReactions) => numHeartReactions - 1
-                    );
-                  }}
-                />
-              ))}
-            </HeartEmojisWrapper>
-            <ObserverEmojiWrapper>
-              <ObserverEmoji show={isObserving} />
-            </ObserverEmojiWrapper>
-            <Svg
-              id="svg"
-              width={VIEW_BOX_WIDTH}
-              height={VIEW_BOX_HEIGHT}
-              viewBox={`0 0 ${VIEW_BOX_WIDTH} ${VIEW_BOX_HEIGHT}`}
-            >
-              <ViewportRect
-                width={VIEWPORT_WIDTH}
-                height={VIEWPORT_HEIGHT}
-                x={VIEWPORT_X}
-                y={VIEWPORT_Y}
+    <DemoUnitCard caption={caption}>
+      <Wrapper>
+        <InteractiveSection>
+          <HeartEmojisWrapper>
+            {_.range(numHeartReactions).map((index) => (
+              <HeartEmoji
+                key={index}
+                onExit={() => {
+                  setNumHeartReactions(
+                    (numHeartReactions) => numHeartReactions - 1
+                  );
+                }}
               />
-              {showConfigurator && (
-                <RootMarginHighlighter rootMargin={rootMargin} />
-              )}
+            ))}
+          </HeartEmojisWrapper>
+          <ObserverEmojiWrapper>
+            <ObserverEmoji show={isObserving} />
+          </ObserverEmojiWrapper>
+          <Svg
+            id="svg"
+            width={VIEW_BOX_WIDTH}
+            height={VIEW_BOX_HEIGHT}
+            viewBox={`0 0 ${VIEW_BOX_WIDTH} ${VIEW_BOX_HEIGHT}`}
+          >
+            <ViewportRect
+              width={VIEWPORT_WIDTH}
+              height={VIEWPORT_HEIGHT}
+              x={VIEWPORT_X}
+              y={VIEWPORT_Y}
+            />
+            {showConfigurator && (
+              <RootMarginHighlighter rootMargin={rootMargin} />
+            )}
 
-              <WebPage y={yPositions.pageY}/>
-              <ObservedElement
-                x={OBSERVED_ELEMENT_X}
-                y={yPositions.observedElemY}
-                threshold={threshold}
-                showConfigurator={showConfigurator}
-              />
-            </Svg>
-            <YPositionScroller onYPositionChange={updateYPositions} />
-          </InteractiveSection>
-          <ControlPanel
-            showConfigurator={showConfigurator}
-            onThresholdChange={setThreshold}
-            threshold={threshold}
-            rootMargin={rootMargin}
-            onRootMarginChange={setRootMargin}
-            onStartObserve={() => {
-              setNumHeartReactions(
-                (numHeartReactions) => numHeartReactions + 1
-              );
-              setIsObserving(true);
-            }}
-            onEndObserve={() => setIsObserving(false)}
-          />
-        </Wrapper>
-      </DemoUnitCard>
-    </WidthRestrict>
+            <WebPage y={yPositions.pageY} />
+            <ObservedElement
+              x={OBSERVED_ELEMENT_X}
+              y={yPositions.observedElemY}
+              threshold={threshold}
+              showConfigurator={showConfigurator}
+            />
+          </Svg>
+          <YPositionScroller onYPositionChange={updateYPositions} />
+        </InteractiveSection>
+        <ControlPanel
+          showConfigurator={showConfigurator}
+          onThresholdChange={setThreshold}
+          threshold={threshold}
+          rootMargin={rootMargin}
+          onRootMarginChange={setRootMargin}
+          onStartObserve={() => {
+            setNumHeartReactions((numHeartReactions) => numHeartReactions + 1);
+            setIsObserving(true);
+          }}
+          onEndObserve={() => setIsObserving(false)}
+        />
+      </Wrapper>
+    </DemoUnitCard>
   );
 }
 
@@ -162,10 +158,6 @@ function WebPage({ y }: { y: number }) {
     />
   );
 }
-
-const WidthRestrict = styled.div`
-  min-width: 350px;
-`;
 
 const Wrapper = styled.div`
   display: flex;

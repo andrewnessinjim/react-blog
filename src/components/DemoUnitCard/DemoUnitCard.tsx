@@ -21,12 +21,11 @@ const Wrapper = styled.div`
   box-shadow: var(--shadow-card);
   margin-left: auto;
   margin-right: auto;
-  container-type: inline-size;
   margin-bottom: 1.5em;
 `;
 
 const ContentWrapper = styled.div`
-  --spacing: clamp(16px, 4.5cqw, 56px);
+  --spacing: clamp(16px, 4.5vw, 32px);
   display: flex;
   flex-direction: column;
   gap: var(--spacing);
@@ -40,6 +39,9 @@ const DemoCaption = styled.figcaption`
 
 const DemoFigure = styled.figure``;
 
-type Props = React.ComponentProps<"div"> & { caption?: React.ReactNode };
+type Props = React.ComponentProps<"div"> & {
+  caption?: React.ReactNode;
+  className?: string;
+};
 
 export default DemoUnitCard;

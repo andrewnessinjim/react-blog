@@ -17,34 +17,30 @@ import { motion, SVGMotionProps } from "framer-motion";
 function IndependentPage({ caption }: IndependentPageProps) {
   const svgPadding = 6;
   return (
-    <WidthRestrict>
-      <DemoUnitCard caption={caption}>
-        <Svg
-          height={PAGE_HEIGHT + svgPadding}
-          width={PAGE_WIDTH + svgPadding}
-          viewBox={`0 0 ${PAGE_WIDTH + svgPadding} ${PAGE_HEIGHT + svgPadding}`}
-        >
-          <PageRect
-            height={PAGE_HEIGHT}
-            width={PAGE_WIDTH}
-            x={svgPadding / 2}
-            y={svgPadding / 2}
-          />
-          <ObservedElement
-            x={OBSERVED_ELEMENT_X}
-            y={PAGE_HEIGHT + OBSERVED_ELEM_OFFSET_FROM_BOTTOM}
-            threshold={1}
-          />
-        </Svg>
-      </DemoUnitCard>
-    </WidthRestrict>
+    <Wrapper caption={caption}>
+      <Svg
+        height={PAGE_HEIGHT + svgPadding}
+        width={PAGE_WIDTH + svgPadding}
+        viewBox={`0 0 ${PAGE_WIDTH + svgPadding} ${PAGE_HEIGHT + svgPadding}`}
+      >
+        <PageRect
+          height={PAGE_HEIGHT}
+          width={PAGE_WIDTH}
+          x={svgPadding / 2}
+          y={svgPadding / 2}
+        />
+        <ObservedElement
+          x={OBSERVED_ELEMENT_X}
+          y={PAGE_HEIGHT + OBSERVED_ELEM_OFFSET_FROM_BOTTOM}
+          threshold={1}
+        />
+      </Svg>
+    </Wrapper>
   );
 }
 
-const WidthRestrict = styled.div`
+const Wrapper = styled(DemoUnitCard)`
   width: min(450px, 100%);
-  margin-left: auto;
-  margin-right: auto;
 `;
 
 const Svg = styled.svg`
