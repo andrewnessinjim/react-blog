@@ -43,6 +43,7 @@ export async function getAllBlogPostList() {
 }
 
 export async function getPublishedBlogPostList() {
+  console.log("getPublishedBlogPostList() - Accessing file system");
   const allPosts = await readBlogPosts();
 
   // @ts-ignore
