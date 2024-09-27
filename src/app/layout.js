@@ -15,6 +15,8 @@ import StyledComponentsRegistry from "@/components/StyledComponentsRegistry";
 import GlobalStyles from "@/components/GlobalStyles";
 import SandPackCSS from "@/components/SandpackCSSRegistry";
 
+export const dynamic = 'force-static';
+
 export const metadata = {
   title: {
     template: `%s • ${BLOG_TITLE}`,
