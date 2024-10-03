@@ -1,0 +1,36 @@
+---
+title: "How Indexes Improve DB Performance"
+abstract: In this post, I'll explain how exactly indexes improve the performance of DB queries.
+publishedOn: "2024-09-26T12:00:00+0530"
+---
+
+During the early days of my career, I understood indexes improve DB query performance. I had also solved many performance problems using indexes.
+
+If you're an advanced developer, you should definitely check out [Markus Winand's SQL Indexing and Tuning e-Book][1]. It's an amazing book with the right level of abstraction for advanced developers to understand DB indexes.
+
+## Prerequisites
+
+This post assumes familiarity with the following topics:
+
+1. Basic database concepts.
+2. `select` and `insert` statements in SQL (database read and write operations in general).
+
+## Introduction
+The more data we read, the slower the DB operation becomes. Why does this happen though? Hasn't hardware advanced to a point where storage device speeds are no longer a concern? Unfortunately, no - and we may never reach that point. Improving DB performance is about reducing the amount of data we access for any operation, given that accessing storage devices is inherently slow. In this post, I'll explain the problem that indexes solve and how it solves it.
+
+## Indexing in General
+Imagine yourself working in a storage warehouse with thousands of crates of fruits. You're tasked with finding the box with apples without any additional information. How would you find it? Try to find it below (as much as I would like to present thousands of crates to make the problem realistic, I don't want to crash your browser 😁):
+
+<FruitFinderGame />
+
+## The Problem
+You can skip to the next section if you already know why database operations are slow without indexes.
+
+Storage devices are organized into blocks. We can visualize a storage device as a vast matrix of blocks, like below:
+
+It's common for devices to have hundreds of millions of such blocks. Data is stored in these blocks in the form of files. The database creates and opens files just like we, as computer users, create and open files. How do you think a database knows where to find what we need? 
+
+When we open a file on our computer, we usually know the path where it's stored and open it up. This process of opening a file based on its path is mostly handled by the OS (this is why we're able to open files too). When we store data through the database in the form of tables (or collections), it's the database that's in charge of creating files and opening them. 
+<StorageMatrix />
+
+[1]: https://use-the-index-luke.com/sql/table-of-contents

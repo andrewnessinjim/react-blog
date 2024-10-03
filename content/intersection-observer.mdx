@@ -126,7 +126,7 @@ We can make the same three observations from this code as in the interactive dem
 - It's logged when the first pixel of the target enters the viewport.
 - It's also logged when last pixel of the target exits the viewport.
 
-This is the default behaviour of the `IntersectionObserver` when we do not use the second knob. 
+This is the default behaviour of the `IntersectionObserver` when we do not use the second knob.
 
 ### The `entries` Argument
 
@@ -235,16 +235,19 @@ Here's an example of how we can achieve the infinite scrolling effect using the 
   }}
 />
 
-Here, the target a zero-height element that is positioned at the end of the viewport:
+Here, the target is a zero-height element positioned at the end of the viewport:
 
-<img
+<NextImage
   alt="A browser snapshot showing the zero-height element at the end of the viewport and its corresponding div element in the developer tools console"
   src="/images/infinite-scrolling-zero-height-element.jpg"
+  fill={true}
+  height={800}
+  phoneHeight={350}
 />
 
 <Spacer size={32} />
 
-We can position this element anywhere in the DOM to control when we want to make the network request.
+We can position this element anywhere in the DOM to control when we make the network request.
 
 This example only focuses on the Intersection Observer API. In the real-world, we also have to handle error states and avoid duplicate network requests. This can be done by hiding the target in the error and loading states.
 

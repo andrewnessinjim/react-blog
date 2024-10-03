@@ -9,9 +9,13 @@ import Spacer from "@/components/Spacer";
 import Choice from "@/components/Quiz/Choice";
 import MultipleChoiceQuestion from "@/components/Quiz/MultipleChoiceQuestion";
 import InlineVideo from "@/components/InlineVideo";
+import StorageMatrix from "@/components/StorageMatrix";
+import FruitFinderGame from "@/components/FruitFinderGame";
+import NextImage from "@/components/NextImage";
 
 const COMPONENTS = {
   Spacer,
+  NextImage,
   pre: CodeSnippet,
   SandpackDemo,
   IntersectionObserverVisualizer,
@@ -22,6 +26,8 @@ const COMPONENTS = {
   Choice,
   MultipleChoiceQuestion,
   InlineVideo,
+  StorageMatrix,
+  FruitFinderGame
 };
 
 export default COMPONENTS;
