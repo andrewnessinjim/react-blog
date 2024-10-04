@@ -55,7 +55,6 @@ export async function getPublishedBlogPostList() {
 
 export const loadBlogPost = React.cache(async (slug: string) => {
   console.log("loadBlogPost() - Accessing file system");
-  await delay(10000);
   const rawContent = await readFile(`/content/${slug}.mdx`);
 
   const { data: frontmatter, content } = matter(rawContent);
