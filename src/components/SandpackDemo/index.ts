@@ -1,2 +1,6 @@
-export * from './SandpackDemo';
-export { default } from './SandpackDemo';
+import dynamic from "next/dynamic";
+
+export * from "./SandpackDemo";
+
+const LazySandpackDemo = dynamic(() => import("./SandpackDemo"));
+export default LazySandpackDemo;
