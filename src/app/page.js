@@ -2,11 +2,15 @@ import React from "react";
 
 import BlogSummaryCard from "@/components/BlogSummaryCard";
 
-import { getPublishedBlogPostList } from "@/helpers/file-helpers";
+import { getAllBlogPosts, getPublishedBlogPosts } from "@/helpers/file-helpers";
 import { Heading, Wrapper } from "./page.styled";
 
+import {isProduction} from "../utils";
+
 async function Home() {
-  const blogPostList = await getPublishedBlogPostList();
+  const blogPostList = isProduction()
+    ? await getPublishedBlogPosts()
+    : await getAllBlogPosts();
 
   return (
     <Wrapper>
@@ -18,7 +22,7 @@ async function Home() {
           slug={slug}
           title={title}
           abstract={abstract}
-          publishedOn={publishedOn}
+          publishedOn={publishedOn??new Date()}
         />
       ))}
     </Wrapper>
