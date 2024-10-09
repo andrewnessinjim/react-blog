@@ -27,7 +27,6 @@ function FruitFinderGame() {
     setFruits(_.shuffle(FRUITS));
   }, []);
 
-  console.log({size: fruits.length});
   return (
     <Wrapper>
       {fruits.map((fruit, index) => (

@@ -1,48 +1,46 @@
+import { motion } from "framer-motion";
 import _ from "lodash-es";
+import React from "react";
 import styled, { css } from "styled-components";
 
 export const FACE_Z_THICKNESS = 4;
 const FACE_HEIGHT = 100;
 const FACE_WIDTH = 100;
 
-function CrateFace({ className, sticker = "" }: Props) {
-  return (
-    <CrateFaceWrapper className={className}>
-      <FaceFront>
-        {_.range(5).map((num) => (
-          <HorizontalPlank
-            style={{
-              gridRow: num + 1,
-            }}
-            key={num}
-          />
-        ))}
+const CrateFace = React.forwardRef<HTMLDivElement, any>(
+  ({ className, sticker = "" }: Props, ref) => {
+    return (
+      <CrateFaceWrapper className={className} ref={ref}>
+        <FaceFront>
+          {_.range(5).map((num) => (
+            <HorizontalPlank
+              style={{
+                gridRow: num + 1,
+              }}
+              key={num}
+            />
+          ))}
 
-        <VerticalPlank
-          style={{
-            gridColumn: 1,
-          }}
-        />
-        <VerticalPlank
-          style={{
-            gridColumn: -2,
-          }}
-        />
-      </FaceFront>
-      <FaceBack>
-        {sticker &&
-          <FruitSticker>
-            {sticker}
-          </FruitSticker>
-        }
-      </FaceBack>
-      <FaceTopEdge />
-      <FaceBottomEdge />
-      <FaceLeftEdge />
-      <FaceRightEdge />
-    </CrateFaceWrapper>
-  );
-}
+          <VerticalPlank
+            style={{
+              gridColumn: 1,
+            }}
+          />
+          <VerticalPlank
+            style={{
+              gridColumn: -2,
+            }}
+          />
+        </FaceFront>
+        <FaceBack>{sticker && <FruitSticker>{sticker}</FruitSticker>}</FaceBack>
+        <FaceTopEdge />
+        <FaceBottomEdge />
+        <FaceLeftEdge />
+        <FaceRightEdge />
+      </CrateFaceWrapper>
+    );
+  }
+);
 
 const PassThroughFaceCSS = css`
   position: absolute;
@@ -51,8 +49,8 @@ const PassThroughFaceCSS = css`
   transform-style: inherit;
 `;
 
-const CrateFaceWrapper = styled.div`
- ${PassThroughFaceCSS};
+const CrateFaceWrapper = styled(motion.div)`
+  ${PassThroughFaceCSS};
 `;
 
 const FaceFront = styled.div`
@@ -77,7 +75,7 @@ const FruitSticker = styled.div`
   display: grid;
   place-content: center;
   font-size: 50px;
-`
+`;
 
 const Edge = styled.div`
   transform-style: inherit;
@@ -122,7 +120,7 @@ const VerticalPlank = styled.div`
 `;
 
 interface Props {
-  className?: string,
-  sticker?: string
+  className?: string;
+  sticker?: string;
 }
 export default CrateFace;

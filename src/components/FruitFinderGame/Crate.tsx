@@ -2,15 +2,38 @@ import _ from "lodash-es";
 import styled, { keyframes } from "styled-components";
 import CrateFace from "./CrateFace";
 import React from "react";
+import { motion } from "framer-motion";
+import useHover from "@/hooks/useHover";
 
 function Crate({ sticker }: Props) {
   const [isOpen, setIsOpen] = React.useState(false);
+  const [isHovered, hoverRef] = useHover<HTMLDivElement>();
 
   return (
-    <Wrapper onClick={() => setIsOpen(true)} $isOpen={isOpen}>
+    <Wrapper
+      ref={hoverRef}
+      onClick={() => setIsOpen(true)}
+      $isOpen={isOpen}
+      animate={{
+        rotateX: isOpen || isHovered ? -45 : 0,
+      }}
+      transition={{
+        type: "spring",
+        stiffness: 150,
+        damping: 20,
+      }}
+    >
       <FrontFace />
       <TopFaceWrapper>
-        <TopFace />
+        <TopFace
+          initial={{
+            transformOrigin: "top"
+          }}
+          animate={{
+            rotateX: isOpen ? 45 : 0,
+            transformOrigin: "top",
+          }}
+        />
       </TopFaceWrapper>
       <BackFace sticker={isOpen ? sticker : ""} />
       <LeftFace />
@@ -20,19 +43,12 @@ function Crate({ sticker }: Props) {
   );
 }
 
-const Wrapper = styled.div<{ $isOpen: boolean }>`
+const Wrapper = styled(motion.div)<{ $isOpen: boolean }>`
   position: relative;
   width: 100px;
   height: 100px;
   transform-style: preserve-3d;
-  transition: 250ms transform;
   cursor: pointer;
-  transform: rotateX(${(p) => (p.$isOpen ? "-45deg" : "0deg")});
-  --top-face-rotation: ${(p) => (p.$isOpen ? "45deg" : "0deg")};
-
-  &:hover {
-    transform: rotateX(-45deg);
-  }
 `;
 
 const TopFaceWrapper = styled.div`
@@ -51,11 +67,7 @@ const BackFace = styled(CrateFace)`
   transform: translateZ(-48px) rotateY(180deg);
 `;
 
-const TopFace = styled(CrateFace)`
-  transform: rotateX(var(--top-face-rotation));
-  transform-origin: top;
-  transition: 250ms transform;
-`;
+const TopFace = motion(styled(CrateFace)``);
 
 const BottomFace = styled(CrateFace)`
   transform: rotateX(-90deg) translateZ(48px);
