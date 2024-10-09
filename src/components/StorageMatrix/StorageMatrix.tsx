@@ -27,8 +27,8 @@ function StorageMatrix() {
         >
           <defs>
             <linearGradient id="myGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="red" />
-              <stop offset="100%" stop-color="blue" />
+              <stop offset="0%" stopColor="red" />
+              <stop offset="100%" stopColor="blue" />
             </linearGradient>
           </defs>
 
