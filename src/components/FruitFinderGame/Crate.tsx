@@ -1,4 +1,3 @@
-import _ from "lodash-es";
 import styled from "styled-components";
 import CrateFace from "./CrateFace";
 import React from "react";

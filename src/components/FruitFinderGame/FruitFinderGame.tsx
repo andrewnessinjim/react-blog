@@ -2,8 +2,6 @@
 
 import * as React from "react";
 
-import _ from "lodash-es";
-
 import ResetController from "./ResetController";
 
 export const FruitToFindContext = React.createContext("");

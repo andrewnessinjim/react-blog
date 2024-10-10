@@ -27,7 +27,7 @@ import ControlPanel from "./ControlPanel";
 
 import { PageRect } from "./Page";
 import ObservedElement from "./ObservedElement";
-import _ from "lodash-es";
+import * as _ from "lodash-es";
 
 function IntersectionObserverVisualizer({
   caption,

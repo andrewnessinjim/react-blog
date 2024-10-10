@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import styled from "styled-components";
-import _ from "lodash-es";
+import * as _ from "lodash-es";
 import Crate from "./Crate";
 import { motion } from "framer-motion";
 import { FruitToFindContext } from "./FruitFinderGame";
@@ -80,7 +80,6 @@ const CratesWrapper = styled.div`
   gap: 64px 32px;
   display: grid;
   grid-template-columns: repeat(auto-fill, 100px);
-  /* max-width: calc((160px + 8px) * 4); */
   margin-left: auto;
   margin-right: auto;
   perspective: 1200px;

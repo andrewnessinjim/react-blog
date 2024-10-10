@@ -3,7 +3,7 @@
 import * as React from "react";
 import styled from "styled-components";
 import DemoUnitCard from "../DemoUnitCard";
-import _ from "lodash-es";
+import * as _ from "lodash-es";
 
 const VIEW_BOX_WIDTH = 482;
 const VIEW_BOX_HEIGHT = 482;
