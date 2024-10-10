@@ -15,9 +15,9 @@ const BLOCKS_BEGIN_Y_OFFSET = 1 + BLOCK_SIZE * 2;
 const ROWS = 6;
 const COLUMNS = 6;
 
-function StorageMatrix() {
+function StorageMatrix({caption}:Props) {
   return (
-    <DemoUnitCard>
+    <DemoUnitCard caption={caption}>
       <Wrapper>
         <svg
           id="svg"
@@ -25,7 +25,7 @@ function StorageMatrix() {
           height={VIEW_BOX_HEIGHT}
           viewBox={`0 0 ${VIEW_BOX_WIDTH} ${VIEW_BOX_HEIGHT}`}
         >
-          <SolidBlocks />
+          {/* <SolidBlocks /> */}
           <ImaginaryVerticalLines />
           <ImaginaryHorizontalLines />
         </svg>
@@ -56,10 +56,9 @@ function ImaginaryVerticalLines() {
         y1={y1}
         x2={x}
         y2={y2}
-        opacity={0.25}
         stroke="var(--color-primary)"
         strokeWidth={2}
-        strokeDasharray="8 8"
+        strokeDasharray="4 4"
       />
     );
   });
@@ -77,10 +76,9 @@ function ImaginaryHorizontalLines() {
         y1={y}
         x2={x2}
         y2={y}
-        opacity={0.25}
         stroke="var(--color-primary)"
         strokeWidth={2}
-        strokeDasharray="8 8"
+        strokeDasharray="4 4"
       />
     );
   });
@@ -100,8 +98,12 @@ function Block({ ...delegated }) {
 }
 
 const Wrapper = styled.div`
-  margin-left: auto;
-  margin-right: auto;
+  display: grid;
+  place-content: center;
 `;
+
+interface Props {
+  caption: React.ReactNode
+}
 
 export default StorageMatrix;
