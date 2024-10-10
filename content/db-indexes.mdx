@@ -1,12 +1,12 @@
 ---
-title: "How Indexes Improve DB Performance"
-abstract: In this post, I'll explain how exactly indexes improve the performance of DB queries.
+title: "How Indexes Improve Database Query Performance"
+abstract: In this post, I'll explain how indexes work in general and how they improve DB query performance.
 
 ---
 
-During the early days of my career, I understood indexes improve DB query performance. I had also solved many performance problems using indexes.
+In this post, I'll explain the fundamental concept behind indexes and we'll see how its used to improve performance when running DB queries.
 
-If you're an advanced developer, you should definitely check out [Markus Winand's SQL Indexing and Tuning e-Book][1]. It's an amazing book with the right level of abstraction for advanced developers to understand DB indexes.
+If you're an advanced developer, you should definitely check out [Markus Winand's SQL Indexing and Tuning e-Book][1]. It's an amazing book with the right level of abstraction for advanced developers to understand and apply DB indexes effectively.
 
 ## Prerequisites
 
@@ -18,13 +18,24 @@ This post assumes familiarity with the following topics:
 ## Introduction
 The more data we read, the slower the DB operation becomes. Why does this happen though? Hasn't hardware advanced to a point where storage device speeds are no longer a concern? Unfortunately, no - and we may never reach that point. Improving DB performance is about reducing the amount of data we access for any operation, given that accessing storage devices is inherently slow. In this post, I'll explain the problem that indexes solve and how it solves it.
 
-## Indexing in General
-Imagine yourself working in a storage warehouse with thousands of crates of fruits. You're tasked with finding the box with apples without any additional information. How would you find it? Try to find it below (as much as I would like to present thousands of crates to make the problem realistic, I don't want to crash your browser 😁):
-
-<FruitFinderGame />
-
 ## The Problem
 You can skip to the next section if you already know why database operations are slow without indexes.
+
+Imagine yourself working in a storage warehouse with thousands of crates of fruits. You're tasked with finding the box with strawberries. How would you find it? Try to find it below (as much as I would like to present thousands of crates to make the problem realistic, I don't want to crash your browser 😁):
+
+<FruitFinderGame fruitToFind="🍓"/>
+
+Regardless of how many crates you opened, think about the logic you used to *decide* which crate to open. Spend a few moments thinking before continuing.
+
+There is no logic we can use when all we have is a set of identical crates, we simply have to try our luck. As you can imagine, this is not the way to operate a warehouse. We need to know the fruits in each crate so we can effectively cater to requests such as, "Ship 100 crates of strawberries to location A".
+
+Now, think about what information the warehouse could maintain to find the crates easier. Spend a few moments thinking before continuing.
+
+After you have spent time thinking, play the following crates game again, but this time you're given a sheet to help you.
+
+<FruitFinderGame fruitToFind="🍓"/>
+
+## The Problem
 
 Storage devices are organized into blocks. We can visualize a storage device as a vast matrix of blocks, like below:
 

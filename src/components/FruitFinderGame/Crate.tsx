@@ -1,21 +1,29 @@
 import _ from "lodash-es";
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import CrateFace from "./CrateFace";
 import React from "react";
 import { motion } from "framer-motion";
 import useHover from "@/hooks/useHover";
 
-function Crate({ sticker }: Props) {
+function Crate({ sticker, onClick, disabled }: Props) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [isHovered, hoverRef] = useHover<HTMLDivElement>();
 
   return (
     <Wrapper
       ref={hoverRef}
-      onClick={() => setIsOpen(true)}
+      onClick={() => {
+        if (!disabled) {
+          setIsOpen(true);
+          onClick();
+        }
+      }}
       $isOpen={isOpen}
+      onAnimationComplete={() => {
+        if (isOpen) onClick();
+      }}
       animate={{
-        rotateX: isOpen || isHovered ? -45 : 0,
+        rotateX: isOpen || (!disabled && isHovered) ? -45 : 0,
       }}
       transition={{
         type: "spring",
@@ -27,7 +35,7 @@ function Crate({ sticker }: Props) {
       <TopFaceWrapper>
         <TopFace
           initial={{
-            transformOrigin: "top"
+            transformOrigin: "top",
           }}
           animate={{
             rotateX: isOpen ? 45 : 0,
@@ -86,5 +94,7 @@ const RightFace = styled(CrateFace)`
 
 interface Props {
   sticker: string;
+  onClick: () => void;
+  disabled: boolean;
 }
 export default Crate;
