@@ -27,21 +27,33 @@ Imagine yourself working in a storage warehouse with thousands of crates of frui
 
 Regardless of how many crates you opened, think about the logic you used to *decide* which crate to open. Spend a few moments thinking before continuing.
 
-There is no logic we can use when all we have is a set of identical crates, we simply have to try our luck. As you can imagine, this is not the way to operate a warehouse. We need to know the fruits in each crate so we can effectively cater to requests such as, "Ship 100 crates of strawberries to location A".
+There is no logic we can use when all we have is a set of identical crates, we simply have to try our luck. As you can imagine, this is not the way to operate a warehouse. We need to know the fruits in each crate so we can effectively cater to requests such as, "Ship 100 crates of strawberries to location A". 
 
 Now, think about what information the warehouse could maintain to find the crates easier. Spend a few moments thinking before continuing.
 
-After you have spent time thinking, play the following crates game again, but this time you're given a sheet to help you.
+## The Solution
+After you have spent time thinking, play the following crates game again, but this time you're given a table to help you.
 
-<FruitFinderGame fruitToFind="🍓"/>
+<FruitFinderGame fruitToFind="🍒" showIndex={true}/>
 
-## The Problem
+Was it easier? The table you used is the basic structure of an index. We see such tables in textbooks as well, which allows us to jump to the topic we're interested in. The only difference here is that we use a row number and a column number to identify crates instead of page numbers of a textbook.
 
-Storage devices are organized into blocks. We can visualize a storage device as a vast matrix of blocks, like below:
+## Computer Storage
 
-It's common for devices to have hundreds of millions of such blocks. Data is stored in these blocks in the form of files. The database creates and opens files just like we, as computer users, create and open files. How do you think a database knows where to find what we need? 
+Storage devices are organized into blocks, which we can visualize as a vast matrix, like so:
 
-When we open a file on our computer, we usually know the path where it's stored and open it up. This process of opening a file based on its path is mostly handled by the OS (this is why we're able to open files too). When we store data through the database in the form of tables (or collections), it's the database that's in charge of creating files and opening them. 
 <StorageMatrix />
+
+The term 'block' is used loosely here. In the context of a database, a block might refer to a database block. In the context of an operating system, it might refer to a hardware block.
+
+This can be compared to the crates in a warehouse. However, computer memory operates on various levels of abstraction. Fortunately, this abstraction is so good that, as developers, we don't have to worry about the underlying details like bits, bytes or memory pages. Instead, we can focus directly on the data we want to store.
+
+It's common for devices to have hundreds of millions of such blocks.
+
+## Database
+In general, data is stored in these blocks in the form of files. We can operate on some files<InfoPopover info="Such as text, audio and video files."/> using a file manager provided by the underlying operating system. However, a file manager is not the only software that can operate on files; a database can do so as well. The database operates on files just like a file manager, but the way we communicate with a file manager is different from a database.
+
+When we use a file manager, we usually know the path for the file. We navigate to the path and read or write the file. When we use a database, we don't care about the file path, we care about the table name and the specific rows and columns in that table. It's up to the database to map these tables to files.
+
 
 [1]: https://use-the-index-luke.com/sql/table-of-contents

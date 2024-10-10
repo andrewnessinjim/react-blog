@@ -4,11 +4,14 @@ import * as React from "react";
 
 import ResetController from "./ResetController";
 
-export const FruitToFindContext = React.createContext("");
+export const FruitToFindContext = React.createContext({
+  fruitToFind: "",
+  showIndex: false,
+});
 
-function FruitFinderGame({ fruitToFind }: Props) {
+function FruitFinderGame({ fruitToFind, showIndex = false }: Props) {
   return (
-    <FruitToFindContext.Provider value={fruitToFind}>
+    <FruitToFindContext.Provider value={{ fruitToFind, showIndex }}>
       <ResetController />
     </FruitToFindContext.Provider>
   );
@@ -16,6 +19,7 @@ function FruitFinderGame({ fruitToFind }: Props) {
 
 interface Props {
   fruitToFind: string;
+  showIndex: false;
 }
 
 export default FruitFinderGame;
