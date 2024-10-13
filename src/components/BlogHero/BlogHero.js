@@ -17,9 +17,11 @@ function BlogHero({ title, publishedOn = new Date(), ...delegated }) {
       <Content>
         <Heading
           initial={{
+            opacity: 0,
             y: -200,
           }}
           animate={{
+            opacity: 1,
             y: 0,
           }}
           transition={{
