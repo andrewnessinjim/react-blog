@@ -4,6 +4,7 @@ import * as React from "react";
 import styled from "styled-components";
 import * as Popover from "@radix-ui/react-popover";
 import useHover from "@/hooks/useHover";
+import { motion } from "framer-motion";
 
 function InfoPopover({ info }: { info: string }) {
   const [isHovered, hoverRef] = useHover<HTMLButtonElement>();
@@ -11,10 +12,22 @@ function InfoPopover({ info }: { info: string }) {
     <Popover.Root open={isHovered}>
       <TriggerButton ref={hoverRef}>*</TriggerButton>
       <Popover.Portal>
-        <PopoverContent>
-          <p>{info}</p>
-          <PopoverArrow />
-        </PopoverContent>
+        <motion.div
+          initial={{
+            opacity: 0,
+          }}
+          animate={{
+            opacity: 1,
+          }}
+          exit={{
+            opacity: 0,
+          }}
+        >
+          <PopoverContent>
+            <p>{info}</p>
+            <PopoverArrow />
+          </PopoverContent>
+        </motion.div>
       </Popover.Portal>
     </Popover.Root>
   );
