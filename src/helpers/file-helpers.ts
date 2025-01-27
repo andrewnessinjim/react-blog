@@ -3,8 +3,7 @@ import path from "path";
 import matter from "gray-matter";
 import React from "react";
 
-const delay = (ms:number) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export async function getProjectFiles(
   projectSubDir: string
@@ -21,7 +20,7 @@ export async function getProjectFiles(
   return filesContents;
 }
 
-async function readBlogPosts() {
+export async function getAllBlogPosts() {
   const fileNames = await readDirectory("/content");
 
   const blogPosts = [];
@@ -41,13 +40,9 @@ async function readBlogPosts() {
   return blogPosts.sort((p1, p2) => (p1.publishedOn < p2.publishedOn ? 1 : -1));
 }
 
-export async function getAllBlogPostList() {
-  return await readBlogPosts();
-}
-
-export async function getPublishedBlogPostList() {
+export async function getPublishedBlogPosts() {
   console.log("getPublishedBlogPostList() - Accessing file system");
-  const allPosts = await readBlogPosts();
+  const allPosts = await getAllBlogPosts();
 
   // @ts-ignore
   return allPosts.filter((post) => post.publishedOn !== undefined);

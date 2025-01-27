@@ -12,6 +12,7 @@ import InlineVideo from "@/components/InlineVideo";
 import StorageMatrix from "@/components/StorageMatrix";
 import FruitFinderGame from "@/components/FruitFinderGame";
 import NextImage from "@/components/NextImage";
+import InfoPopover from "@/components/InfoPopover";
 
 const COMPONENTS = {
   Spacer,
@@ -27,7 +28,8 @@ const COMPONENTS = {
   MultipleChoiceQuestion,
   InlineVideo,
   StorageMatrix,
-  FruitFinderGame
+  FruitFinderGame,
+  InfoPopover
 };
 
 export default COMPONENTS;

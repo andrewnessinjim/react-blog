@@ -2,7 +2,7 @@ import React from "react";
 import SandpackLiveEditor from "./SandpackLiveEditor";
 import { getProjectFiles } from "@/helpers/file-helpers";
 import { headers } from "next/headers";
-import _ from "lodash-es";
+import * as _ from "lodash-es";
 
 async function SandpackDemo({ projectSubDir, ...delegated }: Props) {
   let projectFiles: { [x: string]: string };

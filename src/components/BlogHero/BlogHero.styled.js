@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import styled from "styled-components";
 
 export const Wrapper = styled.header`
@@ -22,9 +23,9 @@ export const Content = styled.div`
   padding-bottom: 64px;
 `;
 
-export const Heading = styled.h1`
+export const Heading = motion(styled.h1`
   margin-bottom: 0.5rem;
-`;
+`);
 
 export const PublishedContainer = styled.p`
   font-size: 1.125rem;

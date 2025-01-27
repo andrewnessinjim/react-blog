@@ -1,12 +1,12 @@
 ---
-title: "How Indexes Improve DB Performance"
-abstract: In this post, I'll explain how exactly indexes improve the performance of DB queries.
+title: "How Indexes Improve Database Query Performance"
+abstract: In this post, I'll explain how indexes work in general and how they improve DB query performance.
 
 ---
 
-During the early days of my career, I understood indexes improve DB query performance. I had also solved many performance problems using indexes.
+In this post, I'll explain the fundamental concept behind indexes and we'll see how its used to improve performance when running DB queries.
 
-If you're an advanced developer, you should definitely check out [Markus Winand's SQL Indexing and Tuning e-Book][1]. It's an amazing book with the right level of abstraction for advanced developers to understand DB indexes.
+If you're an advanced developer, you should definitely check out [Markus Winand's SQL Indexing and Tuning e-Book][1]. It's an amazing book with the right level of abstraction for advanced developers to understand and apply DB indexes effectively.
 
 ## Prerequisites
 
@@ -18,19 +18,42 @@ This post assumes familiarity with the following topics:
 ## Introduction
 The more data we read, the slower the DB operation becomes. Why does this happen though? Hasn't hardware advanced to a point where storage device speeds are no longer a concern? Unfortunately, no - and we may never reach that point. Improving DB performance is about reducing the amount of data we access for any operation, given that accessing storage devices is inherently slow. In this post, I'll explain the problem that indexes solve and how it solves it.
 
-## Indexing in General
-Imagine yourself working in a storage warehouse with thousands of crates of fruits. You're tasked with finding the box with apples without any additional information. How would you find it? Try to find it below (as much as I would like to present thousands of crates to make the problem realistic, I don't want to crash your browser 😁):
-
-<FruitFinderGame />
-
 ## The Problem
 You can skip to the next section if you already know why database operations are slow without indexes.
 
-Storage devices are organized into blocks. We can visualize a storage device as a vast matrix of blocks, like below:
+Imagine yourself working in a storage warehouse with thousands of crates of fruits. You're tasked with finding the box with strawberries. How would you find it? Try to find it below (as much as I would like to present thousands of crates to make the problem realistic, I don't want to crash your browser 😁):
 
-It's common for devices to have hundreds of millions of such blocks. Data is stored in these blocks in the form of files. The database creates and opens files just like we, as computer users, create and open files. How do you think a database knows where to find what we need? 
+<FruitFinderGame fruitToFind="🍓"/>
 
-When we open a file on our computer, we usually know the path where it's stored and open it up. This process of opening a file based on its path is mostly handled by the OS (this is why we're able to open files too). When we store data through the database in the form of tables (or collections), it's the database that's in charge of creating files and opening them. 
+How many crates did you open? Regardless of how many you opened, think about the logic you used to *decide* which crate to open. Spend a few moments thinking before continuing.
+
+There is no logic we can use when all we have is a set of identical crates; we try our luck. As you can imagine, this is not the way to operate a warehouse. We need to know the fruits in each crate so we can effectively cater to requests such as, "Ship 100 crates of strawberries to location A". 
+
+Now, think about what information the warehouse could maintain to find the crates easier. Spend a few moments thinking before continuing.
+
+## The Solution
+Play the following crates game again, but this time you're given a table to help you.
+
+<FruitFinderGame fruitToFind="🍒" showIndex={true}/>
+
+Was it easier? The table you used is the basic structure of an index. We see such tables in textbooks as well, which allows us to jump to the topic we're interested in. The only difference here is that we use row and a column numbers to identify crates instead of page numbers of a textbook.
+
+## Computer Storage
+
+Storage devices are organized into blocks, which we can visualize as a vast matrix, like so:
+
 <StorageMatrix />
+
+The term 'block' is used loosely here. In the context of a database, a block might refer to a database block. In the context of an operating system, it might refer to a hardware block.
+
+This can be compared to the crates in a warehouse. However, computer memory operates on various levels of abstraction. Fortunately, this abstraction is so good that, as developers, we don't have to worry about the underlying details like bits, bytes or memory pages. Instead, we can focus directly on the data we want to store.
+
+It's common for devices to have hundreds of millions of such blocks.
+
+## Database
+In general, data is stored in these blocks in the form of files. We can operate on some files<InfoPopover info="Such as text, audio and video files."/> using a file manager provided by the underlying operating system. However, a file manager is not the only software that can operate on files; a database can do so as well. The database operates on files just like a file manager, but the way we communicate with a file manager is different from a database.
+
+When we use a file manager, we usually know the path for the file. We navigate to the path and read or write the file. When we use a database, we don't care about the file path, we care about the table name and the specific rows and columns in that table. It's up to the database to map these tables to files.
+
 
 [1]: https://use-the-index-luke.com/sql/table-of-contents

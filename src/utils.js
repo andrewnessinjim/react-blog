@@ -9,3 +9,7 @@ export const range = (start, end, step = 1) => {
   }
   return output;
 };
+
+export function isProduction() {
+  return process.env.NODE_ENV === "production"
+}

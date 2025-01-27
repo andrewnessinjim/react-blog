@@ -5,7 +5,7 @@ import styled from "styled-components";
 
 import Question from "../Question";
 import ChoiceList from "../ChoiceList";
-import _ from "lodash-es";
+import * as _ from "lodash-es";
 import * as Checkbox from "@radix-ui/react-checkbox";
 import { Check } from "react-feather";
 import { MultiAnswerMCQProps } from "../types";
