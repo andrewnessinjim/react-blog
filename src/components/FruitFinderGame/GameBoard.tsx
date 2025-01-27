@@ -75,7 +75,7 @@ function GameBoard({ onReset }: Props) {
             }}
             transition={{
               type: "spring",
-              delay: 1,
+              delay: 0.2,
             }}
           >
             <WinMessage>You found the {fruitToFind}!</WinMessage>
