@@ -89,7 +89,8 @@ const GlobalStyles = createGlobalStyle`
     background: var(--color-backdrop-highlight);
   }
 
-  body {
+  #body-div {
+    isolation: isolate;
     min-height: 100vh;
     min-height: 100svh;
     display: flex;
@@ -98,7 +99,7 @@ const GlobalStyles = createGlobalStyle`
     border-bottom: 3px solid var(--color-decorative-600);
   }
 
-  body::before {
+  #body-div::before {
     content: '';
     position: absolute;
     z-index: 0;
@@ -113,7 +114,7 @@ const GlobalStyles = createGlobalStyle`
     );
   }
 
-  body > main {
+  #body-div > main {
     flex: 1;
     position: relative;
   }

@@ -14,7 +14,6 @@ import ThemedHtml from "./ThemedHtml";
 import StyledComponentsRegistry from "@/components/StyledComponentsRegistry";
 import GlobalStyles from "@/components/GlobalStyles";
 import SandPackCSS from "@/components/SandpackCSSRegistry";
-import styled from "styled-components";
 
 export const metadata = {
   title: {
@@ -49,7 +48,7 @@ function RootLayout({ children }) {
             <SandPackCSS />
           </head>
           <body>
-            <div style={{ isolation: "isolate" }}>
+            <div id="body-div">
               <Header />
               <main>{children}</main>
               <Footer />
