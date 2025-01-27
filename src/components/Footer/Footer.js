@@ -4,11 +4,8 @@ import Link from "next/link";
 import Logo from "@/components/Logo";
 
 import DecorativeSwoops from "./DecorativeSwoops";
-import {
-  Attribution,
-  Content,
-  Wrapper,
-} from "./Footer.styled";
+import { Attribution, Content, Wrapper } from "./Footer.styled";
+import Spacer from "../Spacer";
 
 function Footer() {
   return (
@@ -17,12 +14,14 @@ function Footer() {
       <Content>
         <div>
           <Logo mobileAlignment="center" />
+          <a href="mailto:me@andrewnessin.com">Contact</a>
           {/*
             NOTE: If you'd like to build your blog on top
             of this code, the license requires that you leave
             this paragraph untouched. Check out LICENSE.md
             for more information.
           */}
+          <Spacer size={20}/>
           <Attribution>
             Blog template created by{" "}
             <a href="https://www.joshwcomeau.com/">Josh W. Comeau</a>. Check out{" "}
