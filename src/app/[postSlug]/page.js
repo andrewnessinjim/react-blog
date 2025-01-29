@@ -7,6 +7,8 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import COMPONENTS from "@/helpers/mdx-component";
 import { Page, Wrapper } from "./page.styled";
 
+import remarkGfm from 'remark-gfm';
+
 export async function generateMetadata({ params }) {
   const { frontmatter } = await loadBlogPost(params.postSlug);
 
@@ -25,7 +27,11 @@ async function BlogPost({ params }) {
         publishedOn={frontmatter.publishedOn}
       />
       <Page>
-        <MDXRemote source={content} components={COMPONENTS} />
+        <MDXRemote source={content} components={COMPONENTS} options={{
+          mdxOptions: {
+            remarkPlugins: [remarkGfm]
+          }
+        }} />
       </Page>
     </Wrapper>
   );

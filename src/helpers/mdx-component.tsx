@@ -13,6 +13,8 @@ import StorageMatrix from "@/components/StorageMatrix";
 import FruitFinderGame from "@/components/FruitFinderGame";
 import NextImage from "@/components/NextImage";
 import InfoPopover from "@/components/InfoPopover";
+import StyledTable from "@/components/StyledTable";
+import DatabaseIndexDemo from "@/components/DatabaseIndexDemo";
 
 const COMPONENTS = {
   Spacer,
@@ -29,7 +31,9 @@ const COMPONENTS = {
   InlineVideo,
   StorageMatrix,
   FruitFinderGame,
-  InfoPopover
+  InfoPopover,
+  table: StyledTable,
+  DatabaseIndexDemo
 };
 
 export default COMPONENTS;

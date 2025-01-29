@@ -1,7 +1,6 @@
 ---
 title: "How Indexes Improve Database Query Performance"
 abstract: In this post, I'll explain how indexes work in general and how they improve DB query performance.
-
 ---
 
 In this post, I'll explain the fundamental concept behind indexes and we'll see how its used to improve performance when running DB queries.
@@ -16,44 +15,51 @@ This post assumes familiarity with the following topics:
 2. `select` and `insert` statements in SQL (database read and write operations in general).
 
 ## Introduction
+
 The more data we read, the slower the DB operation becomes. Why does this happen though? Hasn't hardware advanced to a point where storage device speeds are no longer a concern? Unfortunately, no - and we may never reach that point. Improving DB performance is about reducing the amount of data we access for any operation, given that accessing storage devices is inherently slow. In this post, I'll explain the problem that indexes solve and how it solves it.
 
 ## The Problem
+
 You can skip to the next section if you already know why database operations are slow without indexes.
 
 Imagine yourself working in a storage warehouse with thousands of crates of fruits. You're tasked with finding the box with strawberries. How would you find it? Try to find it below (as much as I would like to present thousands of crates to make the problem realistic, I don't want to crash your browser 😁):
 
-<FruitFinderGame fruitToFind="🍓"/>
+<FruitFinderGame fruitToFind="🍓" />
 
-How many crates did you open? Regardless of how many you opened, think about the logic you used to *decide* which crate to open. Spend a few moments thinking before continuing.
+How many crates did you open? Regardless of how many you opened, think about the logic you used to _decide_ which crate to open. Spend a few moments thinking before continuing.
 
-There is no logic we can use when all we have is a set of identical crates; we try our luck. As you can imagine, this is not the way to operate a warehouse. We need to know the fruits in each crate so we can effectively cater to requests such as, "Ship 100 crates of strawberries to location A". 
+There is no logic we can use when all we have is a set of identical crates; we try our luck. As you can imagine, this is not the way to operate a warehouse. We need to know the fruits in each crate so we can effectively cater to requests such as, "Ship 100 crates of strawberries to location A".
 
 Now, think about what information the warehouse could maintain to find the crates easier. Spend a few moments thinking before continuing.
 
 ## The Solution
+
 Play the following crates game again, but this time you're given a table to help you.
 
-<FruitFinderGame fruitToFind="🍒" showIndex={true}/>
+<FruitFinderGame fruitToFind="🍒" showIndex={true} />
 
-Was it easier? The table you used is the basic structure of an index. We see such tables in textbooks as well, which allows us to jump to the topic we're interested in. The only difference here is that we use row and a column numbers to identify crates instead of page numbers of a textbook.
+Was it easier? The table you used is the basic structure of an index. We see such tables in textbooks as well, which allows us to jump to the topic we're interested in. The only difference here is that we use row and column numbers to identify crates instead of page numbers of a textbook.
 
-## Computer Storage
+## Database Indexes
 
-Storage devices are organized into blocks, which we can visualize as a vast matrix, like so:
+Suppose we have a table of data in the database:
 
-<StorageMatrix />
+| ID  | Name          | Phone Number           |
+| --- | ------------- | ---------------------- |
+| 1   | John Doe      | (123) 456-7890         |
+| 2   | Jane Smith    | (987) 654-3210         |
+| 3   | Alice Johnson | (555) 123-4567         |
+| 4   | Bob Brown     | (444) 777-8888         |
+| 5   | Eve Davis     | (222) 333-4444         |
 
-The term 'block' is used loosely here. In the context of a database, a block might refer to a database block. In the context of an operating system, it might refer to a hardware block.
 
-This can be compared to the crates in a warehouse. However, computer memory operates on various levels of abstraction. Fortunately, this abstraction is so good that, as developers, we don't have to worry about the underlying details like bits, bytes or memory pages. Instead, we can focus directly on the data we want to store.
+Each row is stored at a specific location on disk. If we ask the DB for the phone number of Bob Brown, for example, it has to read each row from the disk<InfoPopover info="This is an oversimplification. In reality, DB reads rows in pages."/> until it finds Bob. This is similar to opening the crates one by one to find the fruit in question. The more data we read, the slower the operation.
 
-It's common for devices to have hundreds of millions of such blocks.
+When we create an index, the DB doesn't have to read every row from disk. Instead, it can lookup the index and get the exact location where the row is stored and read only that row! The index uses a special data structure to make this happen which I'll not cover in this blog post, but you can read more about it in the [Anatomy of an SQL Index chapter in Markus Winand's free digital book.][2]
 
-## Database
-In general, data is stored in these blocks in the form of files. We can operate on some files<InfoPopover info="Such as text, audio and video files."/> using a file manager provided by the underlying operating system. However, a file manager is not the only software that can operate on files; a database can do so as well. The database operates on files just like a file manager, but the way we communicate with a file manager is different from a database.
+<DatabaseIndexDemo/>
 
-When we use a file manager, we usually know the path for the file. We navigate to the path and read or write the file. When we use a database, we don't care about the file path, we care about the table name and the specific rows and columns in that table. It's up to the database to map these tables to files.
 
 
 [1]: https://use-the-index-luke.com/sql/table-of-contents
+[2]: https://use-the-index-luke.com/sql/anatomy
