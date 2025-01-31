@@ -2,7 +2,7 @@
 title: "How Indexes Improve Database Query Performance"
 abstract: In this post, I'll explain how indexes work in general and how they improve DB query performance.
 ---
-
+{/* 
 In this post, I'll explain the fundamental concept behind indexes and we'll see how its used to improve performance when running DB queries.
 
 If you're an advanced developer, you should definitely check out [Markus Winand's SQL Indexing and Tuning e-Book][1]. It's an amazing book with the right level of abstraction for advanced developers to understand and apply DB indexes effectively.
@@ -55,7 +55,7 @@ Suppose we have a table of data in the database:
 
 Each row is stored at a specific location on disk. If we ask the DB for the phone number of Bob Brown, for example, it has to read each row from the disk<InfoPopover info="This is an oversimplification. In reality, DB reads rows in pages."/> until it finds Bob. This is similar to opening the crates one by one to find the fruit in question. The more data we read, the slower the operation.
 
-When we create an index, the DB doesn't have to read every row from disk. Instead, it can lookup the index and get the exact location where the row is stored and read only that row! The index uses a special data structure to make this happen which I'll not cover in this blog post, but you can read more about it in the [Anatomy of an SQL Index chapter in Markus Winand's free digital book.][2]
+When we create an index, the DB doesn't have to read every row from disk. Instead, it can lookup the index and get the exact location where the row is stored and read only that row! The index uses a special data structure to make this happen which I'll not cover in this blog post, but you can read more about it in the [Anatomy of an SQL Index chapter in Markus Winand's free digital book.][2] */}
 
 <DatabaseIndexDemo/>
 

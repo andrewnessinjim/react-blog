@@ -33,7 +33,7 @@ const SIZE = {
 
 const VARIANT = {
   primary: {
-    "--borderStyle": "none",
+    "--borderStyle": "solid",
     "--background": "var(--color-primary-500)",
     "--color": "var(--color-gray-100)",
   },

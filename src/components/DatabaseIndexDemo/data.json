@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "John Doe",
+    "phoneNumber": "(123) 456-7890",
+    "memoryAddress": "0x001"
+  },
+  {
+    "id": 2,
+    "name": "Jane Smith",
+    "phoneNumber": "(987) 654-3210",
+    "memoryAddress": "0x002"
+  },
+  {
+    "id": 3,
+    "name": "Alice Johnson",
+    "phoneNumber": "(555) 123-4567",
+    "memoryAddress": "0x003"
+  },
+  {
+    "id": 4,
+    "name": "Bob Brown",
+    "phoneNumber": "(444) 777-8888",
+    "memoryAddress": "0x004"
+  },
+  {
+    "id": 5,
+    "name": "Eve Davis",
+    "phoneNumber": "(222) 333-4444",
+    "memoryAddress": "0x005"
+  }
+]
