@@ -5,44 +5,51 @@ import styled from "styled-components";
 
 import personData from "./data.json";
 import { Transition, useAnimate, motion } from "framer-motion";
-import PersonRow from "./PersonRow";
 import StyledRadioGroup from "../StyledRadioGroup";
 import Spacer from "../Spacer";
 import Button from "../Button";
 import { range } from "lodash-es";
 import MemoryReadArrow from "./Arrow";
+import Text from "./Text";
+import PersonsTable, {
+  CLASS_PERSON_ROW,
+  CLASS_PERSON_TABLE,
+} from "./PersonsTable";
 
 type Mode = "auto" | "manual" | "";
 type Status = "idle" | "playing";
+
+type ElementStatus = "hide" | "show" | "animate";
+
 const personTrans: Transition = {
   type: "spring",
   damping: 15,
   stiffness: 150,
 };
 
-const arrowTransWithoutBounce: Transition = {
+const arrowNoBounceTrans: Transition = {
   type: "spring",
   bounce: 0,
   duration: 0.5,
 };
 
-const arrowTransBounce: Transition = {
+const arrowBounceTrans: Transition = {
   type: "spring",
   bounce: 0.5,
   duration: 1,
 };
 
-const compareLabelTrans: Transition = {
+const labelTrans: Transition = {
   type: "spring",
-  bounce: 0.15,
-  duration: 0.25,
+  bounce: 0.4,
+  duration: 0.75,
 };
 
 function nthPerson(n: number) {
   return `.person-row:nth-child(${n})`;
 }
 
-function indexArrow(status: "hide" | "show" | "animate") {
+function indexArrow(status: ElementStatus) {
   const animationMap = {
     hide: { scale: 0 },
     animate: { scale: [0.9, 1] },
@@ -50,9 +57,9 @@ function indexArrow(status: "hide" | "show" | "animate") {
   };
 
   const transitionMap = {
-    hide: arrowTransWithoutBounce,
-    animate: arrowTransBounce,
-    show: arrowTransWithoutBounce,
+    hide: arrowNoBounceTrans,
+    animate: arrowBounceTrans,
+    show: arrowNoBounceTrans,
   };
 
   return [
@@ -83,9 +90,14 @@ function personHighlighted(highlightIndex: number, result: boolean) {
   });
 }
 
-function label(className: string, show: boolean) {
-  const animation = show ? { opacity: 1, y: "0%" } : { opacity: 0, y: "-100%" };
-  return [className, animation, { ...compareLabelTrans, at: "<" }];
+function label(className: string, status: ElementStatus) {
+  const animationMap: Record<ElementStatus, object> = {
+    show: { opacity: 1, y: "0%" },
+    animate: { opacity: 1, y: ["-100%", "0%"] },
+    hide: { opacity: 0, y: "-100%" },
+  };
+
+  return [className, animationMap[status], { ...labelTrans, at: "<" }];
 }
 
 function memoryAddress(stepNum: number) {
@@ -102,28 +114,28 @@ function personAnimationSteps(
 ) {
   return [
     [
-      [".person-table", { y: tableOffset }, { ...personTrans }],
+      [`.${CLASS_PERSON_TABLE}`, { y: tableOffset }, { ...personTrans }],
       ...personHighlighted(personIndex, false),
       ...indexArrow("animate"),
-      label(".is-it-bob", false),
-      label(".result-no", false),
-      label(".result-yes", false),
+      label(".is-it-bob", "hide"),
+      label(".result-no", "hide"),
+      label(".result-yes", "hide"),
     ],
     [
-      [".person-table", { y: tableOffset }, { ...personTrans }],
+      [`.${CLASS_PERSON_TABLE}`, { y: tableOffset }, { ...personTrans }],
       ...personHighlighted(personIndex, false),
       ...indexArrow("show"),
-      label(".is-it-bob", true),
-      label(".result-no", false),
-      label(".result-yes", false),
+      label(".is-it-bob", "animate"),
+      label(".result-no", "hide"),
+      label(".result-yes", "hide"),
     ],
     [
-      [".person-table", { y: tableOffset }, { ...personTrans }],
+      [`.${CLASS_PERSON_TABLE}`, { y: tableOffset }, { ...personTrans }],
       ...personHighlighted(personIndex, result),
       ...indexArrow("show"),
-      label(".is-it-bob", true),
-      label(".result-no", result ? false : true),
-      label(".result-yes", result ? true : false),
+      label(".is-it-bob", "show"),
+      label(".result-no", result ? "hide" : "animate"),
+      label(".result-yes", result ? "animate" : "hide"),
     ],
   ];
 }
@@ -141,12 +153,12 @@ function DatabaseIndexDemo() {
   React.useEffect(() => {
     const animationSteps = [
       [
-        [".person-table", { y: "0%" }, { ...personTrans }],
+        [`.${CLASS_PERSON_ROW}`, { y: "0%" }, { ...personTrans }],
         ...personHighlighted(-1, false),
         ...indexArrow("hide"),
-        label(".is-it-bob", false),
-        label(".result-no", false),
-        label(".result-yes", false),
+        label(".is-it-bob", "hide"),
+        label(".result-no", "hide"),
+        label(".result-yes", "hide"),
       ],
       ...personAnimationSteps("35%", 0, false),
       ...personAnimationSteps("15%", 1, false),
@@ -187,45 +199,17 @@ function DatabaseIndexDemo() {
           }}
         >{`Read row at ${memoryAddress(currentStep)}`}</ReadLabel>
 
-        <IsItBob
-          initial={{
-            opacity: 0,
-            y: "-100%",
-          }}
-          className="is-it-bob"
-        >
+        <Text left={20} top={264} className="is-it-bob">
           Is it Bob?
-        </IsItBob>
-        <ResultNo
-          initial={{
-            opacity: 0,
-            y: "-100%",
-          }}
-          className="result-no"
-        >
+        </Text>
+        <Text left={100} top={264} className="result-no">
           No ❌
-        </ResultNo>
-        <ResultYes
-          initial={{
-            opacity: 0,
-            y: "-100%",
-          }}
-          className="result-yes"
-        >
+        </Text>
+        <Text left={100} top={264} className="result-yes">
           Yes ✅
-        </ResultYes>
+        </Text>
 
-        <PersonsTableContainer className="person-table">
-          {personData.map((person) => {
-            return (
-              <PersonRow
-                key={person.id}
-                person={person}
-                className="person-row"
-              />
-            );
-          })}
-        </PersonsTableContainer>
+        <PersonsTable />
       </DrawingBoard>
       <Spacer size={24} />
       <ControlPanel>
@@ -297,33 +281,6 @@ const ReadLabel = styled(motion.p)`
   font-size: 16px;
   left: 192px;
   top: 208px;
-`;
-
-const IsItBob = styled(motion.p)`
-  position: absolute;
-  font-size: 16px;
-  left: 20px;
-  top: 264px;
-`;
-
-const ResultYes = styled(motion.p)`
-  position: absolute;
-  font-size: 16px;
-  left: 100px;
-  top: 264px;
-`;
-
-const ResultNo = styled(motion.p)`
-  position: absolute;
-  font-size: 16px;
-  left: 100px;
-  top: 264px;
-`;
-
-const PersonsTableContainer = styled(motion.div)`
-  position: absolute;
-  right: 48px;
-  top: 145px;
 `;
 
 const ControlPanel = styled.div`
