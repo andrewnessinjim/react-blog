@@ -5,21 +5,26 @@ import styled from "styled-components";
 
 import personData from "./data.json";
 import { Transition, useAnimate, motion } from "framer-motion";
-import StyledRadioGroup from "../StyledRadioGroup";
 import Spacer from "../Spacer";
-import Button from "../Button";
+
 import { range } from "lodash-es";
-import MemoryReadArrow from "./Arrow";
+import TableAccessArrow, { CLASS_TABLE_ARROW } from "./Arrow";
 import Text from "./Text";
 import PersonsTable, {
   CLASS_PERSON_ROW,
   CLASS_PERSON_TABLE,
 } from "./PersonsTable";
-
-type Mode = "auto" | "manual" | "";
-type Status = "idle" | "playing";
+import ControlPanel, { Mode } from "./ControlPanel";
 
 type ElementStatus = "hide" | "show" | "animate";
+
+const CLASS_IS_IT_BOB = "is-it-bob";
+const CLASS_RESULT_YES = "result-yes";
+const CLASS_RESULT_NO = "result-no";
+
+function toSelector(className: string) {
+  return `.${className}`;
+}
 
 const personTrans: Transition = {
   type: "spring",
@@ -46,7 +51,7 @@ const labelTrans: Transition = {
 };
 
 function nthPerson(n: number) {
-  return `.person-row:nth-child(${n})`;
+  return `${toSelector(CLASS_PERSON_ROW)}:nth-child(${n})`;
 }
 
 function indexArrow(status: ElementStatus) {
@@ -64,7 +69,7 @@ function indexArrow(status: ElementStatus) {
 
   return [
     [
-      ".index-arrow",
+      toSelector(CLASS_TABLE_ARROW),
       animationMap[status],
       { ...transitionMap[status], at: "<" },
     ],
@@ -114,28 +119,28 @@ function personAnimationSteps(
 ) {
   return [
     [
-      [`.${CLASS_PERSON_TABLE}`, { y: tableOffset }, { ...personTrans }],
+      [toSelector(CLASS_PERSON_TABLE), { y: tableOffset }, { ...personTrans }],
       ...personHighlighted(personIndex, false),
       ...indexArrow("animate"),
-      label(".is-it-bob", "hide"),
-      label(".result-no", "hide"),
-      label(".result-yes", "hide"),
+      label(toSelector(CLASS_IS_IT_BOB), "hide"),
+      label(toSelector(CLASS_RESULT_NO), "hide"),
+      label(toSelector(CLASS_RESULT_YES), "hide"),
     ],
     [
-      [`.${CLASS_PERSON_TABLE}`, { y: tableOffset }, { ...personTrans }],
+      [toSelector(CLASS_PERSON_TABLE), { y: tableOffset }, { ...personTrans }],
       ...personHighlighted(personIndex, false),
       ...indexArrow("show"),
-      label(".is-it-bob", "animate"),
-      label(".result-no", "hide"),
-      label(".result-yes", "hide"),
+      label(toSelector(CLASS_IS_IT_BOB), "animate"),
+      label(toSelector(CLASS_RESULT_NO), "hide"),
+      label(toSelector(CLASS_RESULT_YES), "hide"),
     ],
     [
-      [`.${CLASS_PERSON_TABLE}`, { y: tableOffset }, { ...personTrans }],
+      [toSelector(CLASS_PERSON_TABLE), { y: tableOffset }, { ...personTrans }],
       ...personHighlighted(personIndex, result),
       ...indexArrow("show"),
-      label(".is-it-bob", "show"),
-      label(".result-no", result ? "hide" : "animate"),
-      label(".result-yes", result ? "animate" : "hide"),
+      label(toSelector(CLASS_IS_IT_BOB), "show"),
+      label(toSelector(CLASS_RESULT_NO), result ? "hide" : "animate"),
+      label(toSelector(CLASS_RESULT_YES), result ? "animate" : "hide"),
     ],
   ];
 }
@@ -145,35 +150,23 @@ function DatabaseIndexDemo() {
   const drawingBoardHeight = drawingBoardWidth / 1.618;
 
   const [scope, animate] = useAnimate();
-  const [status, setStatus] = React.useState<Status>("idle");
-  const [mode, setMode] = React.useState<Mode>("");
   const [currentStep, setCurrentStep] = React.useState(0);
-  const [animationSteps, setAnimationSteps] = React.useState([]);
 
-  React.useEffect(() => {
-    const animationSteps = [
+  function getAnimationSteps(mode: Mode) {
+    return [
       [
-        [`.${CLASS_PERSON_ROW}`, { y: "0%" }, { ...personTrans }],
+        [toSelector(CLASS_PERSON_TABLE), { y: "0%" }, { ...personTrans }],
         ...personHighlighted(-1, false),
         ...indexArrow("hide"),
-        label(".is-it-bob", "hide"),
-        label(".result-no", "hide"),
-        label(".result-yes", "hide"),
+        label(toSelector(CLASS_IS_IT_BOB), "hide"),
+        label(toSelector(CLASS_RESULT_NO), "hide"),
+        label(toSelector(CLASS_RESULT_YES), "hide"),
       ],
       ...personAnimationSteps("35%", 0, false),
       ...personAnimationSteps("15%", 1, false),
       ...personAnimationSteps("-5%", 2, false),
       ...personAnimationSteps("-25%", 3, true),
     ];
-    setAnimationSteps(animationSteps);
-  }, [animate, scope]);
-
-  function animateToStep(step: number) {
-    if (step < 0 || step >= animationSteps.length) return;
-
-    const nextStep = step;
-    animate(animationSteps[nextStep]);
-    setCurrentStep(nextStep);
   }
 
   return (
@@ -187,7 +180,7 @@ function DatabaseIndexDemo() {
         <DatabaseProcess className="database-process">
           Database Process
         </DatabaseProcess>
-        <MemoryReadArrow />
+        <TableAccessArrow />
 
         <ReadLabel
           initial={{
@@ -199,57 +192,24 @@ function DatabaseIndexDemo() {
           }}
         >{`Read row at ${memoryAddress(currentStep)}`}</ReadLabel>
 
-        <Text left={20} top={264} className="is-it-bob">
+        <Text left={20} top={264} className={CLASS_IS_IT_BOB}>
           Is it Bob?
         </Text>
-        <Text left={100} top={264} className="result-no">
+        <Text left={100} top={264} className={CLASS_RESULT_NO}>
           No ❌
         </Text>
-        <Text left={100} top={264} className="result-yes">
+        <Text left={100} top={264} className={CLASS_RESULT_YES}>
           Yes ✅
         </Text>
 
         <PersonsTable />
       </DrawingBoard>
       <Spacer size={24} />
-      <ControlPanel>
-        {status === "idle" && (
-          <>
-            <StyledRadioGroup
-              options={{
-                manual: "Manual",
-                auto: "Auto",
-              }}
-              value={mode}
-              onChange={(value) => setMode(value)}
-            />
-            <Button
-              variant="primary"
-              size="regular"
-              onClick={() => setStatus("playing")}
-            >
-              Start
-            </Button>
-          </>
-        )}
-        {mode === "manual" && status === "playing" && (
-          <>
-            <Button onClick={() => animateToStep(currentStep - 1)}>
-              Previous
-            </Button>
-            <Button onClick={() => animateToStep(currentStep + 1)}>Next</Button>
-            <Button
-              variant="secondary"
-              onClick={() => {
-                animateToStep(0);
-                setStatus("idle");
-              }}
-            >
-              Cancel
-            </Button>
-          </>
-        )}
-      </ControlPanel>
+      <ControlPanel
+        animate={animate}
+        getAnimationSteps={getAnimationSteps}
+        onStepChange={(stepNum: number) => setCurrentStep(stepNum)}
+      />
     </Wrapper>
   );
 }
@@ -281,16 +241,6 @@ const ReadLabel = styled(motion.p)`
   font-size: 16px;
   left: 192px;
   top: 208px;
-`;
-
-const ControlPanel = styled.div`
-  width: var(--width);
-  margin-inline-start: auto;
-  margin-inline-end: auto;
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  align-items: center;
 `;
 
 export default DatabaseIndexDemo;

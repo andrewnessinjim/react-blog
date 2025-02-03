@@ -1,7 +1,9 @@
 import styled from "styled-components";
 import { motion } from "framer-motion";
 
-function MemoryReadArrow() {
+export const CLASS_TABLE_ARROW = "table-arrow";
+
+function TableAccessArrow() {
   return (
     <Wrapper
       width="164px"
@@ -9,7 +11,7 @@ function MemoryReadArrow() {
       viewBox="0 0 185 32"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="index-arrow"
+      className={CLASS_TABLE_ARROW}
       initial={{
         scale: 0,
       }}
@@ -30,9 +32,8 @@ function MemoryReadArrow() {
 
 const Wrapper = styled(motion.svg)`
   position: absolute;
-  /* border: 1px dotted green; */
   left: 180px;
   top: 220px;
 `;
 
-export default MemoryReadArrow;
+export default TableAccessArrow;
