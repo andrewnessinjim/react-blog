@@ -30,8 +30,6 @@ function GameBoard({ onReset }: Props) {
   const cratesWrapperRef = React.useRef<HTMLDivElement>(null);
   const [numCratesColumns, setNumCratesColumns] = React.useState(4);
 
-  console.log({ answerIndex });
-
   const { fruitToFind, showIndex } = React.useContext(FruitToFindContext);
 
   React.useEffect(() => {
