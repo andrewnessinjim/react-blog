@@ -5,22 +5,21 @@ import React from "react";
 
 import { useAnimate } from "framer-motion";
 
-export type Mode = "auto" | "manual" | "";
+export type Mode = "auto" | "manual" | undefined;
 type Status = "idle" | "playing" | "paused";
 
 type AnimateType = ReturnType<typeof useAnimate>[1];
 
 interface Props {
   animate: AnimateType;
-  getAnimationSteps: (mode: Mode) => [];
+  animationSteps: [];
   onStepChange: (step: number) => void;
 }
 
-function ControlPanel({ animate, getAnimationSteps, onStepChange }: Props) {
-  const [mode, setMode] = React.useState<Mode>("");
+function ControlPanel({ animate, animationSteps, onStepChange }: Props) {
+  const [mode, setMode] = React.useState<Mode>(undefined);
   const [status, setStatus] = React.useState<Status>("idle");
   const [currentStep, setCurrentStep] = React.useState(0);
-  const [animationSteps, setAnimationSteps] = React.useState([]);
 
   React.useEffect(() => {
     animate(animationSteps[currentStep]);
@@ -28,34 +27,37 @@ function ControlPanel({ animate, getAnimationSteps, onStepChange }: Props) {
 
   React.useEffect(() => {
     if (mode === "auto" && status === "playing") {
-      const timer = setInterval(() => {
-        console.log("interval");
-        setCurrentStep((prevStep) => {
-          const nextStep = prevStep + 1;
-          if (validateStep(nextStep)) {
-            onStepChange(nextStep);
-            return nextStep;
-          } else {
-            clearInterval(timer);
-            return prevStep;
-          }
-        });
+      const intervalId = setInterval(() => {
+        const nextStep = currentStep + 1;
+        handleAutoStep(nextStep, intervalId);
       }, 1000);
 
       return () => {
-        clearInterval(timer);
+        clearInterval(intervalId);
       };
     }
-  }, [mode, status]);
+  }, [mode, status, currentStep]);
 
   function validateStep(step: number) {
     return step >= 0 && step < animationSteps.length;
   }
 
-  function handleStep(step: number) {
+  function handleManualStep(step: number) {
     if (validateStep(step)) {
       setCurrentStep(step);
       onStepChange(step);
+    }
+  }
+
+  function handleAutoStep(
+    step: number,
+    intervalId: ReturnType<typeof setInterval>
+  ) {
+    if (validateStep(step)) {
+      onStepChange(step);
+      setCurrentStep(step);
+    } else {
+      clearInterval(intervalId);
     }
   }
 
@@ -73,9 +75,8 @@ function ControlPanel({ animate, getAnimationSteps, onStepChange }: Props) {
               manual: "Manual",
               auto: "Auto",
             }}
-            value={mode}
+            value={mode ?? ""}
             onChange={(value) => {
-              setAnimationSteps(getAnimationSteps(value as Mode));
               setMode(value as Mode);
             }}
           />
@@ -83,7 +84,7 @@ function ControlPanel({ animate, getAnimationSteps, onStepChange }: Props) {
             variant="primary"
             size="regular"
             onClick={() => {
-              setStatus("playing");
+              if (mode !== undefined) setStatus("playing");
             }}
           >
             Start
@@ -92,24 +93,37 @@ function ControlPanel({ animate, getAnimationSteps, onStepChange }: Props) {
       )}
       {isManualPlaying && (
         <>
-          <Button onClick={() => handleStep(currentStep - 1)}>Previous</Button>
-          <Button onClick={() => handleStep(currentStep + 1)}>Next</Button>
+          <Button onClick={() => handleManualStep(currentStep - 1)}>
+            Previous
+          </Button>
+          <Button onClick={() => handleManualStep(currentStep + 1)}>
+            Next
+          </Button>
         </>
       )}
       {(isAutoPlaying || isAutoPaused) && (
         <>
-          <Button onClick={() => setStatus("playing")}>Play</Button>
-          <Button onClick={() => setStatus("paused")}>Pause</Button>
+          <Button
+            onClick={() => {
+              if (isAutoPlaying) {
+                setStatus("paused");
+              } else {
+                setStatus("playing");
+              }
+            }}
+          >
+            {isAutoPlaying ? "Pause" : "Play"}
+          </Button>
         </>
       )}
       <Button
         variant="secondary"
         onClick={() => {
-          handleStep(0);
+          handleManualStep(0);
           setStatus("idle");
         }}
       >
-        Cancel
+        Done
       </Button>
     </Wrapper>
   );

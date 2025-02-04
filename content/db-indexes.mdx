@@ -1,9 +1,9 @@
 ---
-title: "How Indexes Improve Database Query Performance"
-abstract: In this post, I'll explain how indexes work in general and how they improve DB query performance.
+title: "Concept Behind Database Indexes"
+abstract: Database indexes felt like magic to me at first. Slow query? Create an index and see the magic happen! This simple strategy doesn't scale well, we need thoughtful consideration to create good indexes. We'll explore the fundamental concept behind indexes, which will help us understand more advanced concepts later on.
 ---
-{/* 
-In this post, I'll explain the fundamental concept behind indexes and we'll see how its used to improve performance when running DB queries.
+
+We'll see the fundamental concept behind indexes and how it improves DB query performance. We'll not see any technical detail, not even the command to create an index. We'll focus only on the concept.
 
 If you're an advanced developer, you should definitely check out [Markus Winand's SQL Indexing and Tuning e-Book][1]. It's an amazing book with the right level of abstraction for advanced developers to understand and apply DB indexes effectively.
 
@@ -12,11 +12,11 @@ If you're an advanced developer, you should definitely check out [Markus Winand'
 This post assumes familiarity with the following topics:
 
 1. Basic database concepts.
-2. `select` and `insert` statements in SQL (database read and write operations in general).
+2. The concept behind reading and writing data into a database.
 
 ## Introduction
 
-The more data we read, the slower the DB operation becomes. Why does this happen though? Hasn't hardware advanced to a point where storage device speeds are no longer a concern? Unfortunately, no - and we may never reach that point. Improving DB performance is about reducing the amount of data we access for any operation, given that accessing storage devices is inherently slow. In this post, I'll explain the problem that indexes solve and how it solves it.
+The more data we read, the slower the DB operation becomes<InfoPopover info="As we'll see, we could end up reading a lot of data just trying to find a single row."/>. Why does this happen though? Hasn't hardware advanced to a point where storage device speeds are no longer a concern? Unfortunately, no - and we may never reach that point. To improve DB performance, we must acknowledge that storage devices are inherently slow and reduce the amount of data we access for any operation. Indexes helps us do this.
 
 ## The Problem
 
@@ -38,28 +38,40 @@ Play the following crates game again, but this time you're given a table to help
 
 <FruitFinderGame fruitToFind="🍒" showIndex={true} />
 
-Was it easier? The table you used is the basic structure of an index. We see such tables in textbooks as well, which allows us to jump to the topic we're interested in. The only difference here is that we use row and column numbers to identify crates instead of page numbers of a textbook.
+Was it easier? The table you used is the basic structure of an index. We generally see such tables at the end of textbooks as well, which allows us to jump to the topic we're interested in. The only difference here is that we use row and column numbers to identify crates instead of page numbers in a textbook.
+
+An important idea behind indexes is that they have _an order_. The index behind a book sorts the topics in an ascending order like a dictionary, which helps us find the relevant topic without going through the whole index. The above index doesn't follow any order, we just scan every row for a 🍒. A DB index on the other hand, uses a special data structure to enable quick scans and order is only one aspect of the data structure. I ignored this structure in this demo to keep the concept simple, but you can read more about it in the [Anatomy of an SQL Index chapter in Markus Winand's free digital book][2].
 
 ## Database Indexes
 
 Suppose we have a table of data in the database:
 
-| ID  | Name          | Phone Number           |
-| --- | ------------- | ---------------------- |
-| 1   | John Doe      | (123) 456-7890         |
-| 2   | Jane Smith    | (987) 654-3210         |
-| 3   | Alice Johnson | (555) 123-4567         |
-| 4   | Bob Brown     | (444) 777-8888         |
-| 5   | Eve Davis     | (222) 333-4444         |
+| Memory Address | ID  | Name          | Phone Number   |
+| -------------- | --- | ------------- | -------------- |
+| 0x001          | 1   | John Doe      | (123) 456-7890 |
+| 0x002          | 2   | Jane Smith    | (987) 654-3210 |
+| 0x003          | 3   | Alice Johnson | (555) 123-4567 |
+| 0x004          | 4   | Bob Brown     | (444) 777-8888 |
+| 0x005          | 5   | Eve Davis     | (222) 333-4444 |
 
+Each row is stored at a specific location on disk, indicated by the first column. If we ask the DB for the phone number of Bob Brown, for example, it has to look at each row until it finds Bob. This is similar to opening the crates one by one to find the fruit we need. The more data we look at, the slower the operation. Play around in the below demo to visualize it.
 
-Each row is stored at a specific location on disk. If we ask the DB for the phone number of Bob Brown, for example, it has to read each row from the disk<InfoPopover info="This is an oversimplification. In reality, DB reads rows in pages."/> until it finds Bob. This is similar to opening the crates one by one to find the fruit in question. The more data we read, the slower the operation.
+<DatabaseIndexDemo withIndex={false} />
+<Spacer size={64} />
 
-When we create an index, the DB doesn't have to read every row from disk. Instead, it can lookup the index and get the exact location where the row is stored and read only that row! The index uses a special data structure to make this happen which I'll not cover in this blog post, but you can read more about it in the [Anatomy of an SQL Index chapter in Markus Winand's free digital book.][2] */}
+If we create an index, the DB doesn't have to look at every row when searching for Bob. Instead, it looks up the index and gets the exact location where the row is stored and look only at that row! You can play around in the below demo to visualize this.
 
-<DatabaseIndexDemo/>
+<DatabaseIndexDemo withIndex={true} />
+<Spacer size={64} />
 
+The word **look at** is doing a lot of work here. When I say the DB looks at a
+row, it means its reading the row from disk into memory and then checking the
+row's content to see if that's the row we requested. Moreover, a DB reads data
+in pages <InfoPopover info="a collection of rows" />, not one row at a time. I'll cover this in a future post, but you can get into the details in [Markus Winand's book][2].
 
+## Conclusion
+
+By using an index, the database can avoid reading the whole table just to find a single row. The indexes uses a special data structure to make the scanning process super fast, which you can read more about in [Markus Winand's book][2].
 
 [1]: https://use-the-index-luke.com/sql/table-of-contents
 [2]: https://use-the-index-luke.com/sql/anatomy
