@@ -65,7 +65,7 @@ function DatabaseIndexDemo({ withIndex }: Props) {
     >
       <DrawingBoard ref={scope}>
         {withIndex ? (
-          <WithIndexAnimation currentStep={currentStep} />
+          <WithIndexAnimation />
         ) : (
           <WithoutIndexAnimation currentStep={currentStep} />
         )}

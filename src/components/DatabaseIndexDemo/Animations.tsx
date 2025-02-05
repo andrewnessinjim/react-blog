@@ -3,7 +3,7 @@ import PersonsTable, {
   CLASS_PERSON_ROW,
   CLASS_PERSON_TABLE,
 } from "./PersonsTable";
-import Arrow, { ArrowType, CLASS_TABLE_ARROW, TYPE_MAP } from "./LabelledArrow";
+import Arrow, { ArrowType, TYPE_MAP } from "./LabelledArrow";
 import Text from "./Text";
 import { motion } from "framer-motion";
 import {
@@ -201,14 +201,14 @@ export function WithoutIndexAnimation({ currentStep }: Props) {
       <PersonsTable />
 
       <Caption>
-        Visualization of how the DB looks at every row to find a record when there is no index,{" "}
-        <strong>Bob&nbsp;Brown</strong>, in this example.
+        Visualization of how the DB looks at every row to find a record when
+        there is no index, <strong>Bob&nbsp;Brown</strong>, in this example.
       </Caption>
     </Wrapper>
   );
 }
 
-export function WithIndexAnimation({ currentStep }: Props) {
+export function WithIndexAnimation() {
   return (
     <Wrapper>
       <DatabaseProcess className="database-process">
