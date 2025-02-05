@@ -13,6 +13,8 @@ import {
   WithoutIndexAnimation,
   withoutIndexAnimationSteps,
 } from "./Animations";
+import { MEDIA_QUERIES } from "@/constants";
+import DemoVideo from "../DemoVideo";
 
 interface Props {
   withIndex: boolean;
@@ -26,32 +28,68 @@ function DatabaseIndexDemo({ withIndex }: Props) {
   const [currentStep, setCurrentStep] = React.useState(0);
 
   return (
-    <Wrapper
-      style={{
-        "--width": drawingBoardWidth + "px",
-        "--height": drawingBoardHeight + "px",
-      }}
-    >
-      <DrawingBoard ref={scope}>
-        {withIndex ? (
-          <WithIndexAnimation currentStep={currentStep} />
-        ) : (
-          <WithoutIndexAnimation currentStep={currentStep} />
-        )}
-      </DrawingBoard>
-      <Spacer size={24} />
-      <ControlPanel
-        animate={animate}
-        animationSteps={
-          withIndex ? withIndexAnimationSteps : withoutIndexAnimationSteps
+    <>
+      <DesktopContent
+        style={
+          {
+            "--width": drawingBoardWidth + "px",
+            "--height": drawingBoardHeight + "px",
+          } as React.CSSProperties
         }
-        onStepChange={(stepNum: number) => setCurrentStep(stepNum)}
-      />
-    </Wrapper>
+      >
+        <DrawingBoard ref={scope}>
+          {withIndex ? (
+            <WithIndexAnimation currentStep={currentStep} />
+          ) : (
+            <WithoutIndexAnimation currentStep={currentStep} />
+          )}
+        </DrawingBoard>
+        <Spacer size={24} />
+        <ControlPanel
+          animate={animate}
+          // @ts-ignore
+          animationSteps={
+            withIndex ? withIndexAnimationSteps : withoutIndexAnimationSteps
+          }
+          onStepChange={(stepNum: number) => setCurrentStep(stepNum)}
+        />
+      </DesktopContent>
+      <MobileContent>
+        {withIndex ? (
+          <>
+            <p>
+              Again, you can watch the below video to visualize this and play
+              around with the demo later on a wider screen.
+            </p>
+            <DemoVideo videoId="demoWithIndex" />
+          </>
+        ) : (
+          <>
+            <p>
+              I built a demo that you can step through to visualize this flow,
+              but it works only on wider screens. You can watch the video below
+              now and play around with the demo on a wider screen later.
+            </p>
+            <DemoVideo videoId="demoWithoutIndex" />
+          </>
+        )}
+      </MobileContent>
+    </>
   );
 }
 
-const Wrapper = styled.div``;
+const DesktopContent = styled.div`
+  @media ${MEDIA_QUERIES.tabletAndBelow} {
+    display: none;
+  }
+`;
+
+const MobileContent = styled.div`
+  display: none;
+  @media ${MEDIA_QUERIES.tabletAndBelow} {
+    display: revert;
+  }
+`;
 
 const DrawingBoard = styled.div`
   border: 3px solid var(--color-gray-500);

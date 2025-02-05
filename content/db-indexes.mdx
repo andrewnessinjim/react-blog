@@ -54,12 +54,12 @@ Suppose we have a table of data in the database:
 | 0x004          | 4   | Bob Brown     | (444) 777-8888 |
 | 0x005          | 5   | Eve Davis     | (222) 333-4444 |
 
-Each row is stored at a specific location on disk, indicated by the first column. If we ask the DB for the phone number of Bob Brown, for example, it has to look at each row until it finds Bob. This is similar to opening the crates one by one to find the fruit we need. The more data we look at, the slower the operation. Play around in the below demo to visualize it.
+Each row is stored at a specific location on disk, indicated by the first column. If we ask the DB for the phone number of Bob Brown, for example, it has to look at each row until it finds Bob. This is similar to opening the crates one by one to find the fruit we need. The more data we look at, the slower the operation. <DesktopOnly as ="span">You can visualize this in the below demo by stepping through manually or letting it play like a video. Select an option and press Start.</DesktopOnly>
 
 <DatabaseIndexDemo withIndex={false} />
 <Spacer size={64} />
 
-If we create an index, the DB doesn't have to look at every row when searching for Bob. Instead, it looks up the index and gets the exact location where the row is stored and look only at that row! You can play around in the below demo to visualize this.
+If we create an index, the DB doesn't have to look at every row when searching for Bob. Instead, it looks up the index and gets the exact location where the row is stored and look only at that row! <DesktopOnly as ="span">You can visualize this in the below demo.</DesktopOnly>
 
 <DatabaseIndexDemo withIndex={true} />
 <Spacer size={64} />

@@ -201,9 +201,8 @@ export function WithoutIndexAnimation({ currentStep }: Props) {
       <PersonsTable />
 
       <Caption>
-        Visualization of how the DB looks at every row to find a record,{" "}
-        <strong>Bob&nbsp;Brown</strong>, in this example, where there is no
-        index.
+        Visualization of how the DB looks at every row to find a record when there is no index,{" "}
+        <strong>Bob&nbsp;Brown</strong>, in this example.
       </Caption>
     </Wrapper>
   );

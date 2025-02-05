@@ -79,11 +79,13 @@ function Arrow({ arrowType, label }: Props) {
         initial={{
           scale: 0,
         }}
-        style={{
-          transformOrigin: arrowTypeMap.transformOrigin,
-          "--arrowLeft": arrowTypeMap.arrowLeft,
-          "--arrowTop": arrowTypeMap.arrowTop,
-        }}
+        style={
+          {
+            transformOrigin: arrowTypeMap.transformOrigin,
+            "--arrowLeft": arrowTypeMap.arrowLeft,
+            "--arrowTop": arrowTypeMap.arrowTop,
+          } as React.CSSProperties
+        }
       >
         <motion.path
           d={arrowTypeMap.arrowPath}
@@ -98,11 +100,13 @@ function Arrow({ arrowType, label }: Props) {
           scale: 0,
         }}
         className={arrowTypeMap.className}
-        style={{
-          transformOrigin: arrowTypeMap.transformOrigin,
-          "--labelLeft": arrowTypeMap.labelLeft,
-          "--labelTop": arrowTypeMap.labelTop,
-        }}
+        style={
+          {
+            transformOrigin: arrowTypeMap.transformOrigin,
+            "--labelLeft": arrowTypeMap.labelLeft,
+            "--labelTop": arrowTypeMap.labelTop,
+          } as React.CSSProperties
+        }
       >
         {label}
       </Label>

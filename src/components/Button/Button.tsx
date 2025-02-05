@@ -52,18 +52,15 @@ function Button({
   ...delegated
 }: Props) {
   return (
+    //@ts-ignore
     <Wrapper
       key={children}
-      style={{
-        ...SIZE[size],
-        ...VARIANT[variant],
-      }}
-      initial={{
-        scale: 1,
-      }}
-      whileHover={{
-        scale: 1.1,
-      }}
+      style={
+        {
+          ...SIZE[size],
+          ...VARIANT[variant],
+        } as React.CSSProperties
+      }
       whileTap={{
         scale: 0.8,
       }}

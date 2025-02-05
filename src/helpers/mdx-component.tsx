@@ -15,6 +15,7 @@ import NextImage from "@/components/NextImage";
 import InfoPopover from "@/components/InfoPopover";
 import StyledTable from "@/components/StyledTable";
 import DatabaseIndexDemo from "@/components/DatabaseIndexDemo";
+import DesktopOnly from "@/components/DesktopOnly";
 
 const COMPONENTS = {
   Spacer,
@@ -33,7 +34,8 @@ const COMPONENTS = {
   FruitFinderGame,
   InfoPopover,
   table: StyledTable,
-  DatabaseIndexDemo
+  DatabaseIndexDemo,
+  DesktopOnly
 };
 
 export default COMPONENTS;
