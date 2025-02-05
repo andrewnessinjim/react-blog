@@ -3,7 +3,7 @@ import StyledRadioGroup from "../StyledRadioGroup";
 import Button from "../Button";
 import React from "react";
 
-import { useAnimate } from "framer-motion";
+import { useAnimate, AnimatePresence, motion } from "framer-motion";
 
 export type Mode = "auto" | "manual" | undefined;
 type Status = "idle" | "playing" | "paused";
@@ -58,6 +58,7 @@ function ControlPanel({ animate, animationSteps, onStepChange }: Props) {
       setCurrentStep(step);
     } else {
       clearInterval(intervalId);
+      setStatus("paused");
     }
   }
 
@@ -66,70 +67,80 @@ function ControlPanel({ animate, animationSteps, onStepChange }: Props) {
   const isAutoPlaying = mode === "auto" && status === "playing";
   const isAutoPaused = mode === "auto" && status === "paused";
 
-  return (
+  const IdleControls = () => (
     <Wrapper>
-      {isIdle && (
-        <>
-          <StyledRadioGroup
-            options={{
-              manual: "Manual",
-              auto: "Auto",
-            }}
-            value={mode ?? ""}
-            onChange={(value) => {
-              setMode(value as Mode);
-            }}
-          />
-          <Button
-            variant="primary"
-            size="regular"
-            onClick={() => {
-              if (mode !== undefined) setStatus("playing");
-            }}
-          >
-            Start
-          </Button>
-        </>
-      )}
-      {isManualPlaying && (
-        <>
-          <Button onClick={() => handleManualStep(currentStep - 1)}>
-            Previous
-          </Button>
-          <Button onClick={() => handleManualStep(currentStep + 1)}>
-            Next
-          </Button>
-        </>
-      )}
-      {(isAutoPlaying || isAutoPaused) && (
-        <>
-          <Button
-            onClick={() => {
-              if (isAutoPlaying) {
-                setStatus("paused");
-              } else {
-                setStatus("playing");
-              }
-            }}
-          >
-            {isAutoPlaying ? "Pause" : "Play"}
-          </Button>
-        </>
-      )}
+      <StyledRadioGroup
+        options={{
+          manual: "Manual",
+          auto: "Auto",
+        }}
+        value={mode ?? ""}
+        onChange={(value) => {
+          setMode(value as Mode);
+        }}
+      />
       <Button
-        variant="secondary"
+        variant="primary"
+        size="regular"
         onClick={() => {
-          handleManualStep(0);
-          setStatus("idle");
+          if (mode !== undefined) setStatus("playing");
         }}
       >
-        Done
+        Start
       </Button>
     </Wrapper>
   );
+
+  const ManualControls = () => (
+    <Wrapper>
+      <Button onClick={() => handleManualStep(currentStep - 1)}>
+        Previous
+      </Button>
+      <Button onClick={() => handleManualStep(currentStep + 1)}>Next</Button>
+      <DoneButton />
+    </Wrapper>
+  );
+
+  const AutoControls = () => (
+    <Wrapper>
+      <Button
+        onClick={() => {
+          if (isAutoPlaying) {
+            setStatus("paused");
+          } else {
+            handleManualStep(0); //Reset step before playing, needed when replayed
+            setStatus("playing");
+          }
+        }}
+      >
+        {isAutoPlaying ? "Pause" : "Play"}
+      </Button>
+      <DoneButton />
+    </Wrapper>
+  );
+
+  const DoneButton = () => (
+    <Button
+      variant="secondary"
+      onClick={() => {
+        handleManualStep(0);
+        setStatus("idle");
+      }}
+    >
+      Done
+    </Button>
+  );
+
+  return (
+    <AnimatePresence>
+      {isIdle && <IdleControls />}
+      {isManualPlaying && <ManualControls />}
+      {(isAutoPlaying || isAutoPaused) && <AutoControls />}
+    </AnimatePresence>
+  );
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled(motion.div)`
   width: var(--width);
   margin-inline-start: auto;
   margin-inline-end: auto;

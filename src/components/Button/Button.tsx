@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import * as React from "react";
 import styled from "styled-components";
 
@@ -52,10 +53,21 @@ function Button({
 }: Props) {
   return (
     <Wrapper
+      key={children}
       style={{
         ...SIZE[size],
         ...VARIANT[variant],
       }}
+      initial={{
+        scale: 1,
+      }}
+      whileHover={{
+        scale: 1.1,
+      }}
+      whileTap={{
+        scale: 0.8,
+      }}
+      transition={{ type: "spring", duration: 1, bounce: 0.5 }}
       {...delegated}
     >
       {children}
@@ -63,7 +75,7 @@ function Button({
   );
 }
 
-const Wrapper = styled.button`
+const Wrapper = styled(motion.button)`
   cursor: pointer;
   padding: var(--padding);
   font-size: var(--fontSize);
