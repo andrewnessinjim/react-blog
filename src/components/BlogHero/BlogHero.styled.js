@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import styled from "styled-components";
 
 export const Wrapper = styled.header`
@@ -23,11 +22,39 @@ export const Content = styled.div`
   padding-bottom: 64px;
 `;
 
-export const Heading = motion(styled.h1`
+export const Heading = styled.h1`
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(20%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0%);
+    }
+  }
   margin-bottom: 0.5rem;
-`);
+  animation-name: slide-up;
+  animation-duration: 300ms;
+  animation-timing-function: ease-out;
+`;
 
 export const PublishedContainer = styled.p`
+ @keyframes slide-down {
+    from {
+      opacity: 0;
+      transform: translateY(-20%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0%);
+    }
+  }
+  margin-bottom: 0.5rem;
+  animation-name: slide-down;
+  animation-duration: 300ms;
+  animation-timing-function: ease-out;
+
   font-size: 1.125rem;
   color: var(--color-decorative-900);
   margin-bottom: 0px;
