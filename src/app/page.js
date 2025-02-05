@@ -7,6 +7,8 @@ import { Heading, Wrapper } from "./page.styled";
 
 import {isProduction} from "../utils";
 
+export const dynamic = "force-static";
+
 async function Home() {
   const blogPostList = isProduction()
     ? await getPublishedBlogPosts()

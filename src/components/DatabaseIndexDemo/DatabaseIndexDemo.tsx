@@ -15,6 +15,7 @@ import {
 } from "./Animations";
 import { MEDIA_QUERIES } from "@/constants";
 import DemoVideo from "../DemoVideo";
+import useMediaQuery from "@/hooks/useMediaQuery";
 
 interface Props {
   withIndex: boolean;
@@ -27,33 +28,10 @@ function DatabaseIndexDemo({ withIndex }: Props) {
   const [scope, animate] = useAnimate();
   const [currentStep, setCurrentStep] = React.useState(0);
 
-  return (
-    <>
-      <DesktopContent
-        style={
-          {
-            "--width": drawingBoardWidth + "px",
-            "--height": drawingBoardHeight + "px",
-          } as React.CSSProperties
-        }
-      >
-        <DrawingBoard ref={scope}>
-          {withIndex ? (
-            <WithIndexAnimation currentStep={currentStep} />
-          ) : (
-            <WithoutIndexAnimation currentStep={currentStep} />
-          )}
-        </DrawingBoard>
-        <Spacer size={24} />
-        <ControlPanel
-          animate={animate}
-          // @ts-ignore
-          animationSteps={
-            withIndex ? withIndexAnimationSteps : withoutIndexAnimationSteps
-          }
-          onStepChange={(stepNum: number) => setCurrentStep(stepNum)}
-        />
-      </DesktopContent>
+  const isMobile = useMediaQuery(MEDIA_QUERIES.tabletAndBelow);
+
+  if (isMobile) {
+    return (
       <MobileContent>
         {withIndex ? (
           <>
@@ -74,22 +52,40 @@ function DatabaseIndexDemo({ withIndex }: Props) {
           </>
         )}
       </MobileContent>
-    </>
+    );
+  }
+  return (
+    <DesktopContent
+      style={
+        {
+          "--width": drawingBoardWidth + "px",
+          "--height": drawingBoardHeight + "px",
+        } as React.CSSProperties
+      }
+    >
+      <DrawingBoard ref={scope}>
+        {withIndex ? (
+          <WithIndexAnimation currentStep={currentStep} />
+        ) : (
+          <WithoutIndexAnimation currentStep={currentStep} />
+        )}
+      </DrawingBoard>
+      <Spacer size={24} />
+      <ControlPanel
+        animate={animate}
+        // @ts-ignore
+        animationSteps={
+          withIndex ? withIndexAnimationSteps : withoutIndexAnimationSteps
+        }
+        onStepChange={(stepNum: number) => setCurrentStep(stepNum)}
+      />
+    </DesktopContent>
   );
 }
 
-const DesktopContent = styled.div`
-  @media ${MEDIA_QUERIES.tabletAndBelow} {
-    display: none;
-  }
-`;
+const DesktopContent = styled.div``;
 
-const MobileContent = styled.div`
-  display: none;
-  @media ${MEDIA_QUERIES.tabletAndBelow} {
-    display: revert;
-  }
-`;
+const MobileContent = styled.div``;
 
 const DrawingBoard = styled.div`
   border: 3px solid var(--color-gray-500);
