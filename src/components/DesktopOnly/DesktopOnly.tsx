@@ -4,7 +4,11 @@ import { MEDIA_QUERIES } from "@/constants";
 import * as React from "react";
 import styled from "styled-components";
 
-function DesktopOnly({ children, as }) {
+interface Props {
+  children: React.ReactNode;
+  as?: keyof JSX.IntrinsicElements;
+}
+function DesktopOnly({ children, as }: Props) {
   return <Wrapper as={as}>{children}</Wrapper>;
 }
 
