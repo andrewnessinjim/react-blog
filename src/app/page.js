@@ -5,7 +5,7 @@ import BlogSummaryCard from "@/components/BlogSummaryCard";
 import { getAllBlogPosts, getPublishedBlogPosts } from "@/helpers/file-helpers";
 import { Heading, Wrapper } from "./page.styled";
 
-import {isProduction} from "../utils";
+import { isProduction } from "../utils";
 
 export const dynamic = "force-static";
 
@@ -18,15 +18,25 @@ async function Home() {
     <Wrapper>
       <Heading>Latest Content:</Heading>
 
-      {blogPostList.map(({ slug, title, abstract, publishedOn }) => (
-        <BlogSummaryCard
-          key={slug}
-          slug={slug}
-          title={title}
-          abstract={abstract}
-          publishedOn={publishedOn??new Date()}
-        />
-      ))}
+      {blogPostList
+        .map((blogPost) => {
+          blogPost.publishedOn = blogPost.publishedOn ?? new Date();
+          return blogPost;
+        })
+        .sort(
+          (blogPostA, blogPostB) =>
+            new Date(blogPostB.publishedOn).getTime() -
+            new Date(blogPostA.publishedOn).getTime()
+        )
+        .map(({ slug, title, abstract, publishedOn }) => (
+          <BlogSummaryCard
+            key={slug}
+            slug={slug}
+            title={title}
+            abstract={abstract}
+            publishedOn={publishedOn}
+          />
+        ))}
     </Wrapper>
   );
 }
