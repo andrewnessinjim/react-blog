@@ -5,7 +5,7 @@ import { THEME_COOKIE_NAME } from "@/constants";
 
 function ThemedHtml(props) {
   const savedTheme = cookies().get(THEME_COOKIE_NAME);
-  const theme = savedTheme?.value || "light";
+  const theme = savedTheme?.value || "dark";
 
   return (
     <ThemeProvider initialTheme={theme}>
