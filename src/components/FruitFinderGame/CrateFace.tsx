@@ -59,7 +59,6 @@ const FaceFront = styled.div`
   display: grid;
   grid-template-rows: repeat(5, 1fr);
   grid-template-columns: repeat(8, 1fr);
-  will-change: transform;
   transform: translateZ(${FACE_Z_THICKNESS / 2}px);
 `;
 
