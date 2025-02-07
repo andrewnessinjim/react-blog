@@ -9,7 +9,7 @@ import { Page, Wrapper } from "./page.styled";
 
 import remarkGfm from 'remark-gfm';
 
-export const dynamic = "force-static";
+export const dynamic = "error";
 
 export async function generateMetadata({ params }) {
   const { frontmatter } = await loadBlogPost(params.postSlug);
