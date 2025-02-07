@@ -1,16 +1,22 @@
-import { cookies } from "next/headers";
-import ThemeProvider from "@/components/ThemeProvider";
-import Html from "./Html";
-import { THEME_COOKIE_NAME } from "@/constants";
+"use client";
+
+import { ThemeContext } from "@/components/ThemeProvider";
+import { DARK_TOKENS, LIGHT_TOKENS } from "@/constants";
+import React from "react";
 
 function ThemedHtml(props) {
-  const savedTheme = cookies().get(THEME_COOKIE_NAME);
-  const theme = savedTheme?.value || "dark";
+  const { theme, isDarkMode } = React.useContext(ThemeContext);
 
+  let dataColorThemeProp = {}; //Don't set if theme is undefined; the dangerouslySetInnerHTML in layout.js has already set the property in this case
+  if (theme !== undefined) {
+    dataColorThemeProp = { "data-color-theme": isDarkMode ? "dark" : "light" };
+  }
   return (
-    <ThemeProvider initialTheme={theme}>
-      <Html {...props} />
-    </ThemeProvider>
+    <html
+      {...props}
+      style={isDarkMode ? DARK_TOKENS : LIGHT_TOKENS}
+      {...dataColorThemeProp}
+    />
   );
 }
 

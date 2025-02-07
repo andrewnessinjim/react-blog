@@ -7,7 +7,11 @@ import { ThemeContext } from "../ThemeProvider";
 import { Action } from "./Header.styled";
 
 function ThemeToggle() {
-  const { isDarkMode, toggleTheme } = React.useContext(ThemeContext);
+  const { theme, isDarkMode, toggleTheme } = React.useContext(ThemeContext);
+
+  if(theme === undefined) {
+    return null;
+  }
 
   return (
     <Action  onClick={toggleTheme}>
