@@ -6,7 +6,7 @@ import * as Popover from "@radix-ui/react-popover";
 import useHover from "@/hooks/useHover";
 import { motion } from "framer-motion";
 
-function InfoPopover({ info }: { info: string }) {
+function InfoPopover({ children}: { children: string }) {
   const [isHovered, hoverRef] = useHover<HTMLButtonElement>();
   return (
     <Popover.Root open={isHovered}>
@@ -24,7 +24,7 @@ function InfoPopover({ info }: { info: string }) {
           }}
         >
           <PopoverContent>
-            <p>{info}</p>
+            <p>{children}</p>
             <PopoverArrow />
           </PopoverContent>
         </motion.div>

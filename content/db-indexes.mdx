@@ -17,7 +17,7 @@ This post assumes familiarity with the following topics:
 
 ## Introduction
 
-The more data we read, the slower the DB operation becomes<InfoPopover info="As we'll see, we could end up reading a lot of data just trying to find a single row."/>. Why does this happen though? Hasn't hardware advanced to a point where storage device speeds are no longer a concern? Unfortunately, no - and we may never reach that point. To improve DB performance, we must acknowledge that storage devices are inherently slow and reduce the amount of data we access for any operation. Indexes help us do this.
+The more data we read, the slower the DB operation becomes<InfoPopover>As we'll see, we could end up reading a lot of data just trying to find a single row.</InfoPopover>. Why does this happen though? Hasn't hardware advanced to a point where storage device speeds are no longer a concern? Unfortunately, no - and we may never reach that point. To improve DB performance, we must acknowledge that storage devices are inherently slow and reduce the amount of data we access for any operation. Indexes help us do this.
 
 ## The Problem
 
@@ -68,7 +68,7 @@ If we create an index, the DB doesn't have to look at every row when searching f
 The word **look at** is doing a lot of work here. When I say the DB looks at a
 row, it means its reading the row from disk into memory and then checking the
 row's content to see if that's the row we requested. Moreover, a DB reads data
-in pages <InfoPopover info="a collection of rows" />, not one row at a time. I'll cover this in a future post, but you can get into the details in [Markus Winand's book][2].
+in pages <InfoPopover>a collection of rows</InfoPopover>, not one row at a time. I'll cover this in a future post, but you can get into the details in [Markus Winand's book][2].
 
 ## Conclusion
 
