@@ -19,6 +19,7 @@ async function Home() {
       <Heading>Latest Content:</Heading>
 
       {blogPostList
+        .filter((blogPost) => blogPost.unlisted !== true)
         .map((blogPost) => {
           blogPost.publishedOn = blogPost.publishedOn ?? new Date();
           return blogPost;
