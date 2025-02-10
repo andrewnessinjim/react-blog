@@ -22,7 +22,7 @@ export const metadata = {
     template: `%s • ${BLOG_TITLE}`,
     default: BLOG_TITLE,
   },
-  description: "A wonderful blog post about JavaScript",
+  description: "Interactive learning experiences on web development, focus on JavaScript, React, CSS, HTML and Next.js.",
 };
 
 const mainFont = Work_Sans({
