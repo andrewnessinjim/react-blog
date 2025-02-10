@@ -13,27 +13,7 @@ const CrateFace = React.forwardRef<HTMLDivElement, any>(function CrateFace(
 ) {
   return (
     <CrateFaceWrapper className={className} ref={ref}>
-      <FaceFront>
-        {_.range(5).map((num) => (
-          <HorizontalPlank
-            style={{
-              gridRow: num + 1,
-            }}
-            key={num}
-          />
-        ))}
-
-        <VerticalPlank
-          style={{
-            gridColumn: 1,
-          }}
-        />
-        <VerticalPlank
-          style={{
-            gridColumn: -2,
-          }}
-        />
-      </FaceFront>
+      <FaceFront />
       <FaceBack>{sticker && <FruitSticker>{sticker}</FruitSticker>}</FaceBack>
       <FaceTopEdge />
       <FaceBottomEdge />
@@ -56,10 +36,26 @@ const CrateFaceWrapper = styled(motion.div)`
 
 const FaceFront = styled.div`
   ${PassThroughFaceCSS};
-  display: grid;
-  grid-template-rows: repeat(5, 1fr);
-  grid-template-columns: repeat(8, 1fr);
   transform: translateZ(${FACE_Z_THICKNESS / 2}px);
+  background: linear-gradient(
+      to right,
+      hsl(18, 58%, 12%) 0px 2px,
+      hsl(19, 64%, 21%) 2px 14px,
+      hsl(18, 58%, 12%) 14px 16px,
+      transparent 16px
+    ),
+    linear-gradient(
+      to left,
+      hsl(18, 58%, 12%) 0px 2px,
+      hsl(19, 64%, 21%) 2px 14px,
+      hsl(18, 58%, 12%) 14px 16px,
+      transparent 16px
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      hsl(18, 58%, 12%) 0px 4px,
+      hsl(28, 85%, 30%) 2px 20px
+    );
 `;
 
 const FaceBack = styled.div`
@@ -105,18 +101,6 @@ const FaceRightEdge = styled(Edge)`
   width: ${FACE_Z_THICKNESS}px;
   height: ${FACE_HEIGHT}px;
   transform: rotateY(-90deg) translateZ(${-FACE_WIDTH + FACE_Z_THICKNESS / 2}px);
-`;
-
-const HorizontalPlank = styled.div`
-  background-color: hsl(28, 85%, 30%);
-  border: 2px solid hsl(18, 58%, 12%);
-  grid-column: -1/1;
-`;
-
-const VerticalPlank = styled.div`
-  background-color: hsl(19, 64%, 21%);
-  border: 2px solid hsl(18, 58%, 12%);
-  grid-row: -1/1;
 `;
 
 interface Props {

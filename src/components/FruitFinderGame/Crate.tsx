@@ -56,8 +56,7 @@ const Wrapper = styled(motion.div)<{ $isOpen: boolean }>`
   height: 100px;
   transform-style: preserve-3d;
   cursor: pointer;
-  will-change: transform;
-  transform: translate(0);
+  transform: translate3d(0, 0, 0);
 `;
 
 const TopFaceWrapper = styled.div`
