@@ -1,0 +1,27 @@
+---
+title: "Visualizing Next.js Streaming"
+abstract: While streaming video can be simpler to understand, streaming HTML can be a bit tricky. We'll compare video and HTML streaming and see how Next.js simplifies the process to get a firm understanding.
+---
+
+While streaming video can be simpler to understand, streaming HTML can be a bit tricky. We'll compare video and HTML streaming and see how Next.js simplifies the process to get a firm understanding.
+
+## Video Streaming
+Let's observe what happens when we play a video in YouTube. Open the network tab in the Developer tools while the video is playing and filter for "videoplayback". You'll see a series of requests for the video file; each request is for a different part of the video. The browser starts playing the video as soon as it receives the first part without waiting for the entire video. This is called streaming.
+
+This works because both the browser and the server<InfoPopover>All modern browsers and servers</InfoPopover> *support* streaming; the browser *knows* to request the video in parts and piece them together to play the video and the server *knows* to send the video in parts as requested.
+
+A video is a series of images. Each streamed part is a sequence of images for a given time span. For example, the browser can request parts of the video from the timestamp 00:00 in increments of 15 seconds <InfoPopover>In real, browsers use sophisticated algorithms to decide how much to download, at what quality, and at which moment.</InfoPopover>. A video file is mostly static. It's stored on the server and we interact with it in straightforward ways—we can play, pause and seek the video.
+
+Play the following animation to see how this works. Assuming a stable internet connection<InfoPopover>And the video was not a clickbait 😁.</InfoPopover>, the user can watch the video while the browser downloads the video incrementally in the background from start to finish! Just think for a moment what this means to the user experience before continuing.
+
+The user gets to watch the video as soon as the page loads no matter the video's size! Without streaming, the user would have to wait for the entire video to download before watching, which could be several minutes or even hours depending on the user's internet speed.
+
+## HTML Streaming
+
+An HTML file on the other hand is nowhere as huge as a video file, so why bother to stream it? Modern web application can get complex, taking several seconds just to generate the required HTML on-the-fly before sending it to the browser. The difference between streamed and non-streamed HTML is easier to show than explain. Below is a side-by-side comparison of the difference! You can also view the code here and the deployed versions here: streamed version and non-streamed version.
+
+What's going on here? In the non-streamed version, the browser sends the request to the server. The server generates the whole HTML, sends it to the browser and closes the connection. The browser waits until the whole HTML is received and renders everything at once. Thus, the whole HTML is rendered at once! The user stares at a blank screen until all this happens.
+
+In the streamed version, the browser sends the request to the server just like in the non-streamed version. The difference is that the server keeps the connection active and sends the HTML in parts. It closes the connection only after sending the whole HTML. The browser renders the HTML in parts, as and when the server sends it.
+
+If we design our server code to send the more relevant HTML parts first, the browser can immediately render them. What is more relevant depends on the context but in general, above-the-fold content and static content that don't need expensive operations can be considered more relevant. You can visualize this in the following animation.
