@@ -16,6 +16,7 @@ import InfoPopover from "@/components/InfoPopover";
 import StyledTable from "@/components/StyledTable";
 import DatabaseIndexDemo from "@/components/DatabaseIndexDemo";
 import DesktopOnly from "@/components/DesktopOnly";
+import PythonZipDemo from "@/components/PythonZipDemo";
 
 const COMPONENTS = {
   Spacer,
@@ -35,7 +36,8 @@ const COMPONENTS = {
   InfoPopover,
   table: StyledTable,
   DatabaseIndexDemo,
-  DesktopOnly
+  DesktopOnly,
+  PythonZipDemo
 };
 
 export default COMPONENTS;

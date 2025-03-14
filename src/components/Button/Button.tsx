@@ -1,11 +1,13 @@
-import { motion } from "framer-motion";
+import { motion, MotionProps } from "framer-motion";
 import * as React from "react";
 import styled from "styled-components";
 
 type Variant = "primary" | "secondary";
 type Size = "small" | "regular" | "large";
 
-interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface Props
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    MotionProps {
   variant?: Variant;
   size?: Size;
   children: string;
