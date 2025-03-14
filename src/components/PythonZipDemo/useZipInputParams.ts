@@ -11,10 +11,11 @@ const MAX_ITEMS = 3;
 type Action = {
   type:
     | "add_iterable"
-    | "remove_iterable"
+    | "mark_last_iterable_for_exit"
     | "add_item"
     | "remove_item"
-    | "update_item";
+    | "update_item"
+    | "drop_last_iterable";
   payload?: any;
 };
 
@@ -52,6 +53,7 @@ function reducer(state: ZipIterableProps[], action: Action) {
           draft.push({
             id: crypto.randomUUID(),
             animateEntry: true,
+            exiting: false,
             items: [
               { value: "0", id: crypto.randomUUID(), animateEntry: true },
               { value: "0", id: crypto.randomUUID(), animateEntry: true },
@@ -62,10 +64,15 @@ function reducer(state: ZipIterableProps[], action: Action) {
         break;
       }
 
-      case "remove_iterable": {
+      case "mark_last_iterable_for_exit": {
         if (draft.length > MIN_ITERABLES) {
-          draft.pop();
+          draft[draft.length - 1].exiting = true;
         }
+        break;
+      }
+
+      case "drop_last_iterable": {
+        draft.pop();
         break;
       }
     }
@@ -76,6 +83,7 @@ export default function useZipInputParams() {
     {
       id: crypto.randomUUID(),
       animateEntry: false,
+      exiting: false,
       items: [
         { id: crypto.randomUUID(), value: "1", animateEntry: false },
         { id: crypto.randomUUID(), value: "2", animateEntry: false },
@@ -85,6 +93,7 @@ export default function useZipInputParams() {
     {
       id: crypto.randomUUID(),
       animateEntry: false,
+      exiting: false,
       items: [
         { id: crypto.randomUUID(), value: "32", animateEntry: false },
         { id: crypto.randomUUID(), value: "34", animateEntry: false },
@@ -92,6 +101,15 @@ export default function useZipInputParams() {
       ],
     },
   ]);
+
+  React.useEffect(() => {
+    if (inputIterables.length >= 1) {
+      const lastIterable = inputIterables[inputIterables.length - 1];
+      if (lastIterable.exiting) {
+        dispatch({ type: "drop_last_iterable" });
+      }
+    }
+  }, [inputIterables]);
 
   function addIterable() {
     dispatch({
@@ -101,7 +119,7 @@ export default function useZipInputParams() {
 
   function removeIterable() {
     dispatch({
-      type: "remove_iterable",
+      type: "mark_last_iterable_for_exit",
     });
   }
 

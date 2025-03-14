@@ -22,6 +22,11 @@ function animations(animateEntry: boolean) {
   };
 }
 
+const preExitStyles = {
+  height: 0,
+  marginTop: "calc(var(--gap) * -1)",
+};
+
 function ZipIterable({
   iterable,
   iterableIndex,
@@ -30,7 +35,11 @@ function ZipIterable({
   removeItem,
 }: Props) {
   return (
-    <Wrapper key={iterable.id} {...animations(iterable.animateEntry)}>
+    <Wrapper
+      key={iterable.id}
+      {...animations(iterable.animateEntry)}
+      style={iterable.exiting ? preExitStyles : undefined}
+    >
       <AnimatePresence>
         {iterable.items.map((iterableItem, itemIndex) => {
           return (

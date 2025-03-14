@@ -8,4 +8,5 @@ export type ZipIterableProps = {
   id: string;
   animateEntry: boolean;
   items: IterableItemProps[];
+  exiting: boolean;
 };
