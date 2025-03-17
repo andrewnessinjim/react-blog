@@ -58,27 +58,33 @@ function Button({
 }: Props) {
   return (
     //@ts-ignore
-    <Wrapper
-      key={children}
-      style={
-        {
-          ...SIZE[size],
-          ...VARIANT[variant],
-        } as React.CSSProperties
-      }
-      whileTap={{
-        scale: 0.8,
-      }}
-      transition={{ type: "spring", duration: 1, bounce: 0.5 }}
-      {...delegated}
-    >
-      {children}
+    <Wrapper key={children} {...delegated}>
+      <ButtonContent
+        style={
+          {
+            ...SIZE[size],
+            ...VARIANT[variant],
+          } as React.CSSProperties
+        }
+        whileTap={{
+          scale: 0.8,
+        }}
+        transition={{ type: "spring", duration: 1, bounce: 0.5 }}
+      >
+        {children}
+      </ButtonContent>
     </Wrapper>
   );
 }
 
 const Wrapper = styled(motion.button)`
   cursor: pointer;
+  background: none;
+  border: none;
+`;
+
+const ButtonContent = styled(motion.span)`
+  display: inline-block;
   padding: var(--padding);
   font-size: var(--fontSize);
   border-radius: var(--borderRadius);
@@ -87,6 +93,8 @@ const Wrapper = styled(motion.button)`
   background: var(--background);
   border-color: var(--color-primary-500);
   color: var(--color);
+  width: 100%;
+  height: 100%;
 `;
 
 export default Button;
