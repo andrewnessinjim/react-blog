@@ -10,7 +10,6 @@ interface Props {
 function IterableItem({ iterableItem, onChange }: Props) {
   return (
     <Wrapper
-      key={iterableItem.id}
       initial={{
         scaleX: iterableItem.animateEntry ? 0 : 1,
         opacity: iterableItem.animateEntry ? 0 : 1,
