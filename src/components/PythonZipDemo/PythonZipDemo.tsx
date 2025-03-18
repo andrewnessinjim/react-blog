@@ -18,35 +18,50 @@ function PythonZipDemo() {
     updateItem,
   } = useZipInputParams();
 
+  function runAnimation() {
+    console.log("TODO: Run animation");
+  }
+
   return (
     <LayoutGroup>
       <Wrapper>
         <DrawingBoard>
           <AnimatePresence>
-            {inputIterables.map((iterable, iterableIndex) => {
-              return (
-                <ZipIterable
-                  key={iterable.id}
-                  iterable={iterable}
-                  iterableIndex={iterableIndex}
-                  addItem={addItem}
-                  removeItem={removeItem}
-                  updateItem={updateItem}
-                />
-              );
-            })}
+            <ZipIterablesWrapper>
+              {inputIterables.map((iterable, iterableIndex) => {
+                return (
+                  <ZipIterable
+                    key={iterable.id}
+                    iterable={iterable}
+                    iterableIndex={iterableIndex}
+                    addItem={addItem}
+                    removeItem={removeItem}
+                    updateItem={updateItem}
+                  />
+                );
+              })}
+            </ZipIterablesWrapper>
+
+            <IterableControls
+              layout={true}
+              exit={{ opacity: 0 }}
+              key={"controls"}
+            >
+              <Button variant="secondary" size="regular" onClick={addIterable}>
+                Add Iterable
+              </Button>
+              <Button
+                variant="secondary"
+                size="regular"
+                onClick={removeIterable}
+              >
+                Remove Iterable
+              </Button>
+            </IterableControls>
           </AnimatePresence>
-          <IterableControls layout={true}>
-            <Button variant="secondary" size="regular" onClick={addIterable}>
-              Add Iterable
-            </Button>
-            <Button variant="secondary" size="regular" onClick={removeIterable}>
-              Remove Iterable
-            </Button>
-          </IterableControls>
         </DrawingBoard>
-        <PythonCode inputIterables={inputIterables} />
-        <ZippedOutput />
+        <PythonCode inputIterables={inputIterables} onRunCode={runAnimation} />
+        <ZippedOutput></ZippedOutput>
       </Wrapper>
     </LayoutGroup>
   );
@@ -68,6 +83,13 @@ const DrawingBoard = styled.div`
   max-width: fit-content;
   flex: 1;
   min-width: 300px;
+`;
+
+const ZipIterablesWrapper = styled(motion.div)`
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  position: relative;
 `;
 
 const ZippedOutput = styled.div`
