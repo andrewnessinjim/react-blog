@@ -51,9 +51,11 @@ function PythonZipDemo() {
     }
   }
 
-  const viewingOrAnimating = status === "viewing" || status === "animating";
+  const viewingOrAnimatingOrPaused =
+    status === "viewing" || status === "animating" || status === "paused";
   const showIterableControls = status === "editing" || status === "viewing";
   const isAnimating = status === "animating";
+  const isPaused = status === "paused";
 
   const minIterableLength = Math.min(
     ...inputIterables.map((iterable) => iterable.items.length)
@@ -66,6 +68,25 @@ function PythonZipDemo() {
   const ResetButton = (
     <Button variant="secondary" size="regular" onClick={reset}>
       Reset
+    </Button>
+  );
+
+  const PauseButton = (
+    <Button
+      variant="secondary"
+      size="regular"
+      onClick={() => setStatus("paused")}
+    >
+      Pause
+    </Button>
+  );
+  const ResumeButton = (
+    <Button
+      variant="secondary"
+      size="regular"
+      onClick={() => setStatus("animating")}
+    >
+      Resume
     </Button>
   );
 
@@ -87,7 +108,7 @@ function PythonZipDemo() {
               addItem={addItem}
               removeItem={removeItem}
               updateItem={updateItem}
-              allowMutation={!isAnimating}
+              allowMutation={!isAnimating && !isPaused}
             />
           </InputOverlayWrapper>
 
@@ -124,8 +145,12 @@ function PythonZipDemo() {
         </DrawingBoard>
         <CodeAndNavigation>
           <PythonCode inputIterables={inputIterables} />
-          {isAnimating ? (
-            <AnimationControls>{ResetButton}</AnimationControls>
+          {isAnimating || isPaused ? (
+            <AnimationControls>
+              {ResetButton}
+              {isAnimating && PauseButton}
+              {isPaused && ResumeButton}
+            </AnimationControls>
           ) : (
             <Button variant="primary" size="regular" onClick={runAnimation}>
               Run Code
@@ -133,7 +158,7 @@ function PythonZipDemo() {
           )}
         </CodeAndNavigation>
         <ZippedOutput>
-          {viewingOrAnimating && (
+          {viewingOrAnimatingOrPaused && (
             <Output
               inputIterables={inputIterables}
               animationStep={animationStep}
