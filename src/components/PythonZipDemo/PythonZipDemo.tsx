@@ -8,8 +8,8 @@ import Button from "../Button";
 import PythonCode from "./PythonCode";
 import IterableList from "./IterableList";
 import { IterableObject } from "./types";
-import { range } from "lodash-es";
 import OutputUnderlay from "./OutputUnderlay";
+import Output from "./Output";
 
 function PythonZipDemo() {
   const {
@@ -44,41 +44,24 @@ function PythonZipDemo() {
   }
 
   function nextStep() {
-    if (animationStep < 8) {
+    if (animationStep < minIterableLength * inputIterables.length + 2) {
       setAnimationStep((prev) => prev + 1);
     } else {
       setStatus("viewing");
     }
   }
 
+  const viewingOrAnimating = status === "viewing" || status === "animating";
   const showIterableControls = status === "editing" || status === "viewing";
   const isAnimating = status === "animating";
 
+  const minIterableLength = Math.min(
+    ...inputIterables.map((iterable) => iterable.items.length)
+  );
+
   const outputIterables: IterableObject[] = [];
 
-  if (animationStep >= 3) {
-    range(3, animationStep + 1).forEach((count) => {
-      const in_row = (count - 3) % inputIterables.length;
-      const in_col = Math.floor((count - 3) / inputIterables.length);
-
-      const out_row = in_col;
-      const out_col = in_row;
-
-      while (outputIterables.length <= out_row) {
-        outputIterables.push({
-          id: out_row.toString(),
-          animateEntry: false,
-          exiting: false,
-          items: [],
-        });
-      }
-      outputIterables[out_row].items[out_col] = {
-        id: inputIterables[in_row].items[in_col].id + "-out",
-        value: inputIterables[in_row].items[in_col].value,
-        animateEntry: false,
-      };
-    });
-  }
+  const showMinLengthIterable = animationStep > 0;
 
   const ResetButton = (
     <Button variant="secondary" size="regular" onClick={reset}>
@@ -150,8 +133,11 @@ function PythonZipDemo() {
           )}
         </CodeAndNavigation>
         <ZippedOutput>
-          {(status === "viewing" || status === "animating") && (
-            <IterableList iterables={outputIterables} allowMutation={false} />
+          {viewingOrAnimating && (
+            <Output
+              inputIterables={inputIterables}
+              animationStep={animationStep}
+            />
           )}
         </ZippedOutput>
       </Wrapper>
