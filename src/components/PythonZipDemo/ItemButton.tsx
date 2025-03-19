@@ -8,7 +8,13 @@ interface Props {
 
 function ItemButton({ onClick, children }: Props) {
   return (
-    <Wrapper variant="secondary" size="small" layout={true} onClick={onClick}>
+    <Wrapper
+      variant="secondary"
+      size="small"
+      layout={true}
+      onClick={onClick}
+      exit={{ opacity: 0 }}
+    >
       {children}
     </Wrapper>
   );

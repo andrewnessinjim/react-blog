@@ -1,6 +1,6 @@
 import { produce } from "immer";
 import React from "react";
-import { ZipIterableProps } from "./types";
+import { IterableObject } from "./types";
 
 const MIN_ITERABLES = 2;
 const MAX_ITERABLES = 3;
@@ -19,13 +19,13 @@ type Action = {
   payload?: any;
 };
 
-function reducer(state: ZipIterableProps[], action: Action) {
+function reducer(state: IterableObject[], action: Action) {
   return produce(state, (draft) => {
     switch (action.type) {
       case "add_item": {
-        const { paramIndex } = action.payload;
-        if (draft[paramIndex].items.length < MAX_ITEMS) {
-          draft[paramIndex].items.push({
+        const { iterableIndex } = action.payload;
+        if (draft[iterableIndex].items.length < MAX_ITEMS) {
+          draft[iterableIndex].items.push({
             value: "0",
             id: action.payload.id,
             animateEntry: true,
@@ -35,8 +35,8 @@ function reducer(state: ZipIterableProps[], action: Action) {
       }
 
       case "update_item": {
-        const { paramIndex, itemIndex, value } = action.payload;
-        draft[paramIndex].items[itemIndex].value = value;
+        const { iterableIndex, itemIndex, value } = action.payload;
+        draft[iterableIndex].items[itemIndex].value = value;
         break;
       }
 
@@ -78,38 +78,34 @@ function reducer(state: ZipIterableProps[], action: Action) {
     }
   });
 }
-export default function useZipInputParams() {
-  const [inputIterables, dispatch] = React.useReducer(reducer, [
-    {
-      id: crypto.randomUUID(),
-      animateEntry: false,
-      exiting: false,
-      items: [
-        { id: crypto.randomUUID(), value: "1", animateEntry: false },
-        { id: crypto.randomUUID(), value: "2", animateEntry: false },
-        { id: crypto.randomUUID(), value: "3", animateEntry: false },
-      ],
-    },
-    {
-      id: crypto.randomUUID(),
-      animateEntry: false,
-      exiting: false,
-      items: [
-        { id: crypto.randomUUID(), value: "32", animateEntry: false },
-        { id: crypto.randomUUID(), value: "34", animateEntry: false },
-        { id: crypto.randomUUID(), value: "35", animateEntry: false },
-      ],
-    },
-  ]);
+
+function initRandomIterable() {
+  return {
+    id: crypto.randomUUID(),
+    animateEntry: false,
+    exiting: false,
+    items: [
+      { id: crypto.randomUUID(), value: "1", animateEntry: false },
+      { id: crypto.randomUUID(), value: "2", animateEntry: false },
+      { id: crypto.randomUUID(), value: "3", animateEntry: false },
+    ],
+  };
+}
+
+export default function useIterablesData(populated = false) {
+  const [data, dispatch] = React.useReducer(
+    reducer,
+    populated ? [initRandomIterable(), initRandomIterable()] : []
+  );
 
   React.useEffect(() => {
-    if (inputIterables.length >= 1) {
-      const lastIterable = inputIterables[inputIterables.length - 1];
+    if (data.length >= 1) {
+      const lastIterable = data[data.length - 1];
       if (lastIterable.exiting) {
         dispatch({ type: "drop_last_iterable" });
       }
     }
-  }, [inputIterables]);
+  }, [data]);
 
   function addIterable() {
     dispatch({
@@ -123,11 +119,11 @@ export default function useZipInputParams() {
     });
   }
 
-  function addItem(paramIndex: number) {
+  function addItem(iterableIndex: number) {
     dispatch({
       type: "add_item",
       payload: {
-        paramIndex,
+        iterableIndex,
         id: crypto.randomUUID(),
       },
     });
@@ -140,7 +136,7 @@ export default function useZipInputParams() {
     });
   }
 
-  function updateItem(paramIndex: number, itemIndex: number, value: string) {
+  function updateItem(iterableIndex: number, itemIndex: number, value: string) {
     let sanitizedValue = value.replace(/^0+/, "");
     if (parseInt(sanitizedValue) > 99) {
       sanitizedValue = "99";
@@ -148,19 +144,30 @@ export default function useZipInputParams() {
     dispatch({
       type: "update_item",
       payload: {
-        paramIndex,
+        iterableIndex,
         itemIndex,
         value: sanitizedValue === "" ? "0" : sanitizedValue,
       },
     });
   }
 
+  function upsert(iterableIndex: number, itemIndex: number, value: string) {
+    while (data.length <= iterableIndex) {
+      addIterable();
+    }
+    while (data[iterableIndex].items.length <= itemIndex) {
+      addItem(iterableIndex);
+    }
+    updateItem(iterableIndex, itemIndex, value);
+  }
+
   return {
-    inputIterables,
+    data,
     addIterable,
     removeIterable,
     addItem,
     removeItem,
     updateItem,
+    upsert,
   };
 }

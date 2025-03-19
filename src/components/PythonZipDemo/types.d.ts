@@ -1,12 +1,12 @@
-export interface IterableItemProps {
+export interface IterableItemObject {
   id: string;
   value: string;
   animateEntry: boolean;
 }
 
-export type ZipIterableProps = {
+export type IterableObject = {
   id: string;
   animateEntry: boolean;
-  items: IterableItemProps[];
+  items: IterableItemObject[];
   exiting: boolean;
 };

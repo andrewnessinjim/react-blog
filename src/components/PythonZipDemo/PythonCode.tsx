@@ -8,14 +8,13 @@ import Button from "../Button";
 import { range } from "lodash-es";
 import { ThemeContext } from "../ThemeProvider";
 import React from "react";
-import { ZipIterableProps } from "./types";
+import { IterableObject } from "./types";
 
 interface Props {
-  inputIterables: ZipIterableProps[];
-  onRunCode: () => void;
+  inputIterables: IterableObject[];
 }
 
-function PythonCode({ inputIterables, onRunCode }: Props) {
+function PythonCode({ inputIterables }: Props) {
   const { isDarkMode } = React.useContext(ThemeContext);
   const pythonCode = inputIterables
     .map((iterable, itertableIndex) => {
@@ -34,31 +33,19 @@ function PythonCode({ inputIterables, onRunCode }: Props) {
     .concat("print(list(zipped))\n");
 
   return (
-    <Wrapper>
-      <StyledSyntaxHighlighter
-        language="python"
-        style={isDarkMode ? a11yDark : a11yLight}
-      >
-        {pythonCode}
-      </StyledSyntaxHighlighter>
-      <Button variant="primary" size="regular" onClick={onRunCode}>
-        Run Code
-      </Button>
-    </Wrapper>
+    <StyledSyntaxHighlighter
+      language="python"
+      style={isDarkMode ? a11yDark : a11yLight}
+    >
+      {pythonCode}
+    </StyledSyntaxHighlighter>
   );
 }
 
 const StyledSyntaxHighlighter = styled(SyntaxHighlighter)`
   padding: 1rem !important;
   border-radius: 8px;
-`;
-
-const Wrapper = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: var(--gap);
+  position: relative;
 `;
 
 export default PythonCode;

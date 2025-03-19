@@ -1,22 +1,25 @@
 import { motion } from "framer-motion";
 import styled from "styled-components";
-import { IterableItemProps } from "./types";
+import { IterableItemObject } from "./types";
+import React from "react";
 
 interface Props {
-  iterableItem: IterableItemProps;
+  iterableItem: IterableItemObject;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 function IterableItem({ iterableItem, onChange }: Props) {
   return (
     <Wrapper
+      data-key={iterableItem.id}
+      layoutId={iterableItem.id}
       initial={{
         scaleX: iterableItem.animateEntry ? 0 : 1,
         opacity: iterableItem.animateEntry ? 0 : 1,
         transformOrigin: "0% 50%",
       }}
       animate={{ scaleX: 1, opacity: 1, transformOrigin: "0% 50%" }}
-      exit={{ scaleX: 0, opacity: 0, transformOrigin: "0% 50%" }}
+      transition={{ type: "spring", bounce: 0.25 }}
       value={iterableItem.value}
       type="number"
       max={99}

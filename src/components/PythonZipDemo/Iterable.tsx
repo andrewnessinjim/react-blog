@@ -1,15 +1,20 @@
 import { AnimatePresence, motion } from "framer-motion";
 import styled from "styled-components";
-import { ZipIterableProps } from "./types";
+import { IterableObject } from "./types";
 import IterableItem from "./IterableItem";
 import ItemButton from "./ItemButton";
 
 interface Props {
-  iterable: ZipIterableProps;
+  iterable: IterableObject;
   iterableIndex: number;
-  updateItem: (iterableIndex: number, itemIndex: number, value: string) => void;
-  addItem: (iterableIndex: number) => void;
-  removeItem: (iterableIndex: number) => void;
+  updateItem?: (
+    iterableIndex: number,
+    itemIndex: number,
+    value: string
+  ) => void;
+  addItem?: (iterableIndex: number) => void;
+  removeItem?: (iterableIndex: number) => void;
+  allowMutation?: boolean;
 }
 
 function animations(animateEntry: boolean) {
@@ -18,7 +23,7 @@ function animations(animateEntry: boolean) {
     initial: animateEntry
       ? { scaleY: 0, opacity: 0, transformOrigin: "50% 0%" }
       : undefined,
-    exit: { scaleY: 0, opacity: 1, transformOrigin: "50% 0%" },
+    // exit: { scaleY: 0, opacity: 1, transformOrigin: "50% 0%" },
   };
 }
 
@@ -27,16 +32,17 @@ const preExitStyles = {
   marginTop: "calc(var(--gap) * -1)",
 };
 
-function ZipIterable({
+function Iterable({
   iterable,
   iterableIndex,
   updateItem,
   addItem,
   removeItem,
+  allowMutation = true,
 }: Props) {
   return (
     <Wrapper
-      key={iterable.id}
+      data-key={iterable.id}
       {...animations(iterable.animateEntry)}
       style={iterable.exiting ? preExitStyles : undefined}
     >
@@ -47,14 +53,25 @@ function ZipIterable({
               key={iterableItem.id}
               iterableItem={iterableItem}
               onChange={(e) => {
-                updateItem(iterableIndex, itemIndex, e.target.value);
+                if (allowMutation) {
+                  updateItem &&
+                    updateItem(iterableIndex, itemIndex, e.target.value);
+                }
               }}
             />
           );
         })}
+        {allowMutation && (
+          <>
+            <ItemButton onClick={() => addItem && addItem(iterableIndex)}>
+              +
+            </ItemButton>
+            <ItemButton onClick={() => removeItem && removeItem(iterableIndex)}>
+              -
+            </ItemButton>
+          </>
+        )}
       </AnimatePresence>
-      <ItemButton onClick={() => addItem(iterableIndex)}>+</ItemButton>
-      <ItemButton onClick={() => removeItem(iterableIndex)}>-</ItemButton>
     </Wrapper>
   );
 }
@@ -65,4 +82,4 @@ const Wrapper = styled(motion.div)`
   gap: var(--gap);
 `;
 
-export default ZipIterable;
+export default Iterable;
