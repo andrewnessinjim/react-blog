@@ -62,11 +62,11 @@ function PythonZipDemo() {
     );
   }
 
-  const viewingOrAnimatingOrPaused =
-    status === "viewing" || status === "playing" || status === "paused";
-  const showIterableControls = status === "editing" || status === "viewing";
+  const showIterableControls = status === "editing";
   const isPlaying = status === "playing";
   const isPaused = status === "paused";
+  const isEditing = status === "editing";
+  const isViewing = status === "viewing";
 
   const minIterableLength = Math.min(
     ...inputIterables.map((iterable) => iterable.items.length)
@@ -140,7 +140,7 @@ function PythonZipDemo() {
               addItem={addItem}
               removeItem={removeItem}
               updateItem={updateItem}
-              allowMutation={!isPlaying && !isPaused}
+              allowMutation={isEditing}
               highlightIndex={
                 highlightMinLengthIterable ? smallestIterableIndex() : undefined
               }
@@ -181,20 +181,22 @@ function PythonZipDemo() {
         </DrawingBoard>
         <CodeAndNavigation>
           <PythonCode inputIterables={inputIterables} />
-          {isPlaying || isPaused ? (
+          {(isPlaying || isPaused) && (
             <AnimationControls>
               {ResetButton}
               {isPlaying && PauseButton}
               {isPaused && ResumeButton}
             </AnimationControls>
-          ) : (
+          )}
+          {isEditing && (
             <Button variant="primary" size="regular" onClick={runAnimation}>
-              Run Code
+              Play Animation
             </Button>
           )}
+          {isViewing && ResetButton}
         </CodeAndNavigation>
         <ZippedOutput>
-          {viewingOrAnimatingOrPaused && (
+          {!isEditing && (
             <Output
               ignoredElementsExist={ignoredElementsExist}
               inputIterables={inputIterables}
