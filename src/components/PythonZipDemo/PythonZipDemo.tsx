@@ -126,6 +126,7 @@ function PythonZipDemo() {
               highlightIndex={
                 highlightMinLengthIterable ? smallestIterableIndex() : undefined
               }
+              onEdit={() => setStatus("editing")}
             />
           </InputOverlayWrapper>
 

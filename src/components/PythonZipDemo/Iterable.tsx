@@ -17,6 +17,7 @@ interface Props {
   removeItem?: (iterableIndex: number) => void;
   allowMutation?: boolean;
   highlight?: boolean;
+  onEdit?: () => void;
 }
 
 function animations(animateEntry: boolean) {
@@ -42,6 +43,7 @@ function Iterable({
   removeItem,
   allowMutation = true,
   highlight = false,
+  onEdit,
 }: Props) {
   const id = React.useId();
 
@@ -64,6 +66,7 @@ function Iterable({
                 iterableItem={iterableItem}
                 onChange={(e) => {
                   if (allowMutation) {
+                    onEdit && onEdit();
                     updateItem &&
                       updateItem(iterableIndex, itemIndex, e.target.value);
                   }
@@ -74,10 +77,20 @@ function Iterable({
         </ItemsWrapper>
         {allowMutation && (
           <>
-            <ItemButton onClick={() => addItem && addItem(iterableIndex)}>
+            <ItemButton
+              onClick={() => {
+                onEdit && onEdit();
+                addItem && addItem(iterableIndex);
+              }}
+            >
               +
             </ItemButton>
-            <ItemButton onClick={() => removeItem && removeItem(iterableIndex)}>
+            <ItemButton
+              onClick={() => {
+                onEdit && onEdit();
+                removeItem && removeItem(iterableIndex);
+              }}
+            >
               -
             </ItemButton>
           </>

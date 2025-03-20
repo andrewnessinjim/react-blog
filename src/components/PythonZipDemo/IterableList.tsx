@@ -11,6 +11,7 @@ interface Props {
   iterables: IterableObject[];
   allowMutation?: boolean;
   highlightIndex?: number;
+  onEdit?: () => void;
 }
 
 function IterableList({
@@ -20,6 +21,7 @@ function IterableList({
   updateItem,
   allowMutation = true,
   highlightIndex,
+  onEdit,
 }: Props) {
   return (
     <Wrapper>
@@ -34,6 +36,7 @@ function IterableList({
             updateItem={updateItem}
             allowMutation={allowMutation}
             highlight={iterableIndex === highlightIndex}
+            onEdit={onEdit}
           />
         );
       })}
