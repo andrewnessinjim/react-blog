@@ -83,9 +83,10 @@ const CrossLineWrapper = styled(motion.div)`
   top: 50%;
   left: 0;
   width: 100%;
-  height: 2px;
+  height: 6px;
   background: red;
   opacity: 0.5;
+  margin-top: -3px;
   /* rotate: 45deg; */
 `;
 
