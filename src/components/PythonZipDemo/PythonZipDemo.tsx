@@ -5,11 +5,10 @@ import styled from "styled-components";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import useIterablesData from "./useIterablesData";
 import Button from "../Button";
-import PythonCode from "./PythonCode";
 import IterableList from "./IterableList";
-import { IterableObject } from "./types";
 import OutputUnderlay from "./OutputUnderlay";
-import Output from "./Output";
+import { OutputIterables, OutputLogs, OutputPrintedValue } from "./Output";
+import { InputIterablesCode } from "./PythonCode";
 
 type Status = "editing" | "playing" | "viewing" | "paused";
 function PythonZipDemo() {
@@ -95,8 +94,6 @@ function PythonZipDemo() {
     };
   });
 
-  console.log(inputIterablesWithIgnoredItems);
-
   const ResetButton = (
     <Button variant="secondary" size="regular" onClick={reset}>
       Reset
@@ -163,7 +160,7 @@ function PythonZipDemo() {
                     addIterable();
                   }}
                 >
-                  Add Iterable
+                  Add
                 </Button>
                 <Button
                   variant="secondary"
@@ -173,20 +170,38 @@ function PythonZipDemo() {
                     removeIterable();
                   }}
                 >
-                  Remove Iterable
+                  Remove
                 </Button>
               </IterableControls>
             )}
           </AnimatePresence>
+          {!isEditing && (
+            <OutputLogs
+              animationStep={animationStep}
+              ignoredElementsExist={ignoredElementsExist}
+              minIterableLength={minIterableLength}
+            />
+          )}
         </DrawingBoard>
-        <CodeAndNavigation>
-          <PythonCode inputIterables={inputIterables} />
+        <PythonCodeWrapper>
+          <InputIterablesCode inputIterables={inputIterables} />
+        </PythonCodeWrapper>
+        <OutputIterablesWrapper>
+          {!isEditing && (
+            <OutputIterables
+              inputIterables={inputIterables}
+              animationStep={animationStep}
+            />
+          )}
+        </OutputIterablesWrapper>
+
+        <AnimationControls>
           {(isPlaying || isPaused) && (
-            <AnimationControls>
+            <>
               {ResetButton}
               {isPlaying && PauseButton}
               {isPaused && ResumeButton}
-            </AnimationControls>
+            </>
           )}
           {isEditing && (
             <Button variant="primary" size="regular" onClick={runAnimation}>
@@ -194,49 +209,44 @@ function PythonZipDemo() {
             </Button>
           )}
           {isViewing && ResetButton}
-        </CodeAndNavigation>
-        <ZippedOutput>
-          {!isEditing && (
-            <Output
-              ignoredElementsExist={ignoredElementsExist}
-              inputIterables={inputIterables}
-              animationStep={animationStep}
-            />
-          )}
-        </ZippedOutput>
+        </AnimationControls>
+
+        {isViewing && (
+          <OutputPrintedValue
+            inputIterables={inputIterables}
+            animationStep={animationStep}
+          />
+        )}
       </Wrapper>
     </LayoutGroup>
   );
 }
 
 const Wrapper = styled.div`
-  --gap: 10px;
-  display: flex;
-  gap: var(--gap);
-  /* border: 1px dotted white; */
+  --gap: 8px;
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  grid-template-rows: 240px auto auto auto;
+  grid-template-areas:
+    "drawing-board output-board"
+    "controls output-board"
+    "code printed-value";
+
+  gap: 24px;
   padding: 16px;
-  min-height: 480px;
+  min-height: 520px;
+  max-width: 620px;
+  margin-inline-start: auto;
+  margin-inline-end: auto;
 `;
 
 const DrawingBoard = styled.div`
+  grid-area: drawing-board;
   display: flex;
   flex-direction: column;
   gap: var(--gap);
-  max-width: fit-content;
-  flex: 1;
-  min-width: 300px;
-`;
-
-const CodeAndNavigation = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: var(--gap);
-`;
-
-const ZippedOutput = styled.div`
-  flex: 1;
+  flex: 1.5;
+  width: 272px;
 `;
 
 const InputOverlayWrapper = styled.div`
@@ -247,6 +257,15 @@ const AnimationControls = styled.div`
   display: flex;
   gap: var(--gap);
   justify-content: center;
+  grid-area: controls;
+`;
+
+const PythonCodeWrapper = styled.div`
+  grid-area: code;
+`;
+
+const OutputIterablesWrapper = styled.div`
+  grid-area: output-board;
 `;
 
 const OutputUnderlayWrapper = styled.div`

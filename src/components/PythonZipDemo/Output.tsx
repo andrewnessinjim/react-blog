@@ -3,11 +3,17 @@ import styled from "styled-components";
 import IterableList from "./IterableList";
 import { IterableObject } from "./types";
 import { range } from "lodash-es";
+import { OutputPrintedValueCode } from "./PythonCode";
 
-interface Props {
+interface OutputProps {
   inputIterables: IterableObject[];
   animationStep: number;
-  ignoredElementsExist?: boolean;
+}
+
+interface OutputLogsProps {
+  animationStep: number;
+  ignoredElementsExist: boolean;
+  minIterableLength: number;
 }
 
 const itemsMoveBegin = 3;
@@ -24,19 +30,11 @@ const valueAnimation = {
   transition: { duration: 0.5 },
 };
 
-function Output({
-  inputIterables,
-  animationStep,
-  ignoredElementsExist = false,
-}: Props) {
+function computeOutputIterables(
+  inputIterables: IterableObject[],
+  animationStep: number
+) {
   const outputIterables: IterableObject[] = [];
-
-  const minIterableLength = Math.min(
-    ...inputIterables.map((iterable) => iterable.items.length)
-  );
-  const showMinLengthIterable = animationStep > 0;
-  const showIgnoredElementsLabel = ignoredElementsExist && animationStep > 1;
-
   if (animationStep >= itemsMoveBegin) {
     range(itemsMoveBegin, animationStep + 1).forEach((count) => {
       const in_row = (count - itemsMoveBegin) % inputIterables.length;
@@ -62,40 +60,64 @@ function Output({
       };
     });
   }
+  return outputIterables;
+}
+
+export function OutputLogs({
+  animationStep,
+  ignoredElementsExist,
+  minIterableLength,
+}: OutputLogsProps) {
+  const showMinLengthIterable = animationStep > 0;
+  const showIgnoredElementsLabel = ignoredElementsExist && animationStep > 1;
 
   return (
-    <Wrapper>
+    <OutputLogsWrapper>
       {showMinLengthIterable && (
-        <MinIterableLengthLabel {...labelAnimation}>
+        <LogLabel {...labelAnimation}>
           Min iterable length:{" "}
           <MinLength {...valueAnimation}>{minIterableLength}</MinLength>
-        </MinIterableLengthLabel>
+        </LogLabel>
       )}
       {showIgnoredElementsLabel && (
-        <IgnoredElementsLabel {...labelAnimation}>
-          Items beyond the min iterable length are ignored. ❌
-        </IgnoredElementsLabel>
+        <LogLabel {...labelAnimation}>Items ignored: ❌</LogLabel>
       )}
-      <IterableList iterables={outputIterables} allowMutation={false} />
-    </Wrapper>
+    </OutputLogsWrapper>
   );
 }
 
-const Wrapper = styled(motion.div)``;
+export function OutputIterables({
+  inputIterables,
+  animationStep,
+}: OutputProps) {
+  const outputIterables = computeOutputIterables(inputIterables, animationStep);
 
-const MinIterableLengthLabel = styled(motion.p)`
+  return (
+    <OutputIterablesWrapper>
+      <IterableList iterables={outputIterables} allowMutation={false} />
+    </OutputIterablesWrapper>
+  );
+}
+
+export function OutputPrintedValue({
+  inputIterables,
+  animationStep,
+}: OutputProps) {
+  const outputIterables = computeOutputIterables(inputIterables, animationStep);
+  return <OutputPrintedValueCode outputIterables={outputIterables} />;
+}
+const OutputIterablesWrapper = styled(motion.div)``;
+const OutputLogsWrapper = styled(motion.div)`
+  position: relative; /* Stay above CoverBlanket */
+`;
+
+const LogLabel = styled(motion.p)`
   font-size: 1rem;
   font-family: var(--font-family-mono);
+  margin: 0;
 `;
 
 const MinLength = styled(motion.strong)`
   display: inline-block;
   color: green;
 `;
-
-const IgnoredElementsLabel = styled(motion.p)`
-  font-size: 1rem;
-  font-family: var(--font-family-mono);
-`;
-
-export default Output;

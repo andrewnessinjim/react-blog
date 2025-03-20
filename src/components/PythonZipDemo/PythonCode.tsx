@@ -9,13 +9,13 @@ import { range } from "lodash-es";
 import { ThemeContext } from "../ThemeProvider";
 import React from "react";
 import { IterableObject } from "./types";
+import { motion } from "framer-motion";
 
 interface Props {
   inputIterables: IterableObject[];
 }
 
-function PythonCode({ inputIterables }: Props) {
-  const { isDarkMode } = React.useContext(ThemeContext);
+export function InputIterablesCode({ inputIterables }: Props) {
   const pythonCode = inputIterables
     .map((iterable, itertableIndex) => {
       return `iterable${itertableIndex} = [${iterable.items
@@ -32,20 +32,75 @@ function PythonCode({ inputIterables }: Props) {
     .concat("\n)\n")
     .concat("print(list(zipped))\n");
 
+  return <PythonCode title="Code Representation" pythonCode={pythonCode} />;
+}
+
+export function OutputPrintedValueCode({
+  outputIterables,
+}: {
+  outputIterables: IterableObject[];
+}) {
+  const pythonCode = ""
+    .concat("[\n")
+    .concat(
+      outputIterables
+        .map((iterable) => {
+          return "    ("
+            .concat(iterable.items.map((item) => item.value).join(", "))
+            .concat(")");
+        })
+        .join(",\n")
+    )
+    .concat("\n")
+    .concat("]\n");
   return (
-    <StyledSyntaxHighlighter
-      language="python"
-      style={isDarkMode ? a11yDark : a11yLight}
-    >
-      {pythonCode}
-    </StyledSyntaxHighlighter>
+    <PythonCode
+      title="Printed Value"
+      pythonCode={pythonCode}
+      animateEntry={true}
+    />
   );
 }
+function PythonCode({
+  title,
+  pythonCode,
+  animateEntry = false,
+}: {
+  title: string;
+  pythonCode: string;
+  animateEntry?: boolean;
+}) {
+  const { isDarkMode } = React.useContext(ThemeContext);
+
+  return (
+    <Wrapper
+      initial={{ opacity: animateEntry ? 0 : 1 }}
+      animate={{ opacity: 1 }}
+    >
+      <Title>{title}</Title>
+      <StyledSyntaxHighlighter
+        language="python"
+        style={isDarkMode ? a11yDark : a11yLight}
+      >
+        {pythonCode}
+      </StyledSyntaxHighlighter>
+    </Wrapper>
+  );
+}
+
+const Wrapper = styled(motion.section)`
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+`;
+
+const Title = styled.h2`
+  font-size: 1.25rem;
+  margin: 0;
+`;
 
 const StyledSyntaxHighlighter = styled(SyntaxHighlighter)`
   padding: 1rem !important;
   border-radius: 8px;
   position: relative;
 `;
-
-export default PythonCode;
