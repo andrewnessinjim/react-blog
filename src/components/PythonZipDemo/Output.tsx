@@ -77,6 +77,7 @@ const MinIterableLength = styled(motion.p)`
 
 const MinLength = styled(motion.strong)`
   display: inline-block;
+  color: green
 `;
 
 export default Output;

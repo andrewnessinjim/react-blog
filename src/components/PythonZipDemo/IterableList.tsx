@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import styled from "styled-components";
 import Iterable from "./Iterable";
 import { IterableObject } from "./types";
+import { hi } from "date-fns/locale";
 
 interface Props {
   addItem?: (paramIndex: number) => void;
@@ -9,6 +10,7 @@ interface Props {
   updateItem?: (paramIndex: number, itemIndex: number, value: string) => void;
   iterables: IterableObject[];
   allowMutation?: boolean;
+  highlightIndex?: number;
 }
 
 function IterableList({
@@ -17,6 +19,7 @@ function IterableList({
   removeItem,
   updateItem,
   allowMutation = true,
+  highlightIndex,
 }: Props) {
   return (
     <Wrapper>
@@ -30,6 +33,7 @@ function IterableList({
             removeItem={removeItem}
             updateItem={updateItem}
             allowMutation={allowMutation}
+            highlight={iterableIndex === highlightIndex}
           />
         );
       })}

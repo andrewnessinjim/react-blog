@@ -51,6 +51,16 @@ function PythonZipDemo() {
     }
   }
 
+  function smallestIterableIndex() {
+    return inputIterables.reduce(
+      (smallestIndex, iterable, index) =>
+        iterable.items.length < inputIterables[smallestIndex].items.length
+          ? index
+          : smallestIndex,
+      0
+    );
+  }
+
   const viewingOrAnimatingOrPaused =
     status === "viewing" || status === "animating" || status === "paused";
   const showIterableControls = status === "editing" || status === "viewing";
@@ -61,9 +71,13 @@ function PythonZipDemo() {
     ...inputIterables.map((iterable) => iterable.items.length)
   );
 
-  const outputIterables: IterableObject[] = [];
-
   const showMinLengthIterable = animationStep > 0;
+  const highlightMinLengthIterable = animationStep == 1;
+
+  if (highlightMinLengthIterable) {
+    console.log("highlightMinLengthIterable", highlightMinLengthIterable);
+    console.log("smallestIterableIndex", smallestIterableIndex());
+  }
 
   const ResetButton = (
     <Button variant="secondary" size="regular" onClick={reset}>
@@ -109,6 +123,9 @@ function PythonZipDemo() {
               removeItem={removeItem}
               updateItem={updateItem}
               allowMutation={!isAnimating && !isPaused}
+              highlightIndex={
+                highlightMinLengthIterable ? smallestIterableIndex() : undefined
+              }
             />
           </InputOverlayWrapper>
 

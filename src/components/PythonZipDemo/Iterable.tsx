@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { IterableObject } from "./types";
 import IterableItem from "./IterableItem";
 import ItemButton from "./ItemButton";
+import React from "react";
 
 interface Props {
   iterable: IterableObject;
@@ -15,6 +16,7 @@ interface Props {
   addItem?: (iterableIndex: number) => void;
   removeItem?: (iterableIndex: number) => void;
   allowMutation?: boolean;
+  highlight?: boolean;
 }
 
 function animations(animateEntry: boolean) {
@@ -39,28 +41,37 @@ function Iterable({
   addItem,
   removeItem,
   allowMutation = true,
+  highlight = false,
 }: Props) {
+  const id = React.useId();
+
   return (
     <Wrapper
-      data-key={iterable.id}
       {...animations(iterable.animateEntry)}
       style={iterable.exiting ? preExitStyles : undefined}
     >
       <AnimatePresence>
-        {iterable.items.map((iterableItem, itemIndex) => {
-          return (
-            <IterableItem
-              key={iterableItem.id}
-              iterableItem={iterableItem}
-              onChange={(e) => {
-                if (allowMutation) {
-                  updateItem &&
-                    updateItem(iterableIndex, itemIndex, e.target.value);
-                }
-              }}
-            />
-          );
-        })}
+        <ItemsWrapper
+          animate={{
+            outlineWidth: highlight ? "4px" : "0px",
+          }}
+          key={id + "-items-wrapper"}
+        >
+          {iterable.items.map((iterableItem, itemIndex) => {
+            return (
+              <IterableItem
+                key={iterableItem.id}
+                iterableItem={iterableItem}
+                onChange={(e) => {
+                  if (allowMutation) {
+                    updateItem &&
+                      updateItem(iterableIndex, itemIndex, e.target.value);
+                  }
+                }}
+              />
+            );
+          })}
+        </ItemsWrapper>
         {allowMutation && (
           <>
             <ItemButton onClick={() => addItem && addItem(iterableIndex)}>
@@ -80,6 +91,13 @@ const Wrapper = styled(motion.div)`
   display: flex;
   flex-direction: row;
   gap: var(--gap);
+`;
+
+const ItemsWrapper = styled(Wrapper)`
+  outline-style: solid;
+  outline-width: 0px;
+  outline-offset: 2px;
+  outline-color: green;
 `;
 
 export default Iterable;
