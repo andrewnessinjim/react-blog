@@ -9,6 +9,7 @@ import IterableList from "./IterableList";
 import OutputUnderlay from "./OutputUnderlay";
 import { OutputIterables, OutputLogs, OutputPrintedValue } from "./Output";
 import { InputIterablesCode } from "./PythonCode";
+import { produce } from "immer";
 
 type Status = "editing" | "playing" | "viewing" | "paused";
 function PythonZipDemo() {
@@ -75,23 +76,26 @@ function PythonZipDemo() {
   const highlightIgnoredItems = animationStep > 1;
   let ignoredElementsExist = false;
 
-  const inputIterablesWithIgnoredItems = inputIterables.map((iterable) => {
-    return {
-      ...iterable,
-      items: iterable.items.map((item, itemIndex) => {
+  // Mark with boop and cross out
+  const markedInputIterables = produce(inputIterables, (draft) => {
+    draft.forEach((iterable, iterableIndex) =>
+      iterable.items.forEach((item, itemIndex) => {
         const shouldIgnore =
           highlightIgnoredItems && itemIndex >= minIterableLength;
+        item.crossedOut = shouldIgnore;
 
-        if (shouldIgnore) {
-          ignoredElementsExist = true;
+        if (
+          animationStep - 3 ==
+            itemIndex * inputIterables.length + iterableIndex &&
+          isPlaying
+        ) {
+          // Item being moved now
+          item.boop = true;
         }
 
-        return {
-          ...item,
-          crossedOut: shouldIgnore,
-        };
-      }),
-    };
+        if (shouldIgnore) ignoredElementsExist = true;
+      })
+    );
   });
 
   const ResetButton = (
@@ -133,7 +137,7 @@ function PythonZipDemo() {
             </OutputUnderlayWrapper>
             <IterableList
               key={"input"}
-              iterables={inputIterablesWithIgnoredItems}
+              iterables={markedInputIterables}
               addItem={addItem}
               removeItem={removeItem}
               updateItem={updateItem}

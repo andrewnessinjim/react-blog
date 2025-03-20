@@ -8,6 +8,16 @@ interface Props {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
+const boopTransition = {
+  type: "tween",
+  duration: 0.5,
+};
+
+const regularTransition = {
+  type: "spring",
+  bounce: 0.5,
+};
+
 function CrossLine({ rotate }: { rotate: number }) {
   return (
     <CrossLineWrapper
@@ -19,25 +29,39 @@ function CrossLine({ rotate }: { rotate: number }) {
 }
 
 function IterableItem({ iterableItem, onChange }: Props) {
+  const { id, value, animateEntry, crossedOut, boop } = iterableItem;
+  const [booping, setBooping] = React.useState(!!boop);
+
+  if (boop) {
+    console.log("Booping: " + value);
+  }
+
+  React.useEffect(() => {
+    if (boop) {
+      setBooping(true);
+      setTimeout(() => setBooping(false), 500);
+    }
+  }, [boop]);
+
   return (
     <Wrapper
-      data-key={iterableItem.id}
-      layoutId={iterableItem.id}
+      data-key={id}
+      layoutId={id}
       initial={{
-        scaleX: iterableItem.animateEntry ? 0 : 1,
-        opacity: iterableItem.animateEntry ? 0 : 1,
+        scaleX: animateEntry ? 0 : 1,
+        opacity: animateEntry ? 0 : 1,
         transformOrigin: "0% 50%",
       }}
-      animate={{ scaleX: 1, opacity: 1, transformOrigin: "0% 50%" }}
-      transition={{ type: "spring", bounce: 0.25 }}
+      animate={{
+        scaleX: 1,
+        opacity: 1,
+        transformOrigin: "0% 50%",
+        scale: booping ? [0.1, 1.5, 1] : 1,
+      }}
+      transition={booping ? boopTransition : regularTransition}
     >
-      <Input
-        type="number"
-        max={99}
-        value={iterableItem.value}
-        onChange={onChange}
-      />
-      {iterableItem.crossedOut && (
+      <Input type="number" max={99} value={value} onChange={onChange} />
+      {crossedOut && (
         <>
           <CrossLine rotate={45} />
           <CrossLine rotate={-45} />

@@ -3,6 +3,7 @@ export interface IterableItemObject {
   value: string;
   animateEntry: boolean;
   crossedOut?: boolean;
+  boop?: boolean;
 }
 
 export type IterableObject = {
