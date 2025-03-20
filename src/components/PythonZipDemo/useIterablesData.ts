@@ -5,7 +5,7 @@ import { IterableObject } from "./types";
 const MIN_ITERABLES = 2;
 const MAX_ITERABLES = 3;
 
-const MIN_ITEMS = 1;
+const MIN_ITEMS = 0;
 const MAX_ITEMS = 3;
 
 type Action = {

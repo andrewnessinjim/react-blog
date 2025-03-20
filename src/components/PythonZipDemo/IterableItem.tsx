@@ -48,7 +48,7 @@ function IterableItem({ iterableItem, onChange }: Props) {
 }
 
 const Wrapper = styled(motion.div)`
-  width: 56px;
+  width: 48px;
   aspect-ratio: 1;
   text-align: center;
   border: 2px dashed var(--color-primary-900);
@@ -65,7 +65,7 @@ const Input = styled(motion.input)`
   border: none;
   background: transparent;
   color: var(--color-primary-500);
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   text-align: center;
   -webkit-appearance: none;
   -moz-appearance: textfield;

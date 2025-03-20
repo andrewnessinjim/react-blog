@@ -159,7 +159,7 @@ function PythonZipDemo() {
                   variant="secondary"
                   size="regular"
                   onClick={() => {
-                    setStatus("editing");
+                    reset();
                     addIterable();
                   }}
                 >
@@ -169,7 +169,7 @@ function PythonZipDemo() {
                   variant="secondary"
                   size="regular"
                   onClick={() => {
-                    setStatus("editing");
+                    reset();
                     removeIterable();
                   }}
                 >
@@ -225,16 +225,20 @@ const DrawingBoard = styled.div`
   min-width: 300px;
 `;
 
-const InputOverlayWrapper = styled.div`
-  position: relative;
-`;
-
 const CodeAndNavigation = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   gap: var(--gap);
+`;
+
+const ZippedOutput = styled.div`
+  flex: 1;
+`;
+
+const InputOverlayWrapper = styled.div`
+  position: relative;
 `;
 
 const AnimationControls = styled.div`
@@ -247,7 +251,6 @@ const OutputUnderlayWrapper = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  /* border: 5px dotted pink; */
 `;
 
 const CoverBlanket = styled.div`
@@ -258,11 +261,6 @@ const CoverBlanket = styled.div`
   top: -35%;
   bottom: -35%;
   background-color: var(--color-backdrop);
-  /* border: 5px dotted fuchsia; */
-`;
-
-const ZippedOutput = styled.div`
-  flex: 1;
 `;
 
 const IterableControls = styled(motion.div)`
