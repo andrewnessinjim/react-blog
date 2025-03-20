@@ -8,6 +8,16 @@ interface Props {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
+function CrossLine({ rotate }: { rotate: number }) {
+  return (
+    <CrossLineWrapper
+      initial={{ rotate, scale: 0 }}
+      animate={{ scale: 1 }}
+      transition={{ type: "spring", bounce: 0.5 }}
+    />
+  );
+}
+
 function IterableItem({ iterableItem, onChange }: Props) {
   return (
     <Wrapper
@@ -20,23 +30,43 @@ function IterableItem({ iterableItem, onChange }: Props) {
       }}
       animate={{ scaleX: 1, opacity: 1, transformOrigin: "0% 50%" }}
       transition={{ type: "spring", bounce: 0.25 }}
-      value={iterableItem.value}
-      type="number"
-      max={99}
-      onChange={onChange}
-    />
+    >
+      <Input
+        type="number"
+        max={99}
+        value={iterableItem.value}
+        onChange={onChange}
+      />
+      {iterableItem.crossedOut && (
+        <>
+          <CrossLine rotate={45} />
+          <CrossLine rotate={-45} />
+        </>
+      )}
+    </Wrapper>
   );
 }
 
-const Wrapper = styled(motion.input)`
+const Wrapper = styled(motion.div)`
   width: 56px;
   aspect-ratio: 1;
   text-align: center;
   border: 2px dashed var(--color-primary-900);
   border-radius: 5px;
   background: transparent;
+
+  position: relative;
+  display: inline-block;
+`;
+
+const Input = styled(motion.input)`
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
   color: var(--color-primary-500);
   font-size: 1.5rem;
+  text-align: center;
   -webkit-appearance: none;
   -moz-appearance: textfield;
   appearance: textfield;
@@ -46,6 +76,17 @@ const Wrapper = styled(motion.input)`
     -webkit-appearance: none;
     margin: 0;
   }
+`;
+
+const CrossLineWrapper = styled(motion.div)`
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: red;
+  opacity: 0.5;
+  /* rotate: 45deg; */
 `;
 
 export default IterableItem;

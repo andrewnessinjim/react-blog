@@ -11,6 +11,7 @@ import { IterableObject } from "./types";
 import OutputUnderlay from "./OutputUnderlay";
 import Output from "./Output";
 
+type Status = "editing" | "playing" | "viewing" | "paused";
 function PythonZipDemo() {
   const {
     data: inputIterables,
@@ -22,10 +23,10 @@ function PythonZipDemo() {
   } = useIterablesData(true);
 
   const [animationStep, setAnimationStep] = React.useState(0);
-  const [status, setStatus] = React.useState("editing");
+  const [status, setStatus] = React.useState<Status>("editing");
 
   React.useEffect(() => {
-    if (status === "animating") {
+    if (status === "playing") {
       const interval = setInterval(() => {
         nextStep();
       }, 1000);
@@ -35,7 +36,7 @@ function PythonZipDemo() {
 
   function runAnimation() {
     setAnimationStep(0);
-    setStatus("animating");
+    setStatus("playing");
   }
 
   function reset() {
@@ -62,22 +63,39 @@ function PythonZipDemo() {
   }
 
   const viewingOrAnimatingOrPaused =
-    status === "viewing" || status === "animating" || status === "paused";
+    status === "viewing" || status === "playing" || status === "paused";
   const showIterableControls = status === "editing" || status === "viewing";
-  const isAnimating = status === "animating";
+  const isPlaying = status === "playing";
   const isPaused = status === "paused";
 
   const minIterableLength = Math.min(
     ...inputIterables.map((iterable) => iterable.items.length)
   );
 
-  const showMinLengthIterable = animationStep > 0;
   const highlightMinLengthIterable = animationStep == 1;
+  const highlightIgnoredItems = animationStep > 1;
+  let ignoredElementsExist = false;
 
-  if (highlightMinLengthIterable) {
-    console.log("highlightMinLengthIterable", highlightMinLengthIterable);
-    console.log("smallestIterableIndex", smallestIterableIndex());
-  }
+  const inputIterablesWithIgnoredItems = inputIterables.map((iterable) => {
+    return {
+      ...iterable,
+      items: iterable.items.map((item, itemIndex) => {
+        const shouldIgnore =
+          highlightIgnoredItems && itemIndex >= minIterableLength;
+
+        if (shouldIgnore) {
+          ignoredElementsExist = true;
+        }
+
+        return {
+          ...item,
+          crossedOut: shouldIgnore,
+        };
+      }),
+    };
+  });
+
+  console.log(inputIterablesWithIgnoredItems);
 
   const ResetButton = (
     <Button variant="secondary" size="regular" onClick={reset}>
@@ -98,7 +116,7 @@ function PythonZipDemo() {
     <Button
       variant="secondary"
       size="regular"
-      onClick={() => setStatus("animating")}
+      onClick={() => setStatus("playing")}
     >
       Resume
     </Button>
@@ -118,15 +136,15 @@ function PythonZipDemo() {
             </OutputUnderlayWrapper>
             <IterableList
               key={"input"}
-              iterables={inputIterables}
+              iterables={inputIterablesWithIgnoredItems}
               addItem={addItem}
               removeItem={removeItem}
               updateItem={updateItem}
-              allowMutation={!isAnimating && !isPaused}
+              allowMutation={!isPlaying && !isPaused}
               highlightIndex={
                 highlightMinLengthIterable ? smallestIterableIndex() : undefined
               }
-              onEdit={() => setStatus("editing")}
+              onEdit={reset}
             />
           </InputOverlayWrapper>
 
@@ -163,10 +181,10 @@ function PythonZipDemo() {
         </DrawingBoard>
         <CodeAndNavigation>
           <PythonCode inputIterables={inputIterables} />
-          {isAnimating || isPaused ? (
+          {isPlaying || isPaused ? (
             <AnimationControls>
               {ResetButton}
-              {isAnimating && PauseButton}
+              {isPlaying && PauseButton}
               {isPaused && ResumeButton}
             </AnimationControls>
           ) : (
@@ -178,6 +196,7 @@ function PythonZipDemo() {
         <ZippedOutput>
           {viewingOrAnimatingOrPaused && (
             <Output
+              ignoredElementsExist={ignoredElementsExist}
               inputIterables={inputIterables}
               animationStep={animationStep}
             />
