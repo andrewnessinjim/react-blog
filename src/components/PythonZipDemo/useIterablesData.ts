@@ -161,8 +161,20 @@ export default function useIterablesData(populated = false) {
     updateItem(iterableIndex, itemIndex, value);
   }
 
+  const shortestIterableIndex = data.reduce(
+    (smallestIndex, iterable, index) =>
+      iterable.items.length < data[smallestIndex].items.length
+        ? index
+        : smallestIndex,
+    0
+  );
+
+  const shortestIterableLength = data[shortestIterableIndex].items.length;
+
   return {
     data,
+    shortestIterableIndex,
+    shortestIterableLength,
     addIterable,
     removeIterable,
     addItem,

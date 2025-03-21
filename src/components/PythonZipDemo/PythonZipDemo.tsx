@@ -15,6 +15,8 @@ type Status = "editing" | "playing" | "viewing" | "paused";
 function PythonZipDemo() {
   const {
     data: inputIterables,
+    shortestIterableIndex,
+    shortestIterableLength,
     addIterable,
     removeIterable,
     addItem,
@@ -43,22 +45,13 @@ function PythonZipDemo() {
   }
 
   function nextStep() {
-    if (animationStep < minIterableLength * inputIterables.length + 2) {
+    if (animationStep < shortestIterableLength * inputIterables.length + 2) {
       setAnimationStep((prev) => prev + 1);
     } else {
       setStatus("viewing");
     }
   }
 
-  function smallestIterableIndex() {
-    return inputIterables.reduce(
-      (smallestIndex, iterable, index) =>
-        iterable.items.length < inputIterables[smallestIndex].items.length
-          ? index
-          : smallestIndex,
-      0
-    );
-  }
 
   const showIterableControls = status === "editing";
   const isPlaying = status === "playing";
@@ -66,11 +59,7 @@ function PythonZipDemo() {
   const isEditing = status === "editing";
   const isViewing = status === "viewing";
 
-  const minIterableLength = Math.min(
-    ...inputIterables.map((iterable) => iterable.items.length)
-  );
-
-  const highlightMinLengthIterable = animationStep == 1;
+  const highlightShortestIterable = animationStep == 1;
   const highlightIgnoredItems = animationStep > 1;
   let ignoredElementsExist = false;
 
@@ -79,7 +68,7 @@ function PythonZipDemo() {
     draft.forEach((iterable, iterableIndex) =>
       iterable.items.forEach((item, itemIndex) => {
         const shouldIgnore =
-          highlightIgnoredItems && itemIndex >= minIterableLength;
+          highlightIgnoredItems && itemIndex >= shortestIterableLength;
         item.crossedOut = shouldIgnore;
 
         if (
@@ -141,7 +130,7 @@ function PythonZipDemo() {
               updateItem={updateItem}
               allowMutation={isEditing}
               highlightIndex={
-                highlightMinLengthIterable ? smallestIterableIndex() : undefined
+                highlightShortestIterable ? shortestIterableIndex : undefined
               }
               onEdit={reset}
             />
@@ -181,7 +170,7 @@ function PythonZipDemo() {
             <OutputLogs
               animationStep={animationStep}
               ignoredElementsExist={ignoredElementsExist}
-              minIterableLength={minIterableLength}
+              minIterableLength={shortestIterableLength}
             />
           )}
         </DrawingBoard>
