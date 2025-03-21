@@ -76,7 +76,6 @@ const Wrapper = styled(motion.div)`
   background: transparent;
 
   position: relative;
-  display: inline-block;
 `;
 
 const Input = styled(motion.input)`

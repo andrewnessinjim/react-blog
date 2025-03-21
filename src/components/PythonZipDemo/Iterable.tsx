@@ -26,14 +26,8 @@ function animations(animateEntry: boolean) {
     initial: animateEntry
       ? { scaleY: 0, opacity: 0, transformOrigin: "50% 0%" }
       : undefined,
-    // exit: { scaleY: 0, opacity: 1, transformOrigin: "50% 0%" },
   };
 }
-
-const preExitStyles = {
-  height: 0,
-  marginTop: "calc(var(--gap) * -1)",
-};
 
 function Iterable({
   iterable,
@@ -48,10 +42,7 @@ function Iterable({
   const id = React.useId();
 
   return (
-    <Wrapper
-      {...animations(iterable.animateEntry)}
-      style={iterable.exiting ? preExitStyles : undefined}
-    >
+    <Wrapper {...animations(iterable.animateEntry)}>
       <AnimatePresence>
         <ItemsWrapper
           animate={{

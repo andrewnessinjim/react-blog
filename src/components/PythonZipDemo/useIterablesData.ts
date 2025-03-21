@@ -55,9 +55,9 @@ function reducer(state: IterableObject[], action: Action) {
             animateEntry: true,
             exiting: false,
             items: [
-              { value: "0", id: crypto.randomUUID(), animateEntry: true },
-              { value: "0", id: crypto.randomUUID(), animateEntry: true },
-              { value: "0", id: crypto.randomUUID(), animateEntry: true },
+              { value: "0", id: crypto.randomUUID(), animateEntry: false },
+              { value: "0", id: crypto.randomUUID(), animateEntry: false },
+              { value: "0", id: crypto.randomUUID(), animateEntry: false },
             ],
           });
         }

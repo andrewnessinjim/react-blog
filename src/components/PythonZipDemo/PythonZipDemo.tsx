@@ -244,7 +244,7 @@ const Wrapper = styled.div`
   /* Ensure cover blanket is not visible */
   background-color: var(--color-backdrop);
   padding: 64px;
-  
+
   border-radius: 8px;
 `;
 
