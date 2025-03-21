@@ -23,9 +23,7 @@ function OutputUnderlay({ inputIterables, animationStep }: Props) {
         items: inputIterable.items.map((item, itemIndex) => {
           return {
             ...item,
-            animateExit: false,
             animateEntry: false,
-            hide: true,
             id: isMoved(itemIndex, iterableIndex)
               ? item.id + "-moved"
               : item.id + "-out",
