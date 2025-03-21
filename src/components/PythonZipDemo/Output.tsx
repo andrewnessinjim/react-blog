@@ -68,14 +68,14 @@ export function OutputLogs({
   ignoredElementsExist,
   minIterableLength,
 }: OutputLogsProps) {
-  const showMinLengthIterable = animationStep > 0;
+  const showShortestIterable = animationStep > 0;
   const showIgnoredElementsLabel = ignoredElementsExist && animationStep > 1;
 
   return (
     <OutputLogsWrapper>
-      {showMinLengthIterable && (
+      {showShortestIterable && (
         <LogLabel {...labelAnimation}>
-          Min iterable length:{" "}
+          Shortest iterable length:{" "}
           <MinLength {...valueAnimation}>{minIterableLength}</MinLength>
         </LogLabel>
       )}
