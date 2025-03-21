@@ -32,10 +32,6 @@ function IterableItem({ iterableItem, onChange }: Props) {
   const { id, value, animateEntry, crossedOut, boop } = iterableItem;
   const [booping, setBooping] = React.useState(!!boop);
 
-  if (boop) {
-    console.log("Booping: " + value);
-  }
-
   React.useEffect(() => {
     if (boop) {
       setBooping(true);
@@ -56,7 +52,7 @@ function IterableItem({ iterableItem, onChange }: Props) {
         scaleX: 1,
         opacity: 1,
         transformOrigin: "0% 50%",
-        scale: booping ? [0.1, 1.5, 1] : 1,
+        scale: booping ? [0.95, 1.05, 1] : 1,
       }}
       transition={booping ? boopTransition : regularTransition}
     >

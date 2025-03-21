@@ -27,10 +27,8 @@ function PythonZipDemo() {
 
   React.useEffect(() => {
     if (status === "playing") {
-      const interval = setInterval(() => {
-        nextStep();
-      }, 1000);
-      return () => clearInterval(interval);
+      const timeoutIt = setTimeout(nextStep, 1250);
+      return () => clearTimeout(timeoutIt);
     }
   }, [status, animationStep]);
 
