@@ -232,7 +232,7 @@ const Wrapper = styled.div`
 
   /* Ensure cover blanket is not visible */
   background-color: var(--color-backdrop);
-  padding: 64px;
+  padding: 72px;
 
   border-radius: 8px;
 `;
@@ -273,11 +273,13 @@ const OutputUnderlayWrapper = styled.div`
 
 const CoverBlanket = styled.div`
   position: absolute;
-  inset: 0;
-  right: -35%;
-  left: -35%;
-  top: -35%;
+  
+  /* Enough size to cover the OutputUnderlay animations */
+  right: -15%;
+  left: -45%;
+  top: -25%;
   bottom: -35%;
+
   background-color: var(--color-backdrop);
 `;
 
