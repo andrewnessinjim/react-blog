@@ -4,6 +4,7 @@ export interface IterableItemObject {
   animateEntry: boolean;
   crossedOut?: boolean;
   boop?: boolean;
+  overlayDuplicate?: boolean;
 }
 
 export type IterableObject = {

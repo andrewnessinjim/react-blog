@@ -9,7 +9,6 @@ import styled from "styled-components";
 import { AnimatePresence, motion } from "framer-motion";
 import Button from "../Button";
 import IterableList from "./IterableList";
-import OutputUnderlay from "./OutputUnderlay";
 import { OutputIterables, OutputLogs, OutputPrintedValue } from "./Output";
 import { InputIterablesCode } from "./PythonCode";
 import LayoutManager from "./LayoutManager";
@@ -43,7 +42,6 @@ function PythonZipDemo() {
 
   const highlightIgnoredItems = animationStep > 1;
   const highlightShortestIterable = animationStep == 1;
-  const renderOutputUnderlay = animationStep > 1;
   const showIterableControls = isEditing;
 
   let ignoredElementsExist = false;
@@ -51,6 +49,13 @@ function PythonZipDemo() {
   const markedInputIterables = produce(inputIterables, (draft) => {
     draft.forEach((iterable, iterableIndex) =>
       iterable.items.forEach((item, itemIndex) => {
+        function isMoved(itemIndex: number, iterableIndex: number) {
+          return (
+            animationStep - 3 >=
+            itemIndex * inputIterables.length + iterableIndex
+          );
+        }
+
         const shouldIgnore =
           highlightIgnoredItems && itemIndex >= shortestIterableLength;
         item.crossedOut = shouldIgnore;
@@ -64,6 +69,8 @@ function PythonZipDemo() {
           item.boop = true;
         }
 
+        item.overlayDuplicate = !isMoved(itemIndex, iterableIndex) && isPlaying;
+
         if (shouldIgnore) ignoredElementsExist = true;
       })
     );
@@ -72,15 +79,6 @@ function PythonZipDemo() {
   const inputBoard = (
     <InputBoard>
       <InputOverlayWrapper>
-        <OutputUnderlayWrapper>
-          {renderOutputUnderlay && (
-            <OutputUnderlay
-              inputIterables={markedInputIterables}
-              animationStep={animationStep}
-            />
-          )}
-          <CoverBlanket />
-        </OutputUnderlayWrapper>
         <IterableList
           key={"input"}
           iterables={markedInputIterables}
@@ -140,7 +138,7 @@ function PythonZipDemo() {
     <OutputBoard>
       {!isEditing && (
         <OutputIterables
-          inputIterables={inputIterables}
+          inputIterables={markedInputIterables}
           animationStep={animationStep}
         />
       )}
@@ -185,19 +183,6 @@ const InputBoard = styled.div`
 
 const InputOverlayWrapper = styled.div`
   position: relative;
-`;
-
-const OutputUnderlayWrapper = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-`;
-
-const CoverBlanket = styled.div`
-  /* Ensure underlay animations are not visible  */
-  position: absolute;
-  inset: -8px;
-  background-color: var(--color-backdrop);
 `;
 
 const IterableControls = styled(motion.div)`

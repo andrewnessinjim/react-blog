@@ -18,6 +18,23 @@ const regularTransition = {
   bounce: 0,
 };
 
+function animations(animateEntry: boolean, booping: boolean) {
+  return {
+    initial: {
+      scaleX: animateEntry ? 0 : 1,
+      opacity: animateEntry ? 0 : 1,
+      transformOrigin: "0% 50%",
+    },
+    animate: {
+      scaleX: 1,
+      opacity: 1,
+      transformOrigin: "0% 50%",
+      scale: booping ? [0.95, 1.05, 1] : 1,
+    },
+    transition: booping ? boopTransition : regularTransition,
+  };
+}
+
 function CrossLine({ rotate }: { rotate: number }) {
   return (
     <CrossLineWrapper
@@ -29,7 +46,8 @@ function CrossLine({ rotate }: { rotate: number }) {
 }
 
 function IterableItem({ iterableItem, onChange }: Props) {
-  const { id, value, animateEntry, crossedOut, boop } = iterableItem;
+  const { id, value, animateEntry, crossedOut, boop, overlayDuplicate } =
+    iterableItem;
   const [booping, setBooping] = React.useState(!!boop);
 
   React.useEffect(() => {
@@ -40,34 +58,33 @@ function IterableItem({ iterableItem, onChange }: Props) {
   }, [boop]);
 
   return (
-    <Wrapper
-      data-key={id}
-      layoutId={id}
-      initial={{
-        scaleX: animateEntry ? 0 : 1,
-        opacity: animateEntry ? 0 : 1,
-        transformOrigin: "0% 50%",
-      }}
-      animate={{
-        scaleX: 1,
-        opacity: 1,
-        transformOrigin: "0% 50%",
-        scale: booping ? [0.95, 1.05, 1] : 1,
-      }}
-      transition={booping ? boopTransition : regularTransition}
-    >
-      <Input type="number" max={99} value={value} onChange={onChange} />
-      {crossedOut && (
-        <>
-          <CrossLine rotate={45} />
-          <CrossLine rotate={-45} />
-        </>
+    <Wrapper>
+      <UnderlayItem layoutId={id} {...animations(animateEntry, booping)}>
+        <Input type="number" max={99} value={value} onChange={onChange} />
+        {crossedOut && (
+          <>
+            <CrossLine rotate={45} />
+            <CrossLine rotate={-45} />
+          </>
+        )}
+      </UnderlayItem>
+      {overlayDuplicate && (
+        <OverlayItem
+          layoutId={id + "-out"}
+          {...animations(animateEntry, booping)}
+        >
+          <Input type="number" max={99} value={value} onChange={onChange} />
+        </OverlayItem>
       )}
     </Wrapper>
   );
 }
 
 const Wrapper = styled(motion.div)`
+  position: relative;
+`;
+
+const UnderlayItem = styled(motion.div)`
   width: 48px;
   aspect-ratio: 1;
   text-align: center;
@@ -76,6 +93,12 @@ const Wrapper = styled(motion.div)`
   background: transparent;
 
   position: relative;
+`;
+
+const OverlayItem = styled(UnderlayItem)`
+  position: absolute;
+  top: 0;
+  left: 0;
 `;
 
 const Input = styled(motion.input)`
