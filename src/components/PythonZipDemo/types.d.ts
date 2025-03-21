@@ -12,3 +12,5 @@ export type IterableObject = {
   items: IterableItemObject[];
   exiting: boolean;
 };
+
+export type AnimationStatus = "editing" | "playing" | "viewing" | "paused";

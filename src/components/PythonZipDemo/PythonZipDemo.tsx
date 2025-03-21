@@ -1,17 +1,19 @@
 "use client";
 
 import * as React from "react";
-import styled from "styled-components";
-import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
+import AnimationStepController from "./AnimationStepController";
 import useIterablesData from "./useIterablesData";
+import { produce } from "immer";
+import { AnimationStatus } from "./types";
+import styled from "styled-components";
+import { AnimatePresence, motion } from "framer-motion";
 import Button from "../Button";
 import IterableList from "./IterableList";
 import OutputUnderlay from "./OutputUnderlay";
 import { OutputIterables, OutputLogs, OutputPrintedValue } from "./Output";
 import { InputIterablesCode } from "./PythonCode";
-import { produce } from "immer";
+import LayoutManager from "./LayoutManager";
 
-type Status = "editing" | "playing" | "viewing" | "paused";
 function PythonZipDemo() {
   const {
     data: inputIterables,
@@ -23,20 +25,11 @@ function PythonZipDemo() {
     removeItem,
     updateItem,
   } = useIterablesData(true);
-
   const [animationStep, setAnimationStep] = React.useState(0);
-  const [status, setStatus] = React.useState<Status>("editing");
+  const [status, setStatus] = React.useState<AnimationStatus>("editing");
 
-  React.useEffect(() => {
-    if (status === "playing") {
-      const timeoutIt = setTimeout(nextStep, 1250);
-      return () => clearTimeout(timeoutIt);
-    }
-  }, [status, animationStep]);
-
-  function runAnimation() {
-    setAnimationStep(0);
-    setStatus("playing");
+  function maxAnimationSteps() {
+    return shortestIterableLength * inputIterables.length + 2;
   }
 
   function reset() {
@@ -44,26 +37,16 @@ function PythonZipDemo() {
     setAnimationStep(0);
   }
 
-  function nextStep() {
-    if (animationStep < shortestIterableLength * inputIterables.length + 2) {
-      setAnimationStep((prev) => prev + 1);
-    } else {
-      setStatus("viewing");
-    }
-  }
-
-  const showIterableControls = status === "editing";
   const isPlaying = status === "playing";
-  const isPaused = status === "paused";
   const isEditing = status === "editing";
   const isViewing = status === "viewing";
 
-  const highlightShortestIterable = animationStep == 1;
   const highlightIgnoredItems = animationStep > 1;
+  const highlightShortestIterable = animationStep == 1;
   const renderOutputUnderlay = animationStep > 1;
+  const showIterableControls = isEditing;
 
   let ignoredElementsExist = false;
-
   // Mark with boop and cross out
   const markedInputIterables = produce(inputIterables, (draft) => {
     draft.forEach((iterable, iterableIndex) =>
@@ -86,162 +69,113 @@ function PythonZipDemo() {
     );
   });
 
-  const ResetButton = (
-    <Button variant="secondary" size="regular" onClick={reset}>
-      Reset
-    </Button>
+  const inputBoard = (
+    <InputBoard>
+      <InputOverlayWrapper>
+        <OutputUnderlayWrapper>
+          {renderOutputUnderlay && (
+            <OutputUnderlay
+              inputIterables={markedInputIterables}
+              animationStep={animationStep}
+            />
+          )}
+          <CoverBlanket />
+        </OutputUnderlayWrapper>
+        <IterableList
+          key={"input"}
+          iterables={markedInputIterables}
+          addItem={addItem}
+          removeItem={removeItem}
+          updateItem={updateItem}
+          allowMutation={isEditing}
+          highlightIndex={
+            highlightShortestIterable ? shortestIterableIndex : undefined
+          }
+          onEdit={reset}
+        />
+      </InputOverlayWrapper>
+
+      <AnimatePresence>
+        {showIterableControls && (
+          <IterableControls
+            layout={true}
+            exit={{ opacity: 0 }}
+            key={"controls"}
+          >
+            <Button
+              variant="secondary"
+              size="regular"
+              onClick={() => {
+                reset();
+                addIterable();
+              }}
+            >
+              Add
+            </Button>
+            <Button
+              variant="secondary"
+              size="regular"
+              onClick={() => {
+                reset();
+                removeIterable();
+              }}
+            >
+              Remove
+            </Button>
+          </IterableControls>
+        )}
+      </AnimatePresence>
+
+      {!isEditing && (
+        <OutputLogs
+          animationStep={animationStep}
+          ignoredElementsExist={ignoredElementsExist}
+          minIterableLength={shortestIterableLength}
+        />
+      )}
+    </InputBoard>
   );
 
-  const PauseButton = (
-    <Button
-      variant="secondary"
-      size="regular"
-      onClick={() => setStatus("paused")}
-    >
-      Pause
-    </Button>
+  const outputBoard = (
+    <OutputBoard>
+      {!isEditing && (
+        <OutputIterables
+          inputIterables={inputIterables}
+          animationStep={animationStep}
+        />
+      )}
+    </OutputBoard>
   );
-  const ResumeButton = (
-    <Button
-      variant="secondary"
-      size="regular"
-      onClick={() => setStatus("playing")}
-    >
-      Resume
-    </Button>
+
+  const inputCode = <InputIterablesCode inputIterables={inputIterables} />;
+
+  const outputPrintedValue = isViewing && (
+    <OutputPrintedValue
+      inputIterables={inputIterables}
+      animationStep={animationStep}
+    />
   );
 
   return (
-    <LayoutGroup>
-      <Wrapper>
-        <InputDrawingBoard>
-          <InputOverlayWrapper>
-            <OutputUnderlayWrapper>
-              {renderOutputUnderlay && (
-                <OutputUnderlay
-                  inputIterables={markedInputIterables}
-                  animationStep={animationStep}
-                />
-              )}
-              <CoverBlanket />
-            </OutputUnderlayWrapper>
-            <IterableList
-              key={"input"}
-              iterables={markedInputIterables}
-              addItem={addItem}
-              removeItem={removeItem}
-              updateItem={updateItem}
-              allowMutation={isEditing}
-              highlightIndex={
-                highlightShortestIterable ? shortestIterableIndex : undefined
-              }
-              onEdit={reset}
-            />
-          </InputOverlayWrapper>
-
-          <AnimatePresence>
-            {showIterableControls && (
-              <IterableControls
-                layout={true}
-                exit={{ opacity: 0 }}
-                key={"controls"}
-              >
-                <Button
-                  variant="secondary"
-                  size="regular"
-                  onClick={() => {
-                    reset();
-                    addIterable();
-                  }}
-                >
-                  Add
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="regular"
-                  onClick={() => {
-                    reset();
-                    removeIterable();
-                  }}
-                >
-                  Remove
-                </Button>
-              </IterableControls>
-            )}
-          </AnimatePresence>
-          {!isEditing && (
-            <OutputLogs
-              animationStep={animationStep}
-              ignoredElementsExist={ignoredElementsExist}
-              minIterableLength={shortestIterableLength}
-            />
-          )}
-        </InputDrawingBoard>
-        <PythonCodeWrapper>
-          <InputIterablesCode inputIterables={inputIterables} />
-        </PythonCodeWrapper>
-        <OutputDrawingBoard>
-          {!isEditing && (
-            <OutputIterables
-              inputIterables={inputIterables}
-              animationStep={animationStep}
-            />
-          )}
-        </OutputDrawingBoard>
-
-        <AnimationControls>
-          {(isPlaying || isPaused) && (
-            <>
-              {ResetButton}
-              {isPlaying && PauseButton}
-              {isPaused && ResumeButton}
-            </>
-          )}
-          {isEditing && (
-            <Button variant="primary" size="regular" onClick={runAnimation}>
-              Play Animation
-            </Button>
-          )}
-          {isViewing && ResetButton}
-        </AnimationControls>
-
-        {isViewing && (
-          <OutputPrintedValue
-            inputIterables={inputIterables}
-            animationStep={animationStep}
-          />
-        )}
-      </Wrapper>
-    </LayoutGroup>
+    <LayoutManager
+      inputBoard={inputBoard}
+      outputBoard={outputBoard}
+      inputCode={inputCode}
+      outputPrintedValue={outputPrintedValue}
+      animationControls={
+        <AnimationStepController
+          maxAnimationSteps={maxAnimationSteps()}
+          onAnimationStepChange={(step) => setAnimationStep(step)}
+          animationStep={animationStep}
+          status={status}
+          setStatus={setStatus}
+        />
+      }
+    />
   );
 }
 
-const Wrapper = styled.div`
-  --gap: 8px;
-  display: grid;
-  grid-template-columns: 1.25fr 1fr;
-  grid-template-rows: 240px auto auto auto;
-  grid-template-areas:
-    "input-board output-board"
-    "controls output-board"
-    "code printed-value";
-
-  gap: 24px;
-  padding: 16px;
-  min-height: 520px;
-  max-width: 620px;
-  margin-inline-start: auto;
-  margin-inline-end: auto;
-
-  /* Ensure cover blanket is not visible */
-  background-color: var(--color-backdrop);
-  padding: 48px;
-
-  border-radius: 8px;
-`;
-
-const InputDrawingBoard = styled.div`
-  grid-area: input-board;
+const InputBoard = styled.div`
   display: flex;
   flex-direction: column;
   gap: var(--gap);
@@ -251,21 +185,6 @@ const InputDrawingBoard = styled.div`
 
 const InputOverlayWrapper = styled.div`
   position: relative;
-`;
-
-const AnimationControls = styled.div`
-  display: flex;
-  gap: var(--gap);
-  justify-content: center;
-  grid-area: controls;
-`;
-
-const PythonCodeWrapper = styled.div`
-  grid-area: code;
-`;
-
-const OutputDrawingBoard = styled.div`
-  grid-area: output-board;
 `;
 
 const OutputUnderlayWrapper = styled.div`
@@ -287,5 +206,7 @@ const IterableControls = styled(motion.div)`
   align-self: center;
   position: relative;
 `;
+
+const OutputBoard = styled.div``;
 
 export default PythonZipDemo;
