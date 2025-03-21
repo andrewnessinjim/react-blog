@@ -114,7 +114,7 @@ function PythonZipDemo() {
   return (
     <LayoutGroup>
       <Wrapper>
-        <DrawingBoard>
+        <InputDrawingBoard>
           <InputOverlayWrapper>
             <OutputUnderlayWrapper>
               {renderOutputUnderlay && (
@@ -176,18 +176,18 @@ function PythonZipDemo() {
               minIterableLength={shortestIterableLength}
             />
           )}
-        </DrawingBoard>
+        </InputDrawingBoard>
         <PythonCodeWrapper>
           <InputIterablesCode inputIterables={inputIterables} />
         </PythonCodeWrapper>
-        <OutputIterablesWrapper>
+        <OutputDrawingBoard>
           {!isEditing && (
             <OutputIterables
               inputIterables={inputIterables}
               animationStep={animationStep}
             />
           )}
-        </OutputIterablesWrapper>
+        </OutputDrawingBoard>
 
         <AnimationControls>
           {(isPlaying || isPaused) && (
@@ -222,7 +222,7 @@ const Wrapper = styled.div`
   grid-template-columns: 1.25fr 1fr;
   grid-template-rows: 240px auto auto auto;
   grid-template-areas:
-    "drawing-board output-board"
+    "input-board output-board"
     "controls output-board"
     "code printed-value";
 
@@ -240,8 +240,8 @@ const Wrapper = styled.div`
   border-radius: 8px;
 `;
 
-const DrawingBoard = styled.div`
-  grid-area: drawing-board;
+const InputDrawingBoard = styled.div`
+  grid-area: input-board;
   display: flex;
   flex-direction: column;
   gap: var(--gap);
@@ -264,7 +264,7 @@ const PythonCodeWrapper = styled.div`
   grid-area: code;
 `;
 
-const OutputIterablesWrapper = styled.div`
+const OutputDrawingBoard = styled.div`
   grid-area: output-board;
 `;
 
