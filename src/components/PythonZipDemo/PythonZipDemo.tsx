@@ -240,6 +240,12 @@ const Wrapper = styled.div`
   max-width: 620px;
   margin-inline-start: auto;
   margin-inline-end: auto;
+
+  /* Ensure cover blanket is not visible */
+  background-color: var(--color-backdrop);
+  padding: 64px;
+  
+  border-radius: 8px;
 `;
 
 const DrawingBoard = styled.div`
