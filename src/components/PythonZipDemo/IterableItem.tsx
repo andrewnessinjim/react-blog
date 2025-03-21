@@ -15,7 +15,7 @@ const boopTransition = {
 
 const regularTransition = {
   type: "spring",
-  bounce: 0.5,
+  bounce: 0,
 };
 
 function CrossLine({ rotate }: { rotate: number }) {

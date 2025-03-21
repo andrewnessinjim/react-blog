@@ -52,7 +52,6 @@ function PythonZipDemo() {
     }
   }
 
-
   const showIterableControls = status === "editing";
   const isPlaying = status === "playing";
   const isPaused = status === "paused";
@@ -61,6 +60,8 @@ function PythonZipDemo() {
 
   const highlightShortestIterable = animationStep == 1;
   const highlightIgnoredItems = animationStep > 1;
+  const renderOutputUnderlay = animationStep > 1;
+
   let ignoredElementsExist = false;
 
   // Mark with boop and cross out
@@ -116,10 +117,12 @@ function PythonZipDemo() {
         <DrawingBoard>
           <InputOverlayWrapper>
             <OutputUnderlayWrapper>
-              <OutputUnderlay
-                inputIterables={inputIterables}
-                animationStep={animationStep}
-              />
+              {renderOutputUnderlay && (
+                <OutputUnderlay
+                  inputIterables={markedInputIterables}
+                  animationStep={animationStep}
+                />
+              )}
               <CoverBlanket />
             </OutputUnderlayWrapper>
             <IterableList
@@ -232,7 +235,7 @@ const Wrapper = styled.div`
 
   /* Ensure cover blanket is not visible */
   background-color: var(--color-backdrop);
-  padding: 72px;
+  padding: 48px;
 
   border-radius: 8px;
 `;
@@ -272,14 +275,9 @@ const OutputUnderlayWrapper = styled.div`
 `;
 
 const CoverBlanket = styled.div`
+  /* Ensure underlay animations are not visible  */
   position: absolute;
-  
-  /* Enough size to cover the OutputUnderlay animations */
-  right: -15%;
-  left: -45%;
-  top: -25%;
-  bottom: -35%;
-
+  inset: -8px;
   background-color: var(--color-backdrop);
 `;
 
