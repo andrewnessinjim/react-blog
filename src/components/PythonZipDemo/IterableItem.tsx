@@ -68,7 +68,7 @@ function IterableItem({ iterableItem, onChange }: Props) {
         {crossedOut && <Cross />}
       </UnderlayItem>
       {overlayDuplicate && (
-        <OverlayItem layoutId={id + "-out"} {...animations(animateEntry, boop)}>
+        <OverlayItem layoutId={id + "-out"} {...animations(false, boop)}>
           <Input type="number" max={99} value={value} onChange={onChange} />
         </OverlayItem>
       )}
