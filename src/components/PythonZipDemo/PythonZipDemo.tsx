@@ -84,20 +84,18 @@ function PythonZipDemo() {
 
   const inputBoard = (
     <InputBoard>
-      <InputOverlayWrapper>
-        <IterableList
-          key={"input"}
-          iterables={markedInputIterables}
-          addItem={addItem}
-          removeItem={removeItem}
-          updateItem={updateItem}
-          allowMutation={isEditing}
-          highlightIndex={
-            highlightShortestIterable ? shortestIterableIndex : undefined
-          }
-          onEdit={reset}
-        />
-      </InputOverlayWrapper>
+      <IterableList
+        key={"input"}
+        iterables={markedInputIterables}
+        addItem={addItem}
+        removeItem={removeItem}
+        updateItem={updateItem}
+        allowMutation={isEditing}
+        highlightIndex={
+          highlightShortestIterable ? shortestIterableIndex : undefined
+        }
+        onEdit={reset}
+      />
 
       <AnimatePresence>
         {showIterableControls && (
@@ -185,10 +183,6 @@ const InputBoard = styled.div`
   gap: var(--gap);
   flex: 1.5;
   width: 272px;
-`;
-
-const InputOverlayWrapper = styled.div`
-  position: relative;
 `;
 
 const IterableControls = styled(motion.div)`
