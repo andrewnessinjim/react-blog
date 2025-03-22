@@ -57,6 +57,7 @@ function computeOutputIterables(
         id: inputIterables[in_row].items[in_col].id + "-out",
         value: inputIterables[in_row].items[in_col].value,
         animateEntry: false,
+        status: "transitioned",
       };
     });
   }

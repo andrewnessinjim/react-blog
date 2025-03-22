@@ -18,7 +18,7 @@ const regularTransition = {
   bounce: 0,
 };
 
-function animations(animateEntry: boolean, booping: boolean) {
+function animations(animateEntry: boolean, boop: boolean) {
   return {
     initial: {
       scaleX: animateEntry ? 0 : 1,
@@ -29,9 +29,9 @@ function animations(animateEntry: boolean, booping: boolean) {
       scaleX: 1,
       opacity: 1,
       transformOrigin: "0% 50%",
-      scale: booping ? [0.95, 1.05, 1] : 1,
+      scale: boop ? [0.95, 1.05, 1] : 1,
     },
-    transition: booping ? boopTransition : regularTransition,
+    transition: boop ? boopTransition : regularTransition,
   };
 }
 
@@ -45,34 +45,30 @@ function CrossLine({ rotate }: { rotate: number }) {
   );
 }
 
-function IterableItem({ iterableItem, onChange }: Props) {
-  const { id, value, animateEntry, crossedOut, boop, overlayDuplicate } =
-    iterableItem;
-  const [booping, setBooping] = React.useState(!!boop);
+function Cross() {
+  return (
+    <>
+      <CrossLine rotate={45} />
+      <CrossLine rotate={-45} />
+    </>
+  );
+}
 
-  React.useEffect(() => {
-    if (boop) {
-      setBooping(true);
-      setTimeout(() => setBooping(false), 500);
-    }
-  }, [boop]);
+function IterableItem({ iterableItem, onChange }: Props) {
+  const { id, value, animateEntry, status } = iterableItem;
+
+  const crossedOut = status === "ignored";
+  const overlayDuplicate = status === "pending";
+  const boop = status === "transitioning";
 
   return (
     <Wrapper>
-      <UnderlayItem layoutId={id} {...animations(animateEntry, booping)}>
+      <UnderlayItem layoutId={id} {...animations(animateEntry, boop)}>
         <Input type="number" max={99} value={value} onChange={onChange} />
-        {crossedOut && (
-          <>
-            <CrossLine rotate={45} />
-            <CrossLine rotate={-45} />
-          </>
-        )}
+        {crossedOut && <Cross />}
       </UnderlayItem>
       {overlayDuplicate && (
-        <OverlayItem
-          layoutId={id + "-out"}
-          {...animations(animateEntry, booping)}
-        >
+        <OverlayItem layoutId={id + "-out"} {...animations(animateEntry, boop)}>
           <Input type="number" max={99} value={value} onChange={onChange} />
         </OverlayItem>
       )}

@@ -1,7 +1,6 @@
 import { produce } from "immer";
 import React from "react";
 import { IterableObject } from "./types";
-import { over } from "lodash-es";
 
 const MIN_ITERABLES = 2;
 const MAX_ITERABLES = 3;
@@ -30,6 +29,7 @@ function reducer(state: IterableObject[], action: Action) {
             value: "0",
             id: action.payload.id,
             animateEntry: true,
+            status: "pending",
           });
         }
         break;
@@ -56,9 +56,24 @@ function reducer(state: IterableObject[], action: Action) {
             animateEntry: true,
             exiting: false,
             items: [
-              { value: "0", id: crypto.randomUUID(), animateEntry: false },
-              { value: "0", id: crypto.randomUUID(), animateEntry: false },
-              { value: "0", id: crypto.randomUUID(), animateEntry: false },
+              {
+                value: "0",
+                id: crypto.randomUUID(),
+                animateEntry: false,
+                status: "pending",
+              },
+              {
+                value: "0",
+                id: crypto.randomUUID(),
+                animateEntry: false,
+                status: "pending",
+              },
+              {
+                value: "0",
+                id: crypto.randomUUID(),
+                animateEntry: false,
+                status: "pending",
+              },
             ],
           });
         }
@@ -80,15 +95,30 @@ function reducer(state: IterableObject[], action: Action) {
   });
 }
 
-function initRandomIterable() {
+function initRandomIterable(): IterableObject {
   return {
     id: crypto.randomUUID(),
     animateEntry: false,
     exiting: false,
     items: [
-      { id: crypto.randomUUID(), value: "1", animateEntry: false },
-      { id: crypto.randomUUID(), value: "2", animateEntry: false },
-      { id: crypto.randomUUID(), value: "3", animateEntry: false },
+      {
+        id: crypto.randomUUID(),
+        value: "1",
+        animateEntry: false,
+        status: "pending",
+      },
+      {
+        id: crypto.randomUUID(),
+        value: "2",
+        animateEntry: false,
+        status: "pending",
+      },
+      {
+        id: crypto.randomUUID(),
+        value: "3",
+        animateEntry: false,
+        status: "pending",
+      },
     ],
   };
 }

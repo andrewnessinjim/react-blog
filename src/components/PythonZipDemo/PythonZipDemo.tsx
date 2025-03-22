@@ -49,7 +49,7 @@ function PythonZipDemo() {
   const markedInputIterables = produce(inputIterables, (draft) => {
     draft.forEach((iterable, iterableIndex) =>
       iterable.items.forEach((item, itemIndex) => {
-        function isMoved(itemIndex: number, iterableIndex: number) {
+        function isTransitioned(itemIndex: number, iterableIndex: number) {
           return (
             animationStep - 3 >=
             itemIndex * inputIterables.length + iterableIndex
@@ -58,20 +58,26 @@ function PythonZipDemo() {
 
         const shouldIgnore =
           highlightIgnoredItems && itemIndex >= shortestIterableLength;
-        item.crossedOut = shouldIgnore;
 
-        if (
-          animationStep - 3 ==
-            itemIndex * inputIterables.length + iterableIndex &&
-          isPlaying
-        ) {
-          // Item being moved now
-          item.boop = true;
+        if (shouldIgnore) {
+          item.status = "ignored";
+          ignoredElementsExist = true;
+          return;
         }
 
-        item.overlayDuplicate = !isMoved(itemIndex, iterableIndex) && isPlaying;
+        // Item being transitioned now
+        const itemTransitioning =
+          animationStep - 3 ==
+            itemIndex * inputIterables.length + iterableIndex && isPlaying;
+        if (itemTransitioning) {
+          item.status = "transitioning";
+          return;
+        }
 
-        if (shouldIgnore) ignoredElementsExist = true;
+        item.status =
+          !isTransitioned(itemIndex, iterableIndex) && isPlaying
+            ? "pending"
+            : "transitioned";
       })
     );
   });
