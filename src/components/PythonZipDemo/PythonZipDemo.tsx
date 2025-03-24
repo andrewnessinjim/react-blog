@@ -2,8 +2,6 @@
 
 import * as React from "react";
 import AnimationStepController from "./AnimationStepController";
-import useIterablesData from "./useIterablesData";
-import { produce } from "immer";
 import { DemoStatus } from "./types";
 import styled from "styled-components";
 import { AnimatePresence, motion } from "framer-motion";
@@ -13,25 +11,23 @@ import { OutputIterables, OutputLogs, OutputPrintedValue } from "./Output";
 import { InputIterablesCode } from "./PythonCode";
 import LayoutManager from "./LayoutManager";
 import IterableItemPosition from "./IterableItemPosition";
+import useInputAndOutputIterables from "./useInputAndOutputIterables";
 
 const INIT_CURRENT_ITEM_POSITION = new IterableItemPosition(-1, 0);
 function PythonZipDemo() {
   const {
-    data: inputIterables,
-    setData: setInputIterables,
+    inputIterables,
+    outputIterables,
+    addInputIterable,
+    removeInputIterable,
+    addInputItem,
+    removeInputItem,
+    updateInputItem,
+    resetInputAndOutput,
+    moveFromInputToOutput,
     shortestIterableIndex,
     shortestIterableLength,
-    addIterable,
-    removeIterable,
-    addItem,
-    removeItem,
-    updateItem,
-  } = useIterablesData(true);
-  const {
-    data: outputIterables,
-    upsert: upsertOutput,
-    setData: setOutputIterables,
-  } = useIterablesData(false);
+  } = useInputAndOutputIterables();
 
   const [status, setStatus] = React.useState<DemoStatus>("editing");
   const [currentItemPosition, setCurrentItemPosition] = React.useState(
@@ -57,8 +53,7 @@ function PythonZipDemo() {
     const nextItemPos = INIT_CURRENT_ITEM_POSITION;
     setCurrentItemPosition(nextItemPos);
 
-    updateItemStatuses(nextItemPos, nextStatus);
-    setOutputIterables([]);
+    resetInputAndOutput();
   }
 
   const isEditing = status === "editing";
@@ -67,80 +62,9 @@ function PythonZipDemo() {
   const highlightShortestIterable = status === "mark_shortest_iterable";
   const showIterableControls = isEditing;
 
-  let ignoredElementsExist = false;
-  for (let iterable of inputIterables) {
-    for (let item of iterable.items) {
-      if (item.status == "ignored") {
-        ignoredElementsExist = true;
-        break;
-      }
-    }
-  }
-
-  function updateItemStatuses(
-    nextItemPosition: IterableItemPosition,
-    nextStatus: DemoStatus
-  ) {
-    const nextInputIterables = produce(inputIterables, (draft) => {
-      draft.forEach((iterable, iterableIndex) =>
-        iterable.items.forEach((item, itemIndex) => {
-          if (nextStatus === "editing") {
-            item.status = "not_started";
-            return;
-          }
-
-          if (
-            itemIndex >= shortestIterableLength &&
-            (nextStatus === "mark_ignored_items" ||
-              nextStatus === "moving" ||
-              nextStatus === "viewing")
-          ) {
-            item.status = "ignored";
-            return;
-          }
-
-          const itemPosition = new IterableItemPosition(
-            iterableIndex,
-            itemIndex
-          );
-          if (nextItemPosition.isEqual(itemPosition)) {
-            item.status = "transitioning";
-          } else if (
-            itemPosition.isBefore(nextItemPosition) &&
-            !nextItemPosition.isEqual(INIT_CURRENT_ITEM_POSITION) &&
-            !isEditing
-          ) {
-            item.status = "transitioned";
-            return;
-          } else {
-            item.status = "pending";
-          }
-        })
-      );
-    });
-    setInputIterables(nextInputIterables);
-
-    for (
-      let iterableIndex = 0;
-      iterableIndex < nextInputIterables.length;
-      iterableIndex++
-    ) {
-      for (let itemIndex = 0; itemIndex < shortestIterableLength; itemIndex++) {
-        const iterableItem = nextInputIterables[iterableIndex].items[itemIndex];
-        if (
-          iterableItem.status === "transitioned" ||
-          iterableItem.status === "transitioning"
-        ) {
-          upsertOutput(itemIndex, iterableIndex, {
-            ...iterableItem,
-            id: iterableItem.id + "-out",
-            status: "transitioned",
-            animateEntry: false,
-          });
-        }
-      }
-    }
-  }
+  const ignoredElementsExist = inputIterables.some((iterable) =>
+    iterable.items.some((item) => item.status === "ignored")
+  );
 
   function nextDemoStep() {
     const statusFlow: Record<DemoStatus, DemoStatus> = {
@@ -160,7 +84,12 @@ function PythonZipDemo() {
 
     if (nextItemPos) {
       setCurrentItemPosition(nextItemPos);
-      updateItemStatuses(nextItemPos, nextStatus);
+      const shouldMarkIgnoredItems =
+        nextStatus === "mark_ignored_items" ||
+        nextStatus === "moving" ||
+        nextStatus === "viewing";
+
+      moveFromInputToOutput(nextItemPos, shouldMarkIgnoredItems);
     }
   }
 
@@ -169,9 +98,9 @@ function PythonZipDemo() {
       <IterableList
         key={"input"}
         iterables={inputIterables}
-        addItem={addItem}
-        removeItem={removeItem}
-        updateItem={updateItem}
+        addItem={addInputItem}
+        removeItem={removeInputItem}
+        updateItem={updateInputItem}
         allowMutation={isEditing}
         highlightIndex={
           highlightShortestIterable ? shortestIterableIndex : undefined
@@ -191,7 +120,7 @@ function PythonZipDemo() {
               size="regular"
               onClick={() => {
                 reset();
-                addIterable();
+                addInputIterable();
               }}
             >
               Add
@@ -201,7 +130,7 @@ function PythonZipDemo() {
               size="regular"
               onClick={() => {
                 reset();
-                removeIterable();
+                removeInputIterable();
               }}
             >
               Remove
@@ -229,6 +158,8 @@ function PythonZipDemo() {
   const outputPrintedValue = isViewing && (
     <OutputPrintedValue outputIterables={outputIterables} />
   );
+
+  console.log(inputIterables, outputIterables);
 
   return (
     <LayoutManager
