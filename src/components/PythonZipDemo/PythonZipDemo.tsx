@@ -55,17 +55,6 @@ function PythonZipDemo() {
     setOutputIterables([]);
   }
 
-  function nextItemPosition(animationStep: number) {
-    if (animationStep > 2) {
-      return currentItemPosition.nextColWise(
-        inputIterables.length,
-        shortestIterableLength
-      );
-    } else {
-      return currentItemPosition;
-    }
-  }
-
   const isEditing = status === "editing";
   const isViewing = status === "viewing";
 
@@ -99,7 +88,10 @@ function PythonZipDemo() {
             return;
           }
 
-          const itemPosition = new IterableItemPosition(iterableIndex, itemIndex);
+          const itemPosition = new IterableItemPosition(
+            iterableIndex,
+            itemIndex
+          );
           if (nextItemPosition.isEqual(itemPosition)) {
             item.status = "transitioning";
           } else if (
@@ -135,6 +127,27 @@ function PythonZipDemo() {
           });
         }
       }
+    }
+  }
+
+  function updateAnimationStepStatuses(nextStep: number) {
+    function nextItemPosition(animationStep: number) {
+      if (animationStep > 2) {
+        return currentItemPosition.nextColWise(
+          inputIterables.length,
+          shortestIterableLength
+        );
+      } else {
+        return currentItemPosition;
+      }
+    }
+
+    setAnimationStep(nextStep);
+
+    const nextItemPos = nextItemPosition(nextStep);
+    if (nextItemPos) {
+      setCurrentItemPosition(nextItemPos);
+      updateItemStatuses(nextItemPos, nextStep);
     }
   }
 
@@ -216,15 +229,7 @@ function PythonZipDemo() {
         <AnimationStepController
           maxAnimationSteps={maxAnimationSteps()}
           onReset={reset}
-          onAnimationStepChange={(step) => {
-            setAnimationStep(step);
-
-            const nextItemPos = nextItemPosition(step);
-            if (nextItemPos) {
-              setCurrentItemPosition(nextItemPos);
-              updateItemStatuses(nextItemPos, step);
-            }
-          }}
+          onAnimationStepChange={updateAnimationStepStatuses}
           animationStep={animationStep}
           status={status}
           setStatus={setStatus}

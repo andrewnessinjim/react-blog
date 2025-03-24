@@ -21,26 +21,32 @@ function AnimationStepController({
   animationStep,
   status,
   setStatus,
-  onReset
+  onReset,
 }: Props) {
   React.useEffect(() => {
+    function nextStep() {
+      if (animationStep < maxAnimationSteps) {
+        onAnimationStepChange(animationStep + 1);
+      } else {
+        setStatus("viewing");
+      }
+    }
+
     if (status === "playing") {
       const timeoutId = setTimeout(nextStep, 1250);
       return () => clearTimeout(timeoutId);
     }
-  }, [status, animationStep]);
+  }, [
+    status,
+    animationStep,
+    maxAnimationSteps,
+    onAnimationStepChange,
+    setStatus,
+  ]);
 
   function runAnimation() {
     onAnimationStepChange(0);
     setStatus("playing");
-  }
-
-  function nextStep() {
-    if (animationStep < maxAnimationSteps) {
-      onAnimationStepChange(animationStep + 1);
-    } else {
-      setStatus("viewing");
-    }
   }
 
   const isPlaying = status === "playing";
