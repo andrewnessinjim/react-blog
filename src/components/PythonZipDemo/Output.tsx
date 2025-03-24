@@ -33,6 +33,7 @@ export function OutputLogs({
 }: OutputLogsProps) {
   const showShortestIterable = animationStep > 0;
   const showIgnoredElementsLabel = ignoredElementsExist && animationStep > 1;
+  const showNoIgnoredElementsLabel = !ignoredElementsExist && animationStep > 1;
 
   return (
     <>
@@ -44,6 +45,9 @@ export function OutputLogs({
       )}
       {showIgnoredElementsLabel && (
         <LogLabel {...labelAnimation}>Items ignored: ❌</LogLabel>
+      )}
+      {showNoIgnoredElementsLabel && (
+        <LogLabel {...labelAnimation}>No items ignored: ✅</LogLabel>
       )}
     </>
   );

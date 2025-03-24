@@ -4,7 +4,6 @@ import {
   a11yDark,
   a11yLight,
 } from "react-syntax-highlighter/dist/esm/styles/hljs";
-import Button from "../Button";
 import { range } from "lodash-es";
 import { ThemeContext } from "../ThemeProvider";
 import React from "react";
