@@ -1,8 +1,8 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import styled from "styled-components";
 import Iterable from "./Iterable";
 import { IterableObject } from "./types";
-import { hi } from "date-fns/locale";
+import Button from "../Button";
 
 interface Props {
   addItem?: (paramIndex: number) => void;
@@ -12,6 +12,8 @@ interface Props {
   allowMutation?: boolean;
   highlightIndex?: number;
   onEdit?: () => void;
+  addInputIterable?: () => void;
+  removeInputIterable?: () => void;
 }
 
 function IterableList({
@@ -22,6 +24,8 @@ function IterableList({
   allowMutation = true,
   highlightIndex,
   onEdit,
+  addInputIterable,
+  removeInputIterable,
 }: Props) {
   return (
     <Wrapper>
@@ -40,6 +44,34 @@ function IterableList({
           />
         );
       })}
+      <AnimatePresence>
+        {allowMutation && (
+          <IterableControls
+            layout={true}
+            exit={{ opacity: 0 }}
+            key={"controls"}
+          >
+            <Button
+              variant="secondary"
+              size="regular"
+              onClick={() => {
+                addInputIterable && addInputIterable();
+              }}
+            >
+              Add
+            </Button>
+            <Button
+              variant="secondary"
+              size="regular"
+              onClick={() => {
+                removeInputIterable && removeInputIterable();
+              }}
+            >
+              Remove
+            </Button>
+          </IterableControls>
+        )}
+      </AnimatePresence>
     </Wrapper>
   );
 }
@@ -48,6 +80,13 @@ const Wrapper = styled(motion.div)`
   display: flex;
   flex-direction: column;
   gap: var(--gap);
+  position: relative;
+`;
+
+const IterableControls = styled(motion.div)`
+  display: flex;
+  gap: var(--gap);
+  align-self: center;
   position: relative;
 `;
 

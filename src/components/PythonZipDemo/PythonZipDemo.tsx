@@ -4,8 +4,6 @@ import * as React from "react";
 import AnimationStepController from "./AnimationStepController";
 import { DemoStatus } from "./types";
 import styled from "styled-components";
-import { AnimatePresence, motion } from "framer-motion";
-import Button from "../Button";
 import IterableList from "./IterableList";
 import { OutputIterables, OutputLogs, OutputPrintedValue } from "./Output";
 import { InputIterablesCode } from "./PythonCode";
@@ -60,7 +58,6 @@ function PythonZipDemo() {
   const isViewing = status === "viewing";
 
   const highlightShortestIterable = status === "mark_shortest_iterable";
-  const showIterableControls = isEditing;
 
   const ignoredElementsExist = inputIterables.some((iterable) =>
     iterable.items.some((item) => item.status === "ignored")
@@ -106,38 +103,9 @@ function PythonZipDemo() {
           highlightShortestIterable ? shortestIterableIndex : undefined
         }
         onEdit={reset}
+        addInputIterable={addInputIterable}
+        removeInputIterable={removeInputIterable}
       />
-
-      <AnimatePresence>
-        {showIterableControls && (
-          <IterableControls
-            layout={true}
-            exit={{ opacity: 0 }}
-            key={"controls"}
-          >
-            <Button
-              variant="secondary"
-              size="regular"
-              onClick={() => {
-                reset();
-                addInputIterable();
-              }}
-            >
-              Add
-            </Button>
-            <Button
-              variant="secondary"
-              size="regular"
-              onClick={() => {
-                reset();
-                removeInputIterable();
-              }}
-            >
-              Remove
-            </Button>
-          </IterableControls>
-        )}
-      </AnimatePresence>
 
       <OutputLogs
         status={status}
@@ -158,8 +126,6 @@ function PythonZipDemo() {
   const outputPrintedValue = isViewing && (
     <OutputPrintedValue outputIterables={outputIterables} />
   );
-
-  console.log(inputIterables, outputIterables);
 
   return (
     <LayoutManager
@@ -184,13 +150,6 @@ const InputBoard = styled.div`
   gap: var(--gap);
   flex: 1.5;
   width: 272px;
-`;
-
-const IterableControls = styled(motion.div)`
-  display: flex;
-  gap: var(--gap);
-  align-self: center;
-  position: relative;
 `;
 
 const OutputBoard = styled.div``;

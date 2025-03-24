@@ -35,9 +35,8 @@ export default function useInputAndOutputIterables() {
 
   function moveFromInputToOutput(
     untilPosition: IterableItemPosition,
-    markIgnoredItems: boolean
+    markIgnoredItems: boolean = false
   ) {
-    console.log("moveFromInputToOutput");
     const nextInputIterables = produce(inputIterables, (draft) => {
       draft.forEach((iterable, iterableIndex) =>
         iterable.items.forEach((item, itemIndex) => {
