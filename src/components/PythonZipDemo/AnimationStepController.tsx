@@ -7,28 +7,18 @@ import Button from "../Button";
 import { AnimationStatus } from "./types";
 
 interface Props {
-  maxAnimationSteps: number;
-  onAnimationStepChange: (step: number) => void;
-  animationStep: number;
-  status: AnimationStatus;
-  setStatus: (status: AnimationStatus) => void;
+  stepsEnded: () => boolean;
+  onNextStep: () => void;
   onReset: () => void;
 }
 
-function AnimationStepController({
-  maxAnimationSteps,
-  onAnimationStepChange,
-  animationStep,
-  status,
-  setStatus,
-  onReset,
-}: Props) {
+function AnimationStepController({ stepsEnded, onNextStep, onReset }: Props) {
+  const [status, setStatus] = React.useState<AnimationStatus>("not_started");
   React.useEffect(() => {
     function nextStep() {
-      if (animationStep < maxAnimationSteps) {
-        onAnimationStepChange(animationStep + 1);
-      } else {
-        setStatus("viewing");
+      onNextStep();
+      if (stepsEnded()) {
+        setStatus("ended");
       }
     }
 
@@ -36,27 +26,34 @@ function AnimationStepController({
       const timeoutId = setTimeout(nextStep, 1250);
       return () => clearTimeout(timeoutId);
     }
-  }, [
-    status,
-    animationStep,
-    maxAnimationSteps,
-    onAnimationStepChange,
-    setStatus,
-  ]);
+  }, [status, stepsEnded, onNextStep]);
 
   function runAnimation() {
-    onAnimationStepChange(0);
+    onNextStep();
     setStatus("playing");
   }
 
   const isPlaying = status === "playing";
   const isPaused = status === "paused";
-  const isEditing = status === "editing";
-  const isViewing = status === "viewing";
+  const notStarted = status === "not_started";
+  const isEnded = status === "ended";
 
   const ResetButton = (
-    <Button variant="secondary" size="regular" onClick={onReset}>
+    <Button
+      variant="secondary"
+      size="regular"
+      onClick={() => {
+        setStatus("not_started");
+        onReset();
+      }}
+    >
       Reset
+    </Button>
+  );
+
+  const PlayButton = (
+    <Button variant="primary" size="regular" onClick={runAnimation}>
+      Play Animation
     </Button>
   );
 
@@ -69,6 +66,7 @@ function AnimationStepController({
       Pause
     </Button>
   );
+
   const ResumeButton = (
     <Button
       variant="secondary"
@@ -81,19 +79,10 @@ function AnimationStepController({
 
   return (
     <Wrapper>
-      {(isPlaying || isPaused) && (
-        <>
-          {ResetButton}
-          {isPlaying && PauseButton}
-          {isPaused && ResumeButton}
-        </>
-      )}
-      {isEditing && (
-        <Button variant="primary" size="regular" onClick={runAnimation}>
-          Play Animation
-        </Button>
-      )}
-      {isViewing && ResetButton}
+      {isPlaying && PauseButton}
+      {isPaused && ResumeButton}
+      {notStarted && PlayButton}
+      {(isEnded || isPlaying || isPaused) && ResetButton}
     </Wrapper>
   );
 }

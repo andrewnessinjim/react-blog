@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import styled from "styled-components";
 import IterableList from "./IterableList";
-import { IterableObject } from "./types";
+import { DemoStatus, IterableObject } from "./types";
 import { OutputPrintedValueCode } from "./PythonCode";
 
 interface OutputProps {
@@ -9,7 +9,7 @@ interface OutputProps {
 }
 
 interface OutputLogsProps {
-  animationStep: number;
+  status: DemoStatus;
   ignoredElementsExist: boolean;
   minIterableLength: number;
 }
@@ -27,13 +27,25 @@ const valueAnimation = {
 };
 
 export function OutputLogs({
-  animationStep,
+  status,
   ignoredElementsExist,
   minIterableLength,
 }: OutputLogsProps) {
-  const showShortestIterable = animationStep > 0;
-  const showIgnoredElementsLabel = ignoredElementsExist && animationStep > 1;
-  const showNoIgnoredElementsLabel = !ignoredElementsExist && animationStep > 1;
+  const showShortestIterable =
+    status === "mark_shortest_iterable" ||
+    status === "mark_ignored_items" ||
+    status === "moving" ||
+    status === "viewing";
+
+  const showIgnoredElementsLabel =
+    status === "mark_ignored_items" ||
+    status === "moving" ||
+    status === "viewing";
+
+  const showIgnoredElementsLabelExists =
+    ignoredElementsExist && showIgnoredElementsLabel;
+  const showIgnoredElementsLabelNotExists =
+    !ignoredElementsExist && showIgnoredElementsLabel;
 
   return (
     <>
@@ -43,10 +55,10 @@ export function OutputLogs({
           <MinLength {...valueAnimation}>{minIterableLength}</MinLength>
         </LogLabel>
       )}
-      {showIgnoredElementsLabel && (
+      {showIgnoredElementsLabelExists && (
         <LogLabel {...labelAnimation}>Items ignored: ❌</LogLabel>
       )}
-      {showNoIgnoredElementsLabel && (
+      {showIgnoredElementsLabelNotExists && (
         <LogLabel {...labelAnimation}>No items ignored: ✅</LogLabel>
       )}
     </>

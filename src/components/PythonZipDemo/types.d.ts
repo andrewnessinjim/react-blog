@@ -17,4 +17,12 @@ export type IterableObject = {
   exiting: boolean;
 };
 
-export type AnimationStatus = "editing" | "playing" | "viewing" | "paused";
+export type AnimationStatus = "not_started" | "playing" | "paused" | "ended";
+
+export type DemoStatus =
+  | "editing"
+  | "waiting"
+  | "mark_shortest_iterable"
+  | "mark_ignored_items"
+  | "moving"
+  | "viewing";

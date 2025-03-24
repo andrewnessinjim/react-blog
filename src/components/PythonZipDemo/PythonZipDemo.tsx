@@ -4,7 +4,7 @@ import * as React from "react";
 import AnimationStepController from "./AnimationStepController";
 import useIterablesData from "./useIterablesData";
 import { produce } from "immer";
-import { AnimationStatus } from "./types";
+import { DemoStatus } from "./types";
 import styled from "styled-components";
 import { AnimatePresence, motion } from "framer-motion";
 import Button from "../Button";
@@ -14,6 +14,7 @@ import { InputIterablesCode } from "./PythonCode";
 import LayoutManager from "./LayoutManager";
 import IterableItemPosition from "./IterableItemPosition";
 
+const INIT_CURRENT_ITEM_POSITION = new IterableItemPosition(-1, 0);
 function PythonZipDemo() {
   const {
     data: inputIterables,
@@ -32,33 +33,38 @@ function PythonZipDemo() {
     setData: setOutputIterables,
   } = useIterablesData(false);
 
-  const [animationStep, setAnimationStep] = React.useState(0);
-  const [status, setStatus] = React.useState<AnimationStatus>("editing");
+  const [status, setStatus] = React.useState<DemoStatus>("editing");
   const [currentItemPosition, setCurrentItemPosition] = React.useState(
-    new IterableItemPosition(-1, 0)
+    INIT_CURRENT_ITEM_POSITION
   );
 
-  function maxAnimationSteps() {
-    return shortestIterableLength * inputIterables.length + 2;
+  function getNextItemPosition() {
+    return currentItemPosition.nextColWise(
+      inputIterables.length,
+      shortestIterableLength
+    );
+  }
+
+  function isDemoEnd() {
+    const nextItemPosition = getNextItemPosition();
+    return nextItemPosition === null;
   }
 
   function reset() {
-    setStatus("editing");
+    const nextStatus = "editing";
+    setStatus(nextStatus);
 
-    const nextAnimationStep = 0;
-    setAnimationStep(nextAnimationStep);
-
-    const nextItemPos = new IterableItemPosition(-1, 0);
+    const nextItemPos = INIT_CURRENT_ITEM_POSITION;
     setCurrentItemPosition(nextItemPos);
 
-    updateItemStatuses(nextItemPos, nextAnimationStep);
+    updateItemStatuses(nextItemPos, nextStatus);
     setOutputIterables([]);
   }
 
   const isEditing = status === "editing";
   const isViewing = status === "viewing";
 
-  const highlightShortestIterable = animationStep == 1;
+  const highlightShortestIterable = status === "mark_shortest_iterable";
   const showIterableControls = isEditing;
 
   let ignoredElementsExist = false;
@@ -73,17 +79,22 @@ function PythonZipDemo() {
 
   function updateItemStatuses(
     nextItemPosition: IterableItemPosition,
-    nextAnimationStep: number
+    nextStatus: DemoStatus
   ) {
     const nextInputIterables = produce(inputIterables, (draft) => {
       draft.forEach((iterable, iterableIndex) =>
         iterable.items.forEach((item, itemIndex) => {
-          if (nextAnimationStep == 0) {
+          if (nextStatus === "editing") {
             item.status = "not_started";
             return;
           }
 
-          if (itemIndex >= shortestIterableLength && nextAnimationStep > 1) {
+          if (
+            itemIndex >= shortestIterableLength &&
+            (nextStatus === "mark_ignored_items" ||
+              nextStatus === "moving" ||
+              nextStatus === "viewing")
+          ) {
             item.status = "ignored";
             return;
           }
@@ -96,7 +107,7 @@ function PythonZipDemo() {
             item.status = "transitioning";
           } else if (
             itemPosition.isBefore(nextItemPosition) &&
-            !nextItemPosition.isEqual(new IterableItemPosition(0, -1)) &&
+            !nextItemPosition.isEqual(INIT_CURRENT_ITEM_POSITION) &&
             !isEditing
           ) {
             item.status = "transitioned";
@@ -124,30 +135,32 @@ function PythonZipDemo() {
             ...iterableItem,
             id: iterableItem.id + "-out",
             status: "transitioned",
+            animateEntry: false,
           });
         }
       }
     }
   }
 
-  function updateAnimationStepStatuses(nextStep: number) {
-    function nextItemPosition(animationStep: number) {
-      if (animationStep > 2) {
-        return currentItemPosition.nextColWise(
-          inputIterables.length,
-          shortestIterableLength
-        );
-      } else {
-        return currentItemPosition;
-      }
-    }
+  function nextDemoStep() {
+    const statusFlow: Record<DemoStatus, DemoStatus> = {
+      editing: "waiting",
+      waiting: "mark_shortest_iterable",
+      mark_shortest_iterable: "mark_ignored_items",
+      mark_ignored_items: "moving",
+      moving: isDemoEnd() ? "viewing" : "moving",
+      viewing: "viewing",
+    };
 
-    setAnimationStep(nextStep);
+    const nextStatus = statusFlow[status];
+    setStatus(nextStatus);
 
-    const nextItemPos = nextItemPosition(nextStep);
+    const nextItemPos =
+      nextStatus === "moving" ? getNextItemPosition() : currentItemPosition;
+
     if (nextItemPos) {
       setCurrentItemPosition(nextItemPos);
-      updateItemStatuses(nextItemPos, nextStep);
+      updateItemStatuses(nextItemPos, nextStatus);
     }
   }
 
@@ -197,13 +210,11 @@ function PythonZipDemo() {
         )}
       </AnimatePresence>
 
-      {!isEditing && (
-        <OutputLogs
-          animationStep={animationStep}
-          ignoredElementsExist={ignoredElementsExist}
-          minIterableLength={shortestIterableLength}
-        />
-      )}
+      <OutputLogs
+        status={status}
+        ignoredElementsExist={ignoredElementsExist}
+        minIterableLength={shortestIterableLength}
+      />
     </InputBoard>
   );
 
@@ -227,12 +238,9 @@ function PythonZipDemo() {
       outputPrintedValue={outputPrintedValue}
       animationControls={
         <AnimationStepController
-          maxAnimationSteps={maxAnimationSteps()}
+          stepsEnded={isDemoEnd}
           onReset={reset}
-          onAnimationStepChange={updateAnimationStepStatuses}
-          animationStep={animationStep}
-          status={status}
-          setStatus={setStatus}
+          onNextStep={nextDemoStep}
         />
       }
     />

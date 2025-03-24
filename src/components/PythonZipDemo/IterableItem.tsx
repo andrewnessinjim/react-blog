@@ -61,6 +61,7 @@ function IterableItem({ iterableItem, onChange }: Props) {
   const overlayDuplicate = status === "pending";
   const boop = status === "transitioning";
 
+  const overlayLayoutId = id + "-out";
   return (
     <Wrapper>
       <UnderlayItem layoutId={id} {...animations(animateEntry, boop)}>
@@ -68,7 +69,7 @@ function IterableItem({ iterableItem, onChange }: Props) {
         {crossedOut && <Cross />}
       </UnderlayItem>
       {overlayDuplicate && (
-        <OverlayItem layoutId={id + "-out"} {...animations(false, boop)}>
+        <OverlayItem layoutId={overlayLayoutId} {...animations(false, boop)}>
           <Input type="number" max={99} value={value} onChange={onChange} />
         </OverlayItem>
       )}

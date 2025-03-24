@@ -28,8 +28,8 @@ function reducer(state: IterableObject[], action: Action) {
         const { iterableIndex } = action.payload;
         if (draft[iterableIndex].items.length < MAX_ITEMS) {
           draft[iterableIndex].items.push({
-            value: "0",
             id: action.payload.id,
+            value: "0",
             animateEntry: true,
             status: "not_started",
           });
@@ -127,19 +127,19 @@ function initRandomIterable(): IterableObject {
         id: crypto.randomUUID(),
         value: "1",
         animateEntry: false,
-        status: "pending",
+        status: "not_started",
       },
       {
         id: crypto.randomUUID(),
         value: "2",
         animateEntry: false,
-        status: "pending",
+        status: "not_started",
       },
       {
         id: crypto.randomUUID(),
         value: "3",
         animateEntry: false,
-        status: "pending",
+        status: "not_started",
       },
     ],
   };
