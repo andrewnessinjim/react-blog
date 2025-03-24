@@ -12,10 +12,12 @@ import IterableList from "./IterableList";
 import { OutputIterables, OutputLogs, OutputPrintedValue } from "./Output";
 import { InputIterablesCode } from "./PythonCode";
 import LayoutManager from "./LayoutManager";
+import IterableItemPosition from "./IterableItemPosition";
 
 function PythonZipDemo() {
   const {
     data: inputIterables,
+    setData: setInputIterables,
     shortestIterableIndex,
     shortestIterableLength,
     addIterable,
@@ -24,8 +26,17 @@ function PythonZipDemo() {
     removeItem,
     updateItem,
   } = useIterablesData(true);
+  const {
+    data: outputIterables,
+    upsert: upsertOutput,
+    setData: setOutputIterables,
+  } = useIterablesData(false);
+
   const [animationStep, setAnimationStep] = React.useState(0);
   const [status, setStatus] = React.useState<AnimationStatus>("editing");
+  const [currentItemPosition, setCurrentItemPosition] = React.useState(
+    new IterableItemPosition(-1, 0)
+  );
 
   function maxAnimationSteps() {
     return shortestIterableLength * inputIterables.length + 2;
@@ -33,60 +44,105 @@ function PythonZipDemo() {
 
   function reset() {
     setStatus("editing");
-    setAnimationStep(0);
+
+    const nextAnimationStep = 0;
+    setAnimationStep(nextAnimationStep);
+
+    const nextItemPos = new IterableItemPosition(-1, 0);
+    setCurrentItemPosition(nextItemPos);
+
+    updateItemStatuses(nextItemPos, nextAnimationStep);
+    setOutputIterables([]);
   }
 
-  const isPlaying = status === "playing";
+  function nextItemPosition(animationStep: number) {
+    if (animationStep > 2) {
+      return currentItemPosition.nextColWise(
+        inputIterables.length,
+        shortestIterableLength
+      );
+    } else {
+      return currentItemPosition;
+    }
+  }
+
   const isEditing = status === "editing";
   const isViewing = status === "viewing";
 
-  const highlightIgnoredItems = animationStep > 1;
   const highlightShortestIterable = animationStep == 1;
   const showIterableControls = isEditing;
 
   let ignoredElementsExist = false;
-  // Mark with boop and cross out
-  const markedInputIterables = produce(inputIterables, (draft) => {
-    draft.forEach((iterable, iterableIndex) =>
-      iterable.items.forEach((item, itemIndex) => {
-        function isTransitioned(itemIndex: number, iterableIndex: number) {
-          return (
-            animationStep - 3 >=
-            itemIndex * inputIterables.length + iterableIndex
-          );
+  for (let iterable of inputIterables) {
+    for (let item of iterable.items) {
+      if (item.status == "ignored") {
+        ignoredElementsExist = true;
+        break;
+      }
+    }
+  }
+
+  function updateItemStatuses(
+    nextItemPosition: IterableItemPosition,
+    nextAnimationStep: number
+  ) {
+    const nextInputIterables = produce(inputIterables, (draft) => {
+      draft.forEach((iterable, iterableIndex) =>
+        iterable.items.forEach((item, itemIndex) => {
+          if (nextAnimationStep == 0) {
+            item.status = "not_started";
+            return;
+          }
+
+          if (itemIndex >= shortestIterableLength && nextAnimationStep > 1) {
+            item.status = "ignored";
+            return;
+          }
+
+          const itemPosition = new IterableItemPosition(iterableIndex, itemIndex);
+          if (nextItemPosition.isEqual(itemPosition)) {
+            item.status = "transitioning";
+          } else if (
+            itemPosition.isBefore(nextItemPosition) &&
+            !nextItemPosition.isEqual(new IterableItemPosition(0, -1)) &&
+            !isEditing
+          ) {
+            item.status = "transitioned";
+            return;
+          } else {
+            item.status = "pending";
+          }
+        })
+      );
+    });
+    setInputIterables(nextInputIterables);
+
+    for (
+      let iterableIndex = 0;
+      iterableIndex < nextInputIterables.length;
+      iterableIndex++
+    ) {
+      for (let itemIndex = 0; itemIndex < shortestIterableLength; itemIndex++) {
+        const iterableItem = nextInputIterables[iterableIndex].items[itemIndex];
+        if (
+          iterableItem.status === "transitioned" ||
+          iterableItem.status === "transitioning"
+        ) {
+          upsertOutput(itemIndex, iterableIndex, {
+            ...iterableItem,
+            id: iterableItem.id + "-out",
+            status: "transitioned",
+          });
         }
-
-        const shouldIgnore =
-          highlightIgnoredItems && itemIndex >= shortestIterableLength;
-
-        if (shouldIgnore) {
-          item.status = "ignored";
-          ignoredElementsExist = true;
-          return;
-        }
-
-        // Item being transitioned now
-        const itemTransitioning =
-          animationStep - 3 ==
-            itemIndex * inputIterables.length + iterableIndex && isPlaying;
-        if (itemTransitioning) {
-          item.status = "transitioning";
-          return;
-        }
-
-        item.status =
-          !isTransitioned(itemIndex, iterableIndex) && isPlaying
-            ? "pending"
-            : "transitioned";
-      })
-    );
-  });
+      }
+    }
+  }
 
   const inputBoard = (
     <InputBoard>
       <IterableList
         key={"input"}
-        iterables={markedInputIterables}
+        iterables={inputIterables}
         addItem={addItem}
         removeItem={removeItem}
         updateItem={updateItem}
@@ -140,22 +196,14 @@ function PythonZipDemo() {
 
   const outputBoard = (
     <OutputBoard>
-      {!isEditing && (
-        <OutputIterables
-          inputIterables={markedInputIterables}
-          animationStep={animationStep}
-        />
-      )}
+      {!isEditing && <OutputIterables outputIterables={outputIterables} />}
     </OutputBoard>
   );
 
   const inputCode = <InputIterablesCode inputIterables={inputIterables} />;
 
   const outputPrintedValue = isViewing && (
-    <OutputPrintedValue
-      inputIterables={inputIterables}
-      animationStep={animationStep}
-    />
+    <OutputPrintedValue outputIterables={outputIterables} />
   );
 
   return (
@@ -167,7 +215,16 @@ function PythonZipDemo() {
       animationControls={
         <AnimationStepController
           maxAnimationSteps={maxAnimationSteps()}
-          onAnimationStepChange={(step) => setAnimationStep(step)}
+          onReset={reset}
+          onAnimationStepChange={(step) => {
+            setAnimationStep(step);
+
+            const nextItemPos = nextItemPosition(step);
+            if (nextItemPos) {
+              setCurrentItemPosition(nextItemPos);
+              updateItemStatuses(nextItemPos, step);
+            }
+          }}
           animationStep={animationStep}
           status={status}
           setStatus={setStatus}

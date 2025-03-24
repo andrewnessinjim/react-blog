@@ -12,6 +12,7 @@ interface Props {
   animationStep: number;
   status: AnimationStatus;
   setStatus: (status: AnimationStatus) => void;
+  onReset: () => void;
 }
 
 function AnimationStepController({
@@ -20,6 +21,7 @@ function AnimationStepController({
   animationStep,
   status,
   setStatus,
+  onReset
 }: Props) {
   React.useEffect(() => {
     if (status === "playing") {
@@ -31,11 +33,6 @@ function AnimationStepController({
   function runAnimation() {
     onAnimationStepChange(0);
     setStatus("playing");
-  }
-
-  function reset() {
-    setStatus("editing");
-    onAnimationStepChange(0);
   }
 
   function nextStep() {
@@ -52,7 +49,7 @@ function AnimationStepController({
   const isViewing = status === "viewing";
 
   const ResetButton = (
-    <Button variant="secondary" size="regular" onClick={reset}>
+    <Button variant="secondary" size="regular" onClick={onReset}>
       Reset
     </Button>
   );

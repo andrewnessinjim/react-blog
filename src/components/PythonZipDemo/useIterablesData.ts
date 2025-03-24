@@ -1,6 +1,6 @@
 import { produce } from "immer";
 import React from "react";
-import { IterableObject } from "./types";
+import { IterableItemObject, IterableObject } from "./types";
 
 const MIN_ITERABLES = 2;
 const MAX_ITERABLES = 3;
@@ -15,7 +15,9 @@ type Action = {
     | "add_item"
     | "remove_item"
     | "update_item"
-    | "drop_last_iterable";
+    | "drop_last_iterable"
+    | "set_data"
+    | "upsert";
   payload?: any;
 };
 
@@ -29,7 +31,7 @@ function reducer(state: IterableObject[], action: Action) {
             value: "0",
             id: action.payload.id,
             animateEntry: true,
-            status: "pending",
+            status: "not_started",
           });
         }
         break;
@@ -89,6 +91,26 @@ function reducer(state: IterableObject[], action: Action) {
 
       case "drop_last_iterable": {
         draft.pop();
+        break;
+      }
+
+      case "set_data": {
+        return action.payload;
+      }
+
+      case "upsert": {
+        const { iterableIndex, itemIndex, item } = action.payload;
+
+        while (draft.length <= iterableIndex) {
+          draft.push({
+            id: crypto.randomUUID(),
+            animateEntry: false,
+            exiting: false,
+            items: [],
+          });
+        }
+
+        draft[iterableIndex].items[itemIndex] = item;
         break;
       }
     }
@@ -182,14 +204,23 @@ export default function useIterablesData(populated = false) {
     });
   }
 
-  function upsert(iterableIndex: number, itemIndex: number, value: string) {
-    while (data.length <= iterableIndex) {
-      addIterable();
-    }
-    while (data[iterableIndex].items.length <= itemIndex) {
-      addItem(iterableIndex);
-    }
-    updateItem(iterableIndex, itemIndex, value);
+  function upsert(
+    iterableIndex: number,
+    itemIndex: number,
+    item: IterableItemObject
+  ) {
+    dispatch({
+      type: "upsert",
+      payload: {
+        iterableIndex,
+        itemIndex,
+        item,
+      },
+    });
+  }
+
+  function setData(newData: IterableObject[]) {
+    dispatch({ type: "set_data", payload: newData });
   }
 
   const shortestIterableIndex = data.reduce(
@@ -200,10 +231,13 @@ export default function useIterablesData(populated = false) {
     0
   );
 
-  const shortestIterableLength = data[shortestIterableIndex].items.length;
+  const shortestIterableLength = data[shortestIterableIndex]
+    ? data[shortestIterableIndex].items.length
+    : 0;
 
   return {
     data,
+    setData,
     shortestIterableIndex,
     shortestIterableLength,
     addIterable,

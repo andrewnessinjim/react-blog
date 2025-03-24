@@ -2,12 +2,10 @@ import { motion } from "framer-motion";
 import styled from "styled-components";
 import IterableList from "./IterableList";
 import { IterableObject } from "./types";
-import { range } from "lodash-es";
 import { OutputPrintedValueCode } from "./PythonCode";
 
 interface OutputProps {
-  inputIterables: IterableObject[];
-  animationStep: number;
+  outputIterables: IterableObject[];
 }
 
 interface OutputLogsProps {
@@ -15,8 +13,6 @@ interface OutputLogsProps {
   ignoredElementsExist: boolean;
   minIterableLength: number;
 }
-
-const itemsMoveBegin = 3;
 
 const labelAnimation = {
   initial: { opacity: 0 },
@@ -30,40 +26,6 @@ const valueAnimation = {
   transition: { duration: 0.5 },
 };
 
-function computeOutputIterables(
-  inputIterables: IterableObject[],
-  animationStep: number
-) {
-  const outputIterables: IterableObject[] = [];
-  if (animationStep >= itemsMoveBegin) {
-    range(itemsMoveBegin, animationStep + 1).forEach((count) => {
-      const in_row = (count - itemsMoveBegin) % inputIterables.length;
-      const in_col = Math.floor(
-        (count - itemsMoveBegin) / inputIterables.length
-      );
-
-      const out_row = in_col;
-      const out_col = in_row;
-
-      while (outputIterables.length <= out_row) {
-        outputIterables.push({
-          id: out_row.toString(),
-          animateEntry: false,
-          exiting: false,
-          items: [],
-        });
-      }
-      outputIterables[out_row].items[out_col] = {
-        id: inputIterables[in_row].items[in_col].id + "-out",
-        value: inputIterables[in_row].items[in_col].value,
-        animateEntry: false,
-        status: "transitioned",
-      };
-    });
-  }
-  return outputIterables;
-}
-
 export function OutputLogs({
   animationStep,
   ignoredElementsExist,
@@ -73,7 +35,7 @@ export function OutputLogs({
   const showIgnoredElementsLabel = ignoredElementsExist && animationStep > 1;
 
   return (
-    <OutputLogsWrapper>
+    <>
       {showShortestIterable && (
         <LogLabel {...labelAnimation}>
           Shortest iterable length:{" "}
@@ -83,34 +45,17 @@ export function OutputLogs({
       {showIgnoredElementsLabel && (
         <LogLabel {...labelAnimation}>Items ignored: ❌</LogLabel>
       )}
-    </OutputLogsWrapper>
+    </>
   );
 }
 
-export function OutputIterables({
-  inputIterables,
-  animationStep,
-}: OutputProps) {
-  const outputIterables = computeOutputIterables(inputIterables, animationStep);
-
-  return (
-    <OutputIterablesWrapper>
-      <IterableList iterables={outputIterables} allowMutation={false} />
-    </OutputIterablesWrapper>
-  );
+export function OutputIterables({ outputIterables }: OutputProps) {
+  return <IterableList iterables={outputIterables} allowMutation={false} />;
 }
 
-export function OutputPrintedValue({
-  inputIterables,
-  animationStep,
-}: OutputProps) {
-  const outputIterables = computeOutputIterables(inputIterables, animationStep);
+export function OutputPrintedValue({ outputIterables }: OutputProps) {
   return <OutputPrintedValueCode outputIterables={outputIterables} />;
 }
-const OutputIterablesWrapper = styled(motion.div)``;
-const OutputLogsWrapper = styled(motion.div)`
-  position: relative; /* Stay above CoverBlanket */
-`;
 
 const LogLabel = styled(motion.p)`
   font-size: 1rem;

@@ -2,7 +2,12 @@ export interface IterableItemObject {
   id: string;
   value: string;
   animateEntry: boolean;
-  status: "ignored" | "transitioned" | "pending" | "transitioning";
+  status:
+    | "not_started"
+    | "ignored"
+    | "transitioned"
+    | "pending"
+    | "transitioning";
 }
 
 export type IterableObject = {
