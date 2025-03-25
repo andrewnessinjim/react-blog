@@ -25,4 +25,5 @@ export type DemoStatus =
   | "mark_shortest_iterable"
   | "mark_ignored_items"
   | "moving"
+  | "resetting"
   | "viewing";

@@ -13,14 +13,13 @@ class IterableItemPosition {
     return this.x > other.x || (this.x === other.x && this.y > other.y);
   }
 
-  nextColWise(maxX: number, maxY: number) {
+  nextColWise(maxX: number, maxY: number): IterableItemPosition | null {
     if (this.x + 1 < maxX) {
       return new IterableItemPosition(this.x + 1, this.y);
     } else if (this.y + 1 < maxY) {
       return new IterableItemPosition(0, this.y + 1);
-    } else {
-      return null;
     }
+    return null;
   }
 
   toString() {

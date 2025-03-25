@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import styled, { css } from "styled-components";
 import { IterableItemObject } from "./types";
 import React from "react";
@@ -19,7 +19,27 @@ const regularTransition = {
   bounce: 0,
 };
 
-function animations(animateEntry: boolean, boop: boolean) {
+function animations(
+  animateEntry: boolean,
+  boop: boolean,
+  enableMotionAlternative: boolean
+) {
+  // if (enableMotionAlternative) {
+  //   return {
+  //     initial: {
+  //       opacity: animateEntry ? 0 : 1,
+  //       boxShadow: "0 0 0 0px black",
+  //     },
+  //     animate: {
+  //       opacity: 1,
+  //       boxShadow: boop ? "0 0 0 4px green" : "0 0 0 0px black",
+  //     },
+  //     transition: {
+  //       type: "spring",
+  //       duration: 0.75,
+  //     },
+  //   };
+  // }
   return {
     initial: {
       scaleX: animateEntry ? 0 : 1,
@@ -31,6 +51,8 @@ function animations(animateEntry: boolean, boop: boolean) {
       opacity: 1,
       transformOrigin: "0% 50%",
       scale: boop ? [0.95, 1.05, 1] : 1,
+      boxShadow:
+        boop && enableMotionAlternative ? "0 0 0 4px green" : "0 0 0 0px black",
     },
     transition: boop ? boopTransition : regularTransition,
   };
@@ -63,10 +85,14 @@ function IterableItem({ iterableItem, onChange, allowMutation = true }: Props) {
   const boop = status === "transitioning";
 
   const overlayLayoutId = id + "-out";
+  const prefersReducedMotion = useReducedMotion() ?? false;
 
   return (
     <Wrapper>
-      <UnderlayItem layoutId={id} {...animations(animateEntry, boop)}>
+      <UnderlayItem
+        layoutId={id}
+        {...animations(animateEntry, boop, prefersReducedMotion)}
+      >
         {allowMutation ? (
           <CellInput type="number" max={99} value={value} onChange={onChange} />
         ) : (
@@ -75,7 +101,10 @@ function IterableItem({ iterableItem, onChange, allowMutation = true }: Props) {
         {crossedOut && <Cross />}
       </UnderlayItem>
       {overlayDuplicate && (
-        <OverlayItem layoutId={overlayLayoutId} {...animations(false, boop)}>
+        <OverlayItem
+          layoutId={overlayLayoutId}
+          {...animations(false, boop, prefersReducedMotion)}
+        >
           <CellInput type="number" max={99} value={value} onChange={onChange} />
         </OverlayItem>
       )}

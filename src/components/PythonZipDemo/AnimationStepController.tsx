@@ -16,9 +16,10 @@ function AnimationStepController({ stepsEnded, onNextStep, onReset }: Props) {
   const [status, setStatus] = React.useState<AnimationStatus>("not_started");
   React.useEffect(() => {
     function nextStep() {
-      onNextStep();
       if (stepsEnded()) {
         setStatus("ended");
+      } else {
+        onNextStep();
       }
     }
 

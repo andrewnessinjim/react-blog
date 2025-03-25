@@ -1,4 +1,6 @@
+import { useReducedMotion } from "framer-motion";
 import IterableItemPosition from "./IterableItemPosition";
+import { IterableObject } from "./types";
 import useIterablesData from "./useIterablesData";
 import { produce } from "immer";
 
@@ -20,6 +22,8 @@ export default function useInputAndOutputIterables() {
     setData: setOutputIterables,
   } = useIterablesData(false);
 
+  const reducedMotion = useReducedMotion() ?? false;
+
   function reset() {
     const nextInputIterables = produce(inputIterables, (draft) => {
       draft.forEach((iterable) => {
@@ -31,6 +35,29 @@ export default function useInputAndOutputIterables() {
 
     setInputIterables(nextInputIterables);
     setOutputIterables([]);
+  }
+
+  function markIgnoredAndPendingItems() {
+    const nextInputIterables = produce(inputIterables, (draft) => {
+      draft.forEach((iterable) =>
+        iterable.items.forEach((item, itemIndex) => {
+          const isIgnored = itemIndex >= shortestIterableLength;
+          item.status = isIgnored ? "ignored" : "pending";
+        })
+      );
+    });
+    setInputIterables(nextInputIterables);
+  }
+
+  function markAllUnignoredItemsAsTransitioned() {
+    const nextInputIterables = produce(inputIterables, (draft) => {
+      draft.forEach((iterable) =>
+        iterable.items.forEach((item) => {
+          item.status = item.status === "ignored" ? "ignored" : "transitioned";
+        })
+      );
+    });
+    setInputIterables(nextInputIterables);
   }
 
   function moveFromInputToOutput(
@@ -74,7 +101,8 @@ export default function useInputAndOutputIterables() {
               ...item,
               id: item.id + "-out",
               status: "transitioned",
-              animateEntry: false,
+              //If motion is reduced, entry animation is used instead of movement animation
+              animateEntry: reducedMotion ? true : false,
             });
           }
         });
@@ -93,5 +121,7 @@ export default function useInputAndOutputIterables() {
     resetInputAndOutput: reset,
     shortestIterableIndex,
     moveFromInputToOutput,
+    markIgnoredAndPendingItems,
+    markAllUnignoredItemsAsTransitioned,
   };
 }

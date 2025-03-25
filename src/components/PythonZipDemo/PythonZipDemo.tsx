@@ -10,6 +10,7 @@ import { InputIterablesCode } from "./PythonCode";
 import LayoutManager from "./LayoutManager";
 import IterableItemPosition from "./IterableItemPosition";
 import useInputAndOutputIterables from "./useInputAndOutputIterables";
+import { useReducedMotion } from "framer-motion";
 
 const INIT_CURRENT_ITEM_POSITION = new IterableItemPosition(-1, 0);
 function PythonZipDemo() {
@@ -23,25 +24,30 @@ function PythonZipDemo() {
     updateInputItem,
     resetInputAndOutput,
     moveFromInputToOutput,
+    markIgnoredAndPendingItems,
+    markAllUnignoredItemsAsTransitioned,
     shortestIterableIndex,
     shortestIterableLength,
   } = useInputAndOutputIterables();
 
   const [status, setStatus] = React.useState<DemoStatus>("editing");
-  const [currentItemPosition, setCurrentItemPosition] = React.useState(
-    INIT_CURRENT_ITEM_POSITION
-  );
+  const [currentItemPosition, setCurrentItemPosition] =
+    React.useState<IterableItemPosition | null>(INIT_CURRENT_ITEM_POSITION);
+
+  const prefersReducedMotion = useReducedMotion() ?? false;
 
   function getNextItemPosition() {
-    return currentItemPosition.nextColWise(
-      inputIterables.length,
-      shortestIterableLength
+    return (
+      currentItemPosition?.nextColWise(
+        inputIterables.length,
+        shortestIterableLength
+      ) ?? null
     );
   }
 
   function isDemoEnd() {
-    const nextItemPosition = getNextItemPosition();
-    return nextItemPosition === null;
+    // const nextItemPosition = getNextItemPosition();
+    return status === "viewing";
   }
 
   function reset() {
@@ -64,29 +70,37 @@ function PythonZipDemo() {
   );
 
   function nextDemoStep() {
+    const nextItemPos = getNextItemPosition();
+
     const statusFlow: Record<DemoStatus, DemoStatus> = {
       editing: "waiting",
       waiting: "mark_shortest_iterable",
       mark_shortest_iterable: "mark_ignored_items",
       mark_ignored_items: "moving",
-      moving: isDemoEnd() ? "viewing" : "moving",
+      moving:
+        nextItemPos === null
+          ? prefersReducedMotion
+            ? "resetting"
+            : "viewing"
+          : "moving",
+      resetting: "viewing",
       viewing: "viewing",
     };
 
     const nextStatus = statusFlow[status];
     setStatus(nextStatus);
 
-    const nextItemPos =
-      nextStatus === "moving" ? getNextItemPosition() : currentItemPosition;
+    if (nextStatus === "mark_ignored_items") {
+      markIgnoredAndPendingItems();
+    }
 
-    if (nextItemPos) {
+    if (nextStatus === "moving") {
       setCurrentItemPosition(nextItemPos);
-      const shouldMarkIgnoredItems =
-        nextStatus === "mark_ignored_items" ||
-        nextStatus === "moving" ||
-        nextStatus === "viewing";
+      if (nextItemPos) moveFromInputToOutput(nextItemPos, true);
+    }
 
-      moveFromInputToOutput(nextItemPos, shouldMarkIgnoredItems);
+    if (nextStatus === "resetting") {
+      markAllUnignoredItemsAsTransitioned();
     }
   }
 
@@ -126,6 +140,8 @@ function PythonZipDemo() {
   const outputPrintedValue = isViewing && (
     <OutputPrintedValue outputIterables={outputIterables} />
   );
+
+  console.log({ status, currentItemPosition });
 
   return (
     <LayoutManager

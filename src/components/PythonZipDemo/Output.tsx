@@ -35,12 +35,14 @@ export function OutputLogs({
     status === "mark_shortest_iterable" ||
     status === "mark_ignored_items" ||
     status === "moving" ||
-    status === "viewing";
+    status === "viewing" ||
+    status === "resetting";
 
   const showIgnoredElementsLabel =
     status === "mark_ignored_items" ||
     status === "moving" ||
-    status === "viewing";
+    status === "viewing" ||
+    status === "resetting";
 
   const showIgnoredElementsLabelExists =
     ignoredElementsExist && showIgnoredElementsLabel;
