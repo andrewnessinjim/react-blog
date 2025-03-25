@@ -1,6 +1,6 @@
 import { produce } from "immer";
 import React from "react";
-import { IterableItemObject, IterableObject } from "./types";
+import { IterableItemObject, IterableObject } from "../types";
 
 const MIN_ITERABLES = 2;
 const MAX_ITERABLES = 3;
@@ -145,7 +145,7 @@ function initRandomIterable(): IterableObject {
   };
 }
 
-export default function useIterablesData(populated = false) {
+export default function useIterables(populated = false) {
   const [data, dispatch] = React.useReducer(
     reducer,
     populated ? [initRandomIterable(), initRandomIterable()] : []

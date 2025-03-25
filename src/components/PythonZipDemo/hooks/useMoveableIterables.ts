@@ -1,10 +1,9 @@
 import { useReducedMotion } from "framer-motion";
-import IterableItemPosition from "./IterableItemPosition";
-import { IterableObject } from "./types";
-import useIterablesData from "./useIterablesData";
+import IterableItemPosition from "../IterableItemPosition";
+import useIterables from "./useIterables";
 import { produce } from "immer";
 
-export default function useInputAndOutputIterables() {
+export default function useMoveableIterables() {
   const {
     data: inputIterables,
     setData: setInputIterables,
@@ -15,12 +14,12 @@ export default function useInputAndOutputIterables() {
     addItem: addInputItem,
     removeItem: removeInputItem,
     updateItem: updateInputItem,
-  } = useIterablesData(true);
+  } = useIterables(true);
   const {
     data: outputIterables,
     upsert: upsertOutput,
     setData: setOutputIterables,
-  } = useIterablesData(false);
+  } = useIterables(false);
 
   const reducedMotion = useReducedMotion() ?? false;
 
@@ -37,33 +36,7 @@ export default function useInputAndOutputIterables() {
     setOutputIterables([]);
   }
 
-  function markIgnoredAndPendingItems() {
-    const nextInputIterables = produce(inputIterables, (draft) => {
-      draft.forEach((iterable) =>
-        iterable.items.forEach((item, itemIndex) => {
-          const isIgnored = itemIndex >= shortestIterableLength;
-          item.status = isIgnored ? "ignored" : "pending";
-        })
-      );
-    });
-    setInputIterables(nextInputIterables);
-  }
-
-  function markAllUnignoredItemsAsTransitioned() {
-    const nextInputIterables = produce(inputIterables, (draft) => {
-      draft.forEach((iterable) =>
-        iterable.items.forEach((item) => {
-          item.status = item.status === "ignored" ? "ignored" : "transitioned";
-        })
-      );
-    });
-    setInputIterables(nextInputIterables);
-  }
-
-  function moveFromInputToOutput(
-    untilPosition: IterableItemPosition,
-    markIgnoredItems: boolean = false
-  ) {
+  function moveFromInputToOutput(untilPosition: IterableItemPosition) {
     const nextInputIterables = produce(inputIterables, (draft) => {
       draft.forEach((iterable, iterableIndex) =>
         iterable.items.forEach((item, itemIndex) => {
@@ -74,16 +47,12 @@ export default function useInputAndOutputIterables() {
 
           const isTransitioning = itemPosition.isEqual(untilPosition);
           const isTransitioned = itemPosition.isBefore(untilPosition);
-          const isIgnored =
-            markIgnoredItems && itemIndex >= shortestIterableLength;
 
-          item.status = isIgnored
-            ? "ignored"
-            : isTransitioning
-            ? "transitioning"
-            : isTransitioned
-            ? "transitioned"
-            : "pending";
+          if (isTransitioning) {
+            item.status = "transitioning";
+          } else if (isTransitioned) {
+            item.status = "transitioned";
+          }
         })
       );
     });
@@ -111,17 +80,16 @@ export default function useInputAndOutputIterables() {
 
   return {
     inputIterables,
+    setInputIterables,
     outputIterables,
     shortestIterableLength,
+    shortestIterableIndex,
     addInputIterable,
     removeInputIterable,
     addInputItem,
     removeInputItem,
     updateInputItem,
-    resetInputAndOutput: reset,
-    shortestIterableIndex,
+    reset,
     moveFromInputToOutput,
-    markIgnoredAndPendingItems,
-    markAllUnignoredItemsAsTransitioned,
   };
 }

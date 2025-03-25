@@ -9,8 +9,8 @@ import { OutputIterables, OutputLogs, OutputPrintedValue } from "./Output";
 import { InputIterablesCode } from "./PythonCode";
 import LayoutManager from "./LayoutManager";
 import IterableItemPosition from "./IterableItemPosition";
-import useInputAndOutputIterables from "./useInputAndOutputIterables";
 import { useReducedMotion } from "framer-motion";
+import { useZipIterables } from "./hooks";
 
 const INIT_CURRENT_ITEM_POSITION = new IterableItemPosition(-1, 0);
 function PythonZipDemo() {
@@ -22,13 +22,13 @@ function PythonZipDemo() {
     addInputItem,
     removeInputItem,
     updateInputItem,
-    resetInputAndOutput,
+    reset: resetData,
     moveFromInputToOutput,
     markIgnoredAndPendingItems,
     markAllUnignoredItemsAsTransitioned,
     shortestIterableIndex,
     shortestIterableLength,
-  } = useInputAndOutputIterables();
+  } = useZipIterables();
 
   const [status, setStatus] = React.useState<DemoStatus>("editing");
   const [currentItemPosition, setCurrentItemPosition] =
@@ -57,7 +57,7 @@ function PythonZipDemo() {
     const nextItemPos = INIT_CURRENT_ITEM_POSITION;
     setCurrentItemPosition(nextItemPos);
 
-    resetInputAndOutput();
+    resetData();
   }
 
   const isEditing = status === "editing";
@@ -96,7 +96,7 @@ function PythonZipDemo() {
 
     if (nextStatus === "moving") {
       setCurrentItemPosition(nextItemPos);
-      if (nextItemPos) moveFromInputToOutput(nextItemPos, true);
+      if (nextItemPos) moveFromInputToOutput(nextItemPos);
     }
 
     if (nextStatus === "resetting") {

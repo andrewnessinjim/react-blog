@@ -9,7 +9,7 @@ interface Props {
   iterable: IterableObject;
   iterableIndex: number;
   updateItem?: (
-    iterableIndex: number,
+    _iterableIndex: number,
     itemIndex: number,
     value: string
   ) => void;
