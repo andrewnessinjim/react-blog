@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { IterableItemObject } from "./types";
 import React from "react";
 
 interface Props {
   iterableItem: IterableItemObject;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  allowMutation?: boolean;
 }
 
 const boopTransition = {
@@ -54,7 +55,7 @@ function Cross() {
   );
 }
 
-function IterableItem({ iterableItem, onChange }: Props) {
+function IterableItem({ iterableItem, onChange, allowMutation = true }: Props) {
   const { id, value, animateEntry, status } = iterableItem;
 
   const crossedOut = status === "ignored";
@@ -62,15 +63,20 @@ function IterableItem({ iterableItem, onChange }: Props) {
   const boop = status === "transitioning";
 
   const overlayLayoutId = id + "-out";
+
   return (
     <Wrapper>
       <UnderlayItem layoutId={id} {...animations(animateEntry, boop)}>
-        <Input type="number" max={99} value={value} onChange={onChange} />
+        {allowMutation ? (
+          <CellInput type="number" max={99} value={value} onChange={onChange} />
+        ) : (
+          <CellSpan>{value}</CellSpan>
+        )}
         {crossedOut && <Cross />}
       </UnderlayItem>
       {overlayDuplicate && (
         <OverlayItem layoutId={overlayLayoutId} {...animations(false, boop)}>
-          <Input type="number" max={99} value={value} onChange={onChange} />
+          <CellInput type="number" max={99} value={value} onChange={onChange} />
         </OverlayItem>
       )}
     </Wrapper>
@@ -98,13 +104,18 @@ const OverlayItem = styled(UnderlayItem)`
   left: 0;
 `;
 
-const Input = styled(motion.input)`
+const cellStyles = css`
   width: 100%;
   height: 100%;
   border: none;
   background: transparent;
   color: var(--color-primary-500);
   font-size: 1.25rem;
+  text-align: center;
+`;
+
+const CellInput = styled(motion.input)`
+  ${cellStyles};
   text-align: center;
   -webkit-appearance: none;
   -moz-appearance: textfield;
@@ -115,6 +126,12 @@ const Input = styled(motion.input)`
     -webkit-appearance: none;
     margin: 0;
   }
+`;
+
+const CellSpan = styled.span`
+  ${cellStyles};
+  display: grid;
+  place-content: center;
 `;
 
 const CrossLineWrapper = styled(motion.div)`

@@ -55,6 +55,7 @@ function Iterable({
               <IterableItem
                 key={iterableItem.id}
                 iterableItem={iterableItem}
+                allowMutation={allowMutation}
                 onChange={(e) => {
                   if (allowMutation) {
                     onEdit && onEdit();
