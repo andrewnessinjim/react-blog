@@ -1,6 +1,12 @@
 import { produce } from "immer";
 import React from "react";
-import { IterableItemObject, IterableObject } from "../types";
+import {
+  AnimationStatus,
+  ItemStatus,
+  IterableItemObject,
+  IterableObject,
+} from "../types";
+import IterableItemPosition from "../IterableItemPosition";
 
 const MIN_ITERABLES = 2;
 const MAX_ITERABLES = 3;
@@ -17,7 +23,8 @@ type Action = {
     | "update_item"
     | "drop_last_iterable"
     | "set_data"
-    | "upsert";
+    | "upsert"
+    | "update_item_status";
   payload?: any;
 };
 
@@ -40,6 +47,12 @@ function reducer(state: IterableObject[], action: Action) {
       case "update_item": {
         const { iterableIndex, itemIndex, value } = action.payload;
         draft[iterableIndex].items[itemIndex].value = value;
+        break;
+      }
+
+      case "update_item_status": {
+        const { iterableIndex, itemIndex, status } = action.payload;
+        draft[iterableIndex].items[itemIndex].status = status;
         break;
       }
 
@@ -204,6 +217,20 @@ export default function useIterables(populated = false) {
     });
   }
 
+  function updateItemStatus(
+    position: IterableItemPosition,
+    status: ItemStatus
+  ) {
+    dispatch({
+      type: "update_item_status",
+      payload: {
+        iterableIndex: position.x,
+        itemIndex: position.y,
+        status,
+      },
+    });
+  }
+
   function upsert(
     iterableIndex: number,
     itemIndex: number,
@@ -245,6 +272,7 @@ export default function useIterables(populated = false) {
     addItem,
     removeItem,
     updateItem,
+    updateItemStatus,
     upsert,
   };
 }

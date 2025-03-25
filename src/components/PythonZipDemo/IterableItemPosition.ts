@@ -22,6 +22,15 @@ class IterableItemPosition {
     return null;
   }
 
+  prevColWise(maxX: number): IterableItemPosition | null {
+    if (this.x - 1 >= 0) {
+      return new IterableItemPosition(this.x - 1, this.y);
+    } else if (this.y - 1 >= 0) {
+      return new IterableItemPosition(maxX - 1, this.y - 1);
+    }
+    return null;
+  }
+
   toString() {
     return `Position (${this.x}, ${this.y})`;
   }

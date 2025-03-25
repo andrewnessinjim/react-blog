@@ -1,13 +1,14 @@
+export type ItemStatus =
+  | "not_started"
+  | "ignored"
+  | "transitioned"
+  | "pending"
+  | "transitioning";
 export interface IterableItemObject {
   id: string;
   value: string;
   animateEntry: boolean;
-  status:
-    | "not_started"
-    | "ignored"
-    | "transitioned"
-    | "pending"
-    | "transitioning";
+  status: ItemStatus;
 }
 
 export type IterableObject = {

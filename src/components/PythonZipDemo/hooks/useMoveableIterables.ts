@@ -14,6 +14,7 @@ export default function useMoveableIterables() {
     addItem: addInputItem,
     removeItem: removeInputItem,
     updateItem: updateInputItem,
+    updateItemStatus: updateInputItemStatus,
   } = useIterables(true);
   const {
     data: outputIterables,
@@ -37,44 +38,20 @@ export default function useMoveableIterables() {
   }
 
   function moveFromInputToOutput(untilPosition: IterableItemPosition) {
-    const nextInputIterables = produce(inputIterables, (draft) => {
-      draft.forEach((iterable, iterableIndex) =>
-        iterable.items.forEach((item, itemIndex) => {
-          const itemPosition = new IterableItemPosition(
-            iterableIndex,
-            itemIndex
-          );
+    const movingItem = inputIterables[untilPosition.x].items[untilPosition.y];
+    updateInputItemStatus(untilPosition, "transitioning");
 
-          const isTransitioning = itemPosition.isEqual(untilPosition);
-          const isTransitioned = itemPosition.isBefore(untilPosition);
+    const prevPosition = untilPosition.prevColWise(inputIterables.length);
+    if (prevPosition) {
+      updateInputItemStatus(prevPosition, "transitioned");
+    }
 
-          if (isTransitioning) {
-            item.status = "transitioning";
-          } else if (isTransitioned) {
-            item.status = "transitioned";
-          }
-        })
-      );
-    });
-    setInputIterables(nextInputIterables);
-
-    nextInputIterables.forEach((iterable, iterableIndex) => {
-      iterable.items
-        .slice(0, shortestIterableLength)
-        .forEach((item, itemIndex) => {
-          if (
-            item.status === "transitioned" ||
-            item.status === "transitioning"
-          ) {
-            upsertOutput(itemIndex, iterableIndex, {
-              ...item,
-              id: item.id + "-out",
-              status: "transitioned",
-              //If motion is reduced, entry animation is used instead of movement animation
-              animateEntry: reducedMotion ? true : false,
-            });
-          }
-        });
+    upsertOutput(untilPosition.y, untilPosition.x, {
+      ...movingItem,
+      id: movingItem.id + "-out",
+      status: "transitioned",
+      //If motion is reduced, entry animation is used instead of movement animation
+      animateEntry: reducedMotion ? true : false,
     });
   }
 
