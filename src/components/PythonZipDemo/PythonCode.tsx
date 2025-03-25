@@ -67,8 +67,12 @@ function PythonCode({
 }) {
   return (
     <Wrapper
-      initial={{ opacity: animateEntry ? 0 : 1 }}
-      animate={{ opacity: 1 }}
+      initial={{
+        opacity: animateEntry ? 0 : 1,
+        translateY: animateEntry ? -16 : 0,
+      }}
+      animate={{ opacity: 1, translateY: 0 }}
+      transition={{ duration: 0.5 }}
     >
       <Title>{title}</Title>
       <StyledSyntaxHighlighter language="python" style={a11yDark}>
