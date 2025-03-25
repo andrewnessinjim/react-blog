@@ -60,6 +60,7 @@ function Button({
     //@ts-ignore
     <Wrapper key={children} {...delegated}>
       <ButtonContent
+        tabIndex={-1} // Button is already focusable, content should not be
         style={
           {
             ...SIZE[size],
