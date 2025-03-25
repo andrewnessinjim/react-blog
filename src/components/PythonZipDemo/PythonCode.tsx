@@ -1,11 +1,7 @@
 import styled from "styled-components";
 import SyntaxHighlighter from "react-syntax-highlighter";
-import {
-  a11yDark,
-  a11yLight,
-} from "react-syntax-highlighter/dist/esm/styles/hljs";
+import { a11yDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { range } from "lodash-es";
-import { ThemeContext } from "../ThemeProvider";
 import React from "react";
 import { IterableObject } from "./types";
 import { motion } from "framer-motion";
@@ -69,18 +65,13 @@ function PythonCode({
   pythonCode: string;
   animateEntry?: boolean;
 }) {
-  const { isDarkMode } = React.useContext(ThemeContext);
-
   return (
     <Wrapper
       initial={{ opacity: animateEntry ? 0 : 1 }}
       animate={{ opacity: 1 }}
     >
       <Title>{title}</Title>
-      <StyledSyntaxHighlighter
-        language="python"
-        style={isDarkMode ? a11yDark : a11yLight}
-      >
+      <StyledSyntaxHighlighter language="python" style={a11yDark}>
         {pythonCode}
       </StyledSyntaxHighlighter>
     </Wrapper>
