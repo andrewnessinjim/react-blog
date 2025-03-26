@@ -6,12 +6,14 @@ interface Props {
   editable: boolean;
   value?: string | null;
   onChange?: (value: string) => void;
+  id?: string;
 }
 
-function Cell({ editable, value, onChange }: Props) {
+function Cell({ editable, value, onChange, id }: Props) {
   return editable ? (
     <CellInput
       type="number"
+      id={id ?? undefined}
       max={99}
       value={value ?? "0"}
       onChange={(e) => {

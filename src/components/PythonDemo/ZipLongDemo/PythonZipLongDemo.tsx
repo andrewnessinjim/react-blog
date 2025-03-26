@@ -210,6 +210,7 @@ function PythonZipLongDemo() {
             setValue={setFillValue}
             fillItemWithPositions={slicedFillItems}
             isFilling={status === "filling"}
+            allowMutation={isEditing}
           />
         }
         inputBoard={inputBoard}
