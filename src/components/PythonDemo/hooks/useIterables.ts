@@ -1,11 +1,6 @@
 import { produce } from "immer";
 import React from "react";
-import {
-  AnimationStatus,
-  ItemStatus,
-  IterableItemObject,
-  IterableObject,
-} from "../types";
+import { ItemStatus, IterableItemObject, IterableObject } from "../types";
 import IterableItemPosition from "../IterableItemPosition";
 
 const MIN_ITERABLES = 2;
@@ -203,16 +198,12 @@ export default function useIterables(populated = false) {
   }
 
   function updateItem(iterableIndex: number, itemIndex: number, value: string) {
-    let sanitizedValue = value.replace(/^0+/, "");
-    if (parseInt(sanitizedValue) > 99) {
-      sanitizedValue = "99";
-    }
     dispatch({
       type: "update_item",
       payload: {
         iterableIndex,
         itemIndex,
-        value: sanitizedValue === "" ? "0" : sanitizedValue,
+        value,
       },
     });
   }
@@ -262,11 +253,25 @@ export default function useIterables(populated = false) {
     ? data[shortestIterableIndex].items.length
     : 0;
 
+  const longestIterableIndex = data.reduce(
+    (largestIndex, iterable, index) =>
+      iterable.items.length > data[largestIndex].items.length
+        ? index
+        : largestIndex,
+    0
+  );
+
+  const longestIterableLength = data[longestIterableIndex]
+    ? data[longestIterableIndex].items.length
+    : 0;
+
   return {
     data,
     setData,
     shortestIterableIndex,
     shortestIterableLength,
+    longestIterableIndex,
+    longestIterableLength,
     addIterable,
     removeIterable,
     addItem,

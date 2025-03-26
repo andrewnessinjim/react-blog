@@ -1,30 +1,13 @@
-import { motion } from "framer-motion";
 import styled from "styled-components";
-import IterableList from "./IterableList";
-import { DemoStatus, IterableObject } from "./types";
-import { OutputPrintedValueCode } from "./PythonCode";
-
-interface OutputProps {
-  outputIterables: IterableObject[];
-}
+import { ZipDemoStatus } from "../types";
+import { motion } from "framer-motion";
+import { labelAnimation, Length, LogLabel, OutputLogsWrapper, valueAnimation } from "../OutputLogs";
 
 interface OutputLogsProps {
-  status: DemoStatus;
+  status: ZipDemoStatus;
   ignoredElementsExist: boolean;
   minIterableLength: number;
 }
-
-const labelAnimation = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  transition: { duration: 0.35 },
-};
-
-const valueAnimation = {
-  initial: { scale: 3 },
-  animate: { scale: 1 },
-  transition: { duration: 0.5 },
-};
 
 export function OutputLogs({
   status,
@@ -50,11 +33,11 @@ export function OutputLogs({
     !ignoredElementsExist && showIgnoredElementsLabel;
 
   return (
-    <>
+    <OutputLogsWrapper>
       {showShortestIterable && (
         <LogLabel {...labelAnimation}>
           Shortest iterable length:{" "}
-          <MinLength {...valueAnimation}>{minIterableLength}</MinLength>
+          <Length {...valueAnimation}>{minIterableLength}</Length>
         </LogLabel>
       )}
       {showIgnoredElementsLabelExists && (
@@ -63,25 +46,6 @@ export function OutputLogs({
       {showIgnoredElementsLabelNotExists && (
         <LogLabel {...labelAnimation}>No items ignored: ✅</LogLabel>
       )}
-    </>
+    </OutputLogsWrapper>
   );
 }
-
-export function OutputIterables({ outputIterables }: OutputProps) {
-  return <IterableList iterables={outputIterables} allowMutation={false} />;
-}
-
-export function OutputPrintedValue({ outputIterables }: OutputProps) {
-  return <OutputPrintedValueCode outputIterables={outputIterables} />;
-}
-
-const LogLabel = styled(motion.p)`
-  font-size: 1rem;
-  font-family: var(--font-family-mono);
-  margin: 0;
-`;
-
-const MinLength = styled(motion.strong)`
-  display: inline-block;
-  color: green;
-`;

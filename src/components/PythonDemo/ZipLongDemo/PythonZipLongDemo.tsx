@@ -1,0 +1,241 @@
+"use client";
+
+import * as React from "react";
+import AnimationStepController from "../AnimationStepController";
+import styled from "styled-components";
+import IterableList from "../IterableList";
+import { OutputIterables } from "../OutputIterables";
+import { OutputLogs } from "./OutputLogs";
+import { InputIterablesCode } from "./PythonIOCode";
+import { OutputPrintedValueCode } from "./PythonIOCode";
+import LayoutManager from "../LayoutManager";
+import IterableItemPosition from "../IterableItemPosition";
+import { useReducedMotion } from "framer-motion";
+import FillCell from "./FillCell";
+import { ZipLongDemoStatus } from "./types";
+import {
+  ItemWithPosition,
+  useZipLongIterables,
+} from "../hooks/useZipLongIterables";
+import { produce } from "immer";
+import { fi } from "date-fns/locale";
+
+const INIT_CURRENT_ITEM_POSITION = new IterableItemPosition(-1, 0);
+function PythonZipLongDemo() {
+  const {
+    inputIterables,
+    outputIterables,
+    addInputIterable,
+    removeInputIterable,
+    addInputItem,
+    removeInputItem,
+    updateInputItem,
+    reset: resetData,
+    markEmptyAndPendingItems,
+    moveFromInputToOutputTrackFill,
+    longestIterableIndex,
+    longestIterableLength,
+    fillValue,
+    setFillValue,
+    fillItems,
+    fillOutputItem,
+  } = useZipLongIterables();
+
+  const [status, setStatus] = React.useState<ZipLongDemoStatus>("editing");
+  const [currentItemPosition, setCurrentItemPosition] =
+    React.useState<IterableItemPosition | null>(INIT_CURRENT_ITEM_POSITION);
+  const [currentFillItemIndex, setCurrentFillItemIndex] = React.useState<
+    number | null
+  >(-1);
+
+  const prefersReducedMotion = useReducedMotion() ?? false;
+
+  function getNextItemPosition() {
+    return (
+      currentItemPosition?.nextColWise(
+        inputIterables.length,
+        longestIterableLength
+      ) ?? null
+    );
+  }
+
+  function getNextFillItemIndex() {
+    if (
+      currentFillItemIndex === null ||
+      currentFillItemIndex + 1 >= fillItems.length
+    ) {
+      return null;
+    }
+
+    return currentFillItemIndex + 1;
+  }
+
+  function isDemoEnd() {
+    return status === "viewing";
+  }
+
+  function reset() {
+    const nextStatus = "editing";
+    setStatus(nextStatus);
+
+    const nextItemPos = INIT_CURRENT_ITEM_POSITION;
+    setCurrentItemPosition(nextItemPos);
+
+    setCurrentFillItemIndex(-1);
+
+    resetData();
+  }
+
+  const isEditing = status === "editing";
+  const isViewing = status === "viewing";
+
+  const highlightLongestIterable = status === "mark_longest_iterable";
+
+  const emptySlotsExists = inputIterables.some((iterable) =>
+    iterable.items.some((item) => item.value === "")
+  );
+
+  function nextDemoStep() {
+    const nextItemPos = getNextItemPosition();
+    const nextFillItemIndex = getNextFillItemIndex();
+
+    const statusFlow: Record<ZipLongDemoStatus, ZipLongDemoStatus> = {
+      editing: "waiting",
+      waiting: "mark_longest_iterable",
+      mark_longest_iterable: "mark_empty_slots",
+      mark_empty_slots: "moving",
+      moving: nextItemPos == null ? "filling" : "moving",
+      filling: nextFillItemIndex == null ? "viewing" : "filling",
+      viewing: "viewing",
+    };
+
+    const nextStatus = statusFlow[status];
+    setStatus(nextStatus);
+
+    if (nextStatus === "mark_empty_slots") {
+      markEmptyAndPendingItems();
+    }
+
+    if (nextStatus === "moving") {
+      setCurrentItemPosition(nextItemPos);
+      if (nextItemPos) moveFromInputToOutputTrackFill(nextItemPos);
+    }
+    if (nextStatus === "filling") {
+      setCurrentFillItemIndex(nextFillItemIndex);
+      if (nextFillItemIndex !== null) {
+        fillOutputItem(fillItems[nextFillItemIndex]);
+      }
+    }
+
+    // if (nextStatus === "resetting") {
+    //   markAllUnignoredItemsAsTransitioned();
+    // }
+  }
+
+  const inputBoard = (
+    <InputBoard>
+      <IterableList
+        key={"input"}
+        title="Configure Input Iterables:"
+        iterables={inputIterables}
+        addItem={addInputItem}
+        removeItem={removeInputItem}
+        updateItem={updateInputItem}
+        allowMutation={isEditing}
+        highlightIndex={
+          highlightLongestIterable ? longestIterableIndex : undefined
+        }
+        onEdit={reset}
+        addInputIterable={addInputIterable}
+        removeInputIterable={removeInputIterable}
+      />
+
+      <OutputLogs
+        status={status}
+        emptySlotsExists={emptySlotsExists}
+        maxIterableLength={longestIterableLength}
+      />
+    </InputBoard>
+  );
+
+  const filledOutputIterables = produce(outputIterables, (draft) => {
+    draft.forEach((iterable) => {
+      iterable.items.forEach((item) => {
+        if (item.status === "transitioned_filled" && item.fillValue) {
+          item.value = item.fillValue;
+        }
+      });
+    });
+  });
+
+  console.log({ filledOutputIterables });
+
+  const outputBoard = (
+    <OutputBoard>
+      {!isEditing && <OutputIterables outputIterables={outputIterables} />}
+    </OutputBoard>
+  );
+
+  const inputCode = (
+    <InputIterablesCode inputIterables={inputIterables} fillValue={fillValue} />
+  );
+
+  const outputPrintedValue = isViewing && (
+    <OutputPrintedValueCode outputIterables={filledOutputIterables} />
+  );
+
+  let slicedFillItems: ItemWithPosition[] = [];
+  if (currentFillItemIndex)
+    slicedFillItems = fillItems.slice(currentFillItemIndex + 1);
+
+  console.log({
+    status,
+    currentItemPosition,
+    inputIterables,
+    outputIterables,
+    slicedFillItems,
+  });
+
+  return (
+    <Wrapper>
+      <LayoutManager
+        extras={
+          <FillCell
+            value={fillValue}
+            setValue={setFillValue}
+            fillItemWithPositions={slicedFillItems}
+          />
+        }
+        inputBoard={inputBoard}
+        outputBoard={outputBoard}
+        inputCode={inputCode}
+        outputPrintedValue={outputPrintedValue}
+        animationControls={
+          <AnimationStepController
+            stepsEnded={isDemoEnd}
+            onReset={reset}
+            onNextStep={nextDemoStep}
+          />
+        }
+      />
+    </Wrapper>
+  );
+}
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
+const InputBoard = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1.5;
+  width: 272px;
+`;
+
+const OutputBoard = styled.div``;
+
+export default PythonZipLongDemo;

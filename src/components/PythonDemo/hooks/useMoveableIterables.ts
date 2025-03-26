@@ -1,7 +1,6 @@
 import { useReducedMotion } from "framer-motion";
 import IterableItemPosition from "../IterableItemPosition";
 import useIterables from "./useIterables";
-import { produce } from "immer";
 
 export default function useMoveableIterables() {
   const {
@@ -15,27 +14,16 @@ export default function useMoveableIterables() {
     removeItem: removeInputItem,
     updateItem: updateInputItem,
     updateItemStatus: updateInputItemStatus,
+    ...rest
   } = useIterables(true);
   const {
     data: outputIterables,
     upsert: upsertOutput,
     setData: setOutputIterables,
+    updateItemStatus: updateOutputItemStatus,
   } = useIterables(false);
 
   const reducedMotion = useReducedMotion() ?? false;
-
-  function reset() {
-    const nextInputIterables = produce(inputIterables, (draft) => {
-      draft.forEach((iterable) => {
-        iterable.items.forEach((item) => {
-          item.status = "not_started";
-        });
-      });
-    });
-
-    setInputIterables(nextInputIterables);
-    setOutputIterables([]);
-  }
 
   function moveFromInputToOutput(untilPosition: IterableItemPosition) {
     const movingItem = inputIterables[untilPosition.x].items[untilPosition.y];
@@ -43,13 +31,12 @@ export default function useMoveableIterables() {
 
     const prevPosition = untilPosition.prevColWise(inputIterables.length);
     if (prevPosition) {
-      updateInputItemStatus(prevPosition, "transitioned");
+      updateInputItemStatus(prevPosition, "input_transitioned");
     }
 
     upsertOutput(untilPosition.y, untilPosition.x, {
       ...movingItem,
-      id: movingItem.id + "-out",
-      status: "transitioned",
+      status: "output_transitioned",
       //If motion is reduced, entry animation is used instead of movement animation
       animateEntry: reducedMotion ? true : false,
     });
@@ -66,7 +53,11 @@ export default function useMoveableIterables() {
     addInputItem,
     removeInputItem,
     updateInputItem,
-    reset,
+    setOutputIterables,
     moveFromInputToOutput,
+    updateInputItemStatus,
+    upsertOutput,
+    updateOutputItemStatus,
+    ...rest,
   };
 }

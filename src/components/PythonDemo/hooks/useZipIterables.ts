@@ -2,8 +2,26 @@ import { produce } from "immer";
 import useMoveableIterables from "./useMoveableIterables";
 
 function useZipIterables() {
-  const { inputIterables, shortestIterableLength, setInputIterables, ...rest } =
-    useMoveableIterables();
+  const {
+    inputIterables,
+    shortestIterableLength,
+    setInputIterables,
+    setOutputIterables,
+    ...rest
+  } = useMoveableIterables();
+
+  function reset() {
+    const nextInputIterables = produce(inputIterables, (draft) => {
+      draft.forEach((iterable) => {
+        iterable.items.forEach((item) => {
+          item.status = "not_started";
+        });
+      });
+    });
+
+    setInputIterables(nextInputIterables);
+    setOutputIterables([]);
+  }
 
   function markIgnoredAndPendingItems() {
     const nextInputIterables = produce(inputIterables, (draft) => {
@@ -23,7 +41,7 @@ function useZipIterables() {
         iterable.items
           .filter((item) => item.status !== "ignored")
           .forEach((item) => {
-            item.status = "transitioned";
+            item.status = "input_transitioned";
           })
       );
     });
@@ -36,6 +54,7 @@ function useZipIterables() {
     shortestIterableLength,
     markIgnoredAndPendingItems,
     markAllUnignoredItemsAsTransitioned,
+    reset,
   };
 }
 

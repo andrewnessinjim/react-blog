@@ -1,11 +1,12 @@
 import { motion, useReducedMotion } from "framer-motion";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { IterableItemObject } from "./types";
 import React from "react";
+import Cell from "./Cell";
 
 interface Props {
   iterableItem: IterableItemObject;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (value: string) => void;
   allowMutation?: boolean;
 }
 
@@ -24,22 +25,6 @@ function animations(
   boop: boolean,
   enableMotionAlternative: boolean
 ) {
-  // if (enableMotionAlternative) {
-  //   return {
-  //     initial: {
-  //       opacity: animateEntry ? 0 : 1,
-  //       boxShadow: "0 0 0 0px black",
-  //     },
-  //     animate: {
-  //       opacity: 1,
-  //       boxShadow: boop ? "0 0 0 4px green" : "0 0 0 0px black",
-  //     },
-  //     transition: {
-  //       type: "spring",
-  //       duration: 0.75,
-  //     },
-  //   };
-  // }
   return {
     initial: {
       scaleX: animateEntry ? 0 : 1,
@@ -78,34 +63,66 @@ function Cross() {
 }
 
 function IterableItem({ iterableItem, onChange, allowMutation = true }: Props) {
-  const { id, value, animateEntry, status } = iterableItem;
+  const { id, animateEntry, status, fillValue } = iterableItem;
+  let { value } = iterableItem;
+
+  const underlayLayoutId =
+    status === "input_transitioned"
+      ? id
+      : status === "output_transitioned" ||
+        status === "transitioned_fill_pending"
+      ? id + "-out"
+      : id;
 
   const crossedOut = status === "ignored";
-  const overlayDuplicate = status === "pending";
-  const boop = status === "transitioning";
 
-  const overlayLayoutId = id + "-out";
+  const overlayOutput = status === "pending" || status === "pending_empty";
+  const overlayOutputLayoutId = id + "-out";
+
+  const overlayFill = status === "transitioned_filled";
+  const overlayFillLayoutId = id + "-fill";
+
+  const boop = status === "transitioning" || status === "transitioning_empty";
+
   const prefersReducedMotion = useReducedMotion() ?? false;
+
+  const underlayValue =
+    status === "pending_empty" ||
+    status === "transitioned_empty" ||
+    status === "transitioning_empty"
+      ? "🚫"
+      : value;
 
   return (
     <Wrapper>
       <UnderlayItem
-        layoutId={id}
+        layoutId={underlayLayoutId}
+        data-layout-id={underlayLayoutId}
         {...animations(animateEntry, boop, prefersReducedMotion)}
       >
-        {allowMutation ? (
-          <CellInput type="number" max={99} value={value} onChange={onChange} />
-        ) : (
-          <CellSpan>{value}</CellSpan>
-        )}
+        <Cell
+          value={underlayValue}
+          onChange={onChange}
+          editable={allowMutation}
+        />
         {crossedOut && <Cross />}
       </UnderlayItem>
-      {overlayDuplicate && (
+      {overlayOutput && (
         <OverlayItem
-          layoutId={overlayLayoutId}
+          layoutId={overlayOutputLayoutId}
+          data-layout-id={overlayOutputLayoutId}
           {...animations(false, boop, prefersReducedMotion)}
         >
-          <CellInput type="number" max={99} value={value} onChange={onChange} />
+          <Cell value={value} editable={allowMutation} />
+        </OverlayItem>
+      )}
+      {overlayFill && (
+        <OverlayItem
+          layoutId={overlayFillLayoutId}
+          data-layout-id={overlayFillLayoutId}
+          {...animations(false, boop, prefersReducedMotion)}
+        >
+          <Cell value={fillValue} editable={allowMutation} />
         </OverlayItem>
       )}
     </Wrapper>
@@ -117,13 +134,6 @@ const Wrapper = styled(motion.div)`
 `;
 
 const UnderlayItem = styled(motion.div)`
-  width: 48px;
-  aspect-ratio: 1;
-  text-align: center;
-  border: 2px dashed var(--color-primary-900);
-  border-radius: 5px;
-  background: transparent;
-
   position: relative;
 `;
 
@@ -131,36 +141,6 @@ const OverlayItem = styled(UnderlayItem)`
   position: absolute;
   top: 0;
   left: 0;
-`;
-
-const cellStyles = css`
-  width: 100%;
-  height: 100%;
-  border: none;
-  background: transparent;
-  color: var(--color-primary-500);
-  font-size: 1.25rem;
-  text-align: center;
-`;
-
-const CellInput = styled(motion.input)`
-  ${cellStyles};
-  text-align: center;
-  -webkit-appearance: none;
-  -moz-appearance: textfield;
-  appearance: textfield;
-
-  &::-webkit-outer-spin-button,
-  &::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-`;
-
-const CellSpan = styled.span`
-  ${cellStyles};
-  display: grid;
-  place-content: center;
 `;
 
 const CrossLineWrapper = styled(motion.div)`

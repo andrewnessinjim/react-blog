@@ -1,16 +1,17 @@
 "use client";
 
 import * as React from "react";
-import AnimationStepController from "./AnimationStepController";
-import { DemoStatus } from "./types";
+import AnimationStepController from "../AnimationStepController";
+import { ZipDemoStatus } from "../types";
 import styled from "styled-components";
-import IterableList from "./IterableList";
-import { OutputIterables, OutputLogs, OutputPrintedValue } from "./Output";
-import { InputIterablesCode } from "./PythonCode";
-import LayoutManager from "./LayoutManager";
-import IterableItemPosition from "./IterableItemPosition";
+import IterableList from "../IterableList";
+import { OutputLogs } from "./OutputLogs";
+import { InputIterablesCode, OutputPrintedValueCode } from "./PythonIOCode";
+import LayoutManager from "../LayoutManager";
+import IterableItemPosition from "../IterableItemPosition";
 import { useReducedMotion } from "framer-motion";
-import { useZipIterables } from "./hooks";
+import { useZipIterables } from "../hooks";
+import { OutputIterables } from "../OutputIterables";
 
 const INIT_CURRENT_ITEM_POSITION = new IterableItemPosition(-1, 0);
 function PythonZipDemo() {
@@ -30,7 +31,7 @@ function PythonZipDemo() {
     shortestIterableLength,
   } = useZipIterables();
 
-  const [status, setStatus] = React.useState<DemoStatus>("editing");
+  const [status, setStatus] = React.useState<ZipDemoStatus>("editing");
   const [currentItemPosition, setCurrentItemPosition] =
     React.useState<IterableItemPosition | null>(INIT_CURRENT_ITEM_POSITION);
 
@@ -72,7 +73,7 @@ function PythonZipDemo() {
   function nextDemoStep() {
     const nextItemPos = getNextItemPosition();
 
-    const statusFlow: Record<DemoStatus, DemoStatus> = {
+    const statusFlow: Record<ZipDemoStatus, ZipDemoStatus> = {
       editing: "waiting",
       waiting: "mark_shortest_iterable",
       mark_shortest_iterable: "mark_ignored_items",
@@ -108,6 +109,7 @@ function PythonZipDemo() {
     <InputBoard>
       <IterableList
         key={"input"}
+        title="Configure Input Iterables:"
         iterables={inputIterables}
         addItem={addInputItem}
         removeItem={removeInputItem}
@@ -138,7 +140,7 @@ function PythonZipDemo() {
   const inputCode = <InputIterablesCode inputIterables={inputIterables} />;
 
   const outputPrintedValue = isViewing && (
-    <OutputPrintedValue outputIterables={outputIterables} />
+    <OutputPrintedValueCode outputIterables={outputIterables} />
   );
 
   console.log({ status, currentItemPosition });

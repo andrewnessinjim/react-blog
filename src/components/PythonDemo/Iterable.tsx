@@ -56,11 +56,10 @@ function Iterable({
                 key={iterableItem.id}
                 iterableItem={iterableItem}
                 allowMutation={allowMutation}
-                onChange={(e) => {
+                onChange={(value) => {
                   if (allowMutation) {
                     onEdit && onEdit();
-                    updateItem &&
-                      updateItem(iterableIndex, itemIndex, e.target.value);
+                    updateItem && updateItem(iterableIndex, itemIndex, value);
                   }
                 }}
               />

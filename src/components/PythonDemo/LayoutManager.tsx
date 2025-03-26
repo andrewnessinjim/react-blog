@@ -7,9 +7,11 @@ interface Props {
   inputCode: React.ReactNode;
   animationControls: React.ReactNode;
   outputPrintedValue: React.ReactNode;
+  extras?: React.ReactNode;
 }
 
 function LayoutManager({
+  extras,
   inputBoard,
   outputBoard,
   inputCode,
@@ -19,6 +21,7 @@ function LayoutManager({
   return (
     <LayoutGroup>
       <Wrapper>
+        {extras && <ExtrasWrapper>{extras}</ExtrasWrapper>}
         <InputBoardWrapper>{inputBoard}</InputBoardWrapper>
         <InputCodeWrapper>{inputCode}</InputCodeWrapper>
         <OutputBoardWrapper>{outputBoard}</OutputBoardWrapper>
@@ -33,8 +36,9 @@ const Wrapper = styled.div`
   --gap: 8px;
   display: grid;
   grid-template-columns: 1.25fr 1fr;
-  grid-template-rows: 240px auto auto auto;
+  grid-template-rows: auto 280px auto auto auto;
   grid-template-areas:
+    "extras extras"
     "input-board output-board"
     "controls output-board"
     "code printed-value";
@@ -51,6 +55,10 @@ const Wrapper = styled.div`
   padding: 48px;
 
   border-radius: 8px;
+`;
+
+const ExtrasWrapper = styled.div`
+  grid-area: extras;
 `;
 
 const InputBoardWrapper = styled.div`

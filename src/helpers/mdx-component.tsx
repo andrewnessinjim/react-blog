@@ -16,7 +16,8 @@ import InfoPopover from "@/components/InfoPopover";
 import StyledTable from "@/components/StyledTable";
 import DatabaseIndexDemo from "@/components/DatabaseIndexDemo";
 import DesktopOnly from "@/components/DesktopOnly";
-import PythonZipDemo from "@/components/PythonZipDemo";
+import PythonZipDemo from "@/components/PythonDemo/ZipDemo/PythonZipDemo";
+import PythonZipLongDemo from "@/components/PythonDemo/ZipLongDemo/PythonZipLongDemo";
 
 const COMPONENTS = {
   Spacer,
@@ -37,7 +38,8 @@ const COMPONENTS = {
   table: StyledTable,
   DatabaseIndexDemo,
   DesktopOnly,
-  PythonZipDemo
+  PythonZipDemo,
+  PythonZipLongDemo,
 };
 
 export default COMPONENTS;
