@@ -13,6 +13,7 @@ export function InputIterablesCode({ inputIterables, fillValue }: Props) {
       inputIterables
         .map((iterable, itertableIndex) => {
           return `iterable${itertableIndex} = [${iterable.items
+            .filter((item) => item.value !== "")
             .map((item) => item.value)
             .join(", ")}]`;
         })
