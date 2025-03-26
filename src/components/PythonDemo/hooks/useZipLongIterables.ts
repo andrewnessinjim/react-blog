@@ -143,6 +143,23 @@ export function useZipLongIterables() {
     });
   }
 
+  function markTransitioningItemsAsTransitioned() {
+    const nextInputIterables = produce(inputIterables, (draft) => {
+      draft.forEach((iterable) => {
+        iterable.items.forEach((item) => {
+          if (item.status === "transitioning") {
+            item.status = "input_transitioned";
+          }
+          if (item.status === "transitioning_empty") {
+            item.status = "transitioned_empty";
+          }
+        });
+      });
+    });
+
+    setInputIterables(nextInputIterables);
+  }
+
   return {
     inputIterables,
     outputIterables,
@@ -155,6 +172,7 @@ export function useZipLongIterables() {
     reset,
     moveFromInputToOutputTrackFill,
     fillOutputItem,
+    markTransitioningItemsAsTransitioned,
     ...rest,
   };
 }

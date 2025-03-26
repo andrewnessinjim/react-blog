@@ -1,22 +1,39 @@
 import React from "react";
 import Cell from "../Cell";
 import styled from "styled-components";
-import { motion } from "framer-motion";
-import { IterableItemObject } from "../types";
+import { motion, useReducedMotion } from "framer-motion";
 import { ItemWithPosition } from "../hooks/useZipLongIterables";
 
 interface Props {
   value: string;
   setValue: (value: string) => void;
   fillItemWithPositions: ItemWithPosition[];
+  isFilling: boolean;
 }
 
-function FillCell({ value, setValue, fillItemWithPositions }: Props) {
+function FillCell({
+  value,
+  setValue,
+  fillItemWithPositions,
+  isFilling,
+}: Props) {
   const id = React.useId();
+
+  const enableMotionAlternative = useReducedMotion() ?? false;
+
   return (
     <Wrapper>
       Fill Value:
-      <CellWrapper>
+      <CellWrapper
+        key={Math.random()}
+        animate={{
+          scale: isFilling ? [0.95, 1.05, 1] : 1,
+          boxShadow:
+            isFilling && enableMotionAlternative
+              ? "0 0 0 4px green"
+              : "0 0 0 0px black",
+        }}
+      >
         <Cell editable value={value} onChange={(value) => setValue(value)} />
         {fillItemWithPositions.map((itemWithPosition) => {
           const { item } = itemWithPosition;
@@ -41,7 +58,7 @@ const Wrapper = styled(motion.div)`
   align-items: center;
 `;
 
-const CellWrapper = styled.div`
+const CellWrapper = styled(motion.div)`
   position: relative;
 `;
 

@@ -18,7 +18,6 @@ import {
   useZipLongIterables,
 } from "../hooks/useZipLongIterables";
 import { produce } from "immer";
-import { fi } from "date-fns/locale";
 
 const INIT_CURRENT_ITEM_POSITION = new IterableItemPosition(-1, 0);
 function PythonZipLongDemo() {
@@ -32,6 +31,7 @@ function PythonZipLongDemo() {
     updateInputItem,
     reset: resetData,
     markEmptyAndPendingItems,
+    markTransitioningItemsAsTransitioned,
     moveFromInputToOutputTrackFill,
     longestIterableIndex,
     longestIterableLength,
@@ -104,8 +104,14 @@ function PythonZipLongDemo() {
       waiting: "mark_longest_iterable",
       mark_longest_iterable: "mark_empty_slots",
       mark_empty_slots: "moving",
-      moving: nextItemPos == null ? "filling" : "moving",
-      filling: nextFillItemIndex == null ? "viewing" : "filling",
+      moving:
+        nextItemPos !== null
+          ? "moving"
+          : prefersReducedMotion
+          ? "resetting"
+          : "filling",
+      resetting: "filling",
+      filling: nextFillItemIndex != null ? "filling" : "viewing",
       viewing: "viewing",
     };
 
@@ -127,9 +133,9 @@ function PythonZipLongDemo() {
       }
     }
 
-    // if (nextStatus === "resetting") {
-    //   markAllUnignoredItemsAsTransitioned();
-    // }
+    if (nextStatus === "resetting") {
+      markTransitioningItemsAsTransitioned();
+    }
   }
 
   const inputBoard = (
@@ -168,8 +174,6 @@ function PythonZipLongDemo() {
     });
   });
 
-  console.log({ filledOutputIterables });
-
   const outputBoard = (
     <OutputBoard>
       {!isEditing && <OutputIterables outputIterables={outputIterables} />}
@@ -185,15 +189,16 @@ function PythonZipLongDemo() {
   );
 
   let slicedFillItems: ItemWithPosition[] = [];
-  if (currentFillItemIndex)
+  if (currentFillItemIndex !== null && currentFillItemIndex >= -1)
     slicedFillItems = fillItems.slice(currentFillItemIndex + 1);
 
   console.log({
     status,
-    currentItemPosition,
+    currentFillItemIndex,
     inputIterables,
     outputIterables,
     slicedFillItems,
+    fillItems,
   });
 
   return (
@@ -204,6 +209,7 @@ function PythonZipLongDemo() {
             value={fillValue}
             setValue={setFillValue}
             fillItemWithPositions={slicedFillItems}
+            isFilling={status === "filling"}
           />
         }
         inputBoard={inputBoard}

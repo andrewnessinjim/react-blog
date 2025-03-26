@@ -24,11 +24,13 @@ export function OutputLogs({
     status === "mark_empty_slots" ||
     status === "moving" ||
     status === "viewing" ||
+    status === "resetting" ||
     status === "filling";
 
   const showEmptySlotsLabel =
     status === "mark_empty_slots" ||
     status === "moving" ||
+    status === "resetting" ||
     status === "viewing" ||
     status === "filling";
 

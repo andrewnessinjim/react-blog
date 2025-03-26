@@ -5,4 +5,5 @@ export type ZipLongDemoStatus =
   | "mark_empty_slots"
   | "moving"
   | "filling"
+  | "resetting"
   | "viewing";
