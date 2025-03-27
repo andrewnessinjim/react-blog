@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import * as React from "react";
 import styled from "styled-components";
+import useBoop from "./useBoop";
 
 interface Props {
   timing: number;
@@ -21,42 +22,10 @@ function Boop({
   scale = 1,
   children,
 }: Props) {
-  const [isBooped, setIsBooped] = React.useState(false);
-
-  React.useEffect(() => {
-    if (!isBooped) {
-      return;
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      setIsBooped(false);
-    }, timing);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [isBooped, timing]);
-
-  const trigger = () => {
-    console.log("Setting isBooped to true");
-    setIsBooped(true);
-  };
+  const [trigger, animationSettings] = useBoop(rotation, timing, x, y, scale);
 
   return (
-    <Wrapper
-      onMouseEnter={trigger}
-      animate={{
-        rotate: isBooped ? rotation : 0,
-        scale: isBooped ? scale : 1,
-        x: isBooped ? x : 0,
-        y: isBooped ? y : 0,
-      }}
-      transition={{
-        type: "spring",
-        stiffness: 300,
-        damping: 10,
-      }}
-    >
+    <Wrapper onMouseEnter={trigger} {...animationSettings}>
       {children}
     </Wrapper>
   );
