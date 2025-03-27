@@ -3,26 +3,14 @@
 import { motion } from "framer-motion";
 import * as React from "react";
 import styled from "styled-components";
-import useBoop from "./useBoop";
+import useBoop, { useBoopProps } from "./useBoop";
 
-interface Props {
-  timing: number;
-  rotation: number;
+interface Props extends useBoopProps {
   children: React.ReactNode;
-  x: number;
-  y: number;
-  scale: number;
 }
 
-function Boop({
-  rotation = 0,
-  timing = 250,
-  x = 0,
-  y = 0,
-  scale = 1,
-  children,
-}: Props) {
-  const [trigger, animationSettings] = useBoop(rotation, timing, x, y, scale);
+function Boop({ children, ...boopConfig }: Props) {
+  const [trigger, animationSettings] = useBoop(boopConfig);
 
   return (
     <Wrapper onMouseEnter={trigger} {...animationSettings}>

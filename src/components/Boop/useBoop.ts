@@ -1,13 +1,21 @@
 import { MotionProps } from "framer-motion";
 import React from "react";
 
-function useBoop(
-  rotation: number = 0,
-  timing: number = 250,
-  x: number = 0,
-  y: number = 0,
-  scale = 1
-): [() => void, MotionProps] {
+export interface useBoopProps {
+  rotation?: number;
+  timing?: number;
+  x?: number;
+  y?: number;
+  scale?: number;
+}
+
+function useBoop({
+  rotation = 0,
+  timing = 250,
+  x = 0,
+  y = 0,
+  scale = 1,
+}: useBoopProps): [() => void, MotionProps] {
   const [isBooped, setIsBooped] = React.useState(false);
 
   React.useEffect(() => {
