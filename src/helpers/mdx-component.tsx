@@ -18,6 +18,7 @@ import DatabaseIndexDemo from "@/components/DatabaseIndexDemo";
 import DesktopOnly from "@/components/DesktopOnly";
 import PythonZipDemo from "@/components/PythonDemo/ZipDemo/PythonZipDemo";
 import PythonZipLongDemo from "@/components/PythonDemo/ZipLongDemo/PythonZipLongDemo";
+import StyledCollapsible from "@/components/StyledCollapsible";
 
 const COMPONENTS = {
   Spacer,
@@ -40,6 +41,7 @@ const COMPONENTS = {
   DesktopOnly,
   PythonZipDemo,
   PythonZipLongDemo,
+  Collapsible: StyledCollapsible,
 };
 
 export default COMPONENTS;
