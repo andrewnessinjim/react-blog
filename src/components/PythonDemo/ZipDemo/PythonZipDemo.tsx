@@ -12,6 +12,7 @@ import IterableItemPosition from "../IterableItemPosition";
 import { useReducedMotion } from "framer-motion";
 import { useZipIterables } from "../hooks";
 import { OutputIterables } from "../OutputIterables";
+import { MEDIA_QUERIES } from "@/constants";
 
 const INIT_CURRENT_ITEM_POSITION = new IterableItemPosition(-1, 0);
 function PythonZipDemo() {
@@ -36,6 +37,8 @@ function PythonZipDemo() {
     React.useState<IterableItemPosition | null>(INIT_CURRENT_ITEM_POSITION);
 
   const prefersReducedMotion = useReducedMotion() ?? false;
+  const isMobile =
+    window && window.matchMedia(MEDIA_QUERIES.phoneAndBelow).matches;
 
   function getNextItemPosition() {
     return (
@@ -122,13 +125,15 @@ function PythonZipDemo() {
         addInputIterable={addInputIterable}
         removeInputIterable={removeInputIterable}
       />
-
-      <OutputLogs
-        status={status}
-        ignoredElementsExist={ignoredElementsExist}
-        minIterableLength={shortestIterableLength}
-      />
     </InputBoard>
+  );
+
+  const outputLogs = !isEditing && (
+    <OutputLogs
+      status={status}
+      ignoredElementsExist={ignoredElementsExist}
+      minIterableLength={shortestIterableLength}
+    />
   );
 
   const outputBoard = (
@@ -137,18 +142,22 @@ function PythonZipDemo() {
     </OutputBoard>
   );
 
-  const inputCode = <InputIterablesCode inputIterables={inputIterables} />;
+  const inputCode = (
+    <InputIterablesCode
+      inputIterables={inputIterables}
+      collapsed={isMobile && !isEditing}
+    />
+  );
 
   const outputPrintedValue = isViewing && (
     <OutputPrintedValueCode outputIterables={outputIterables} />
   );
 
-  console.log({ status, currentItemPosition });
-
   return (
     <LayoutManager
       inputBoard={inputBoard}
       outputBoard={outputBoard}
+      outputLogs={outputLogs}
       inputCode={inputCode}
       outputPrintedValue={outputPrintedValue}
       animationControls={

@@ -19,7 +19,6 @@ import {
 } from "../hooks/useZipLongIterables";
 import { produce } from "immer";
 import { MEDIA_QUERIES } from "@/constants";
-import { is } from "date-fns/locale";
 
 const INIT_CURRENT_ITEM_POSITION = new IterableItemPosition(-1, 0);
 function PythonZipLongDemo() {
@@ -51,9 +50,8 @@ function PythonZipLongDemo() {
   >(-1);
 
   const prefersReducedMotion = useReducedMotion() ?? false;
-  const isMobile = window.matchMedia(MEDIA_QUERIES.phoneAndBelow).matches;
-
-  console.log({isMobile});
+  const isMobile =
+    window && window.matchMedia(MEDIA_QUERIES.phoneAndBelow).matches;
 
   function getNextItemPosition() {
     return (
@@ -207,15 +205,6 @@ function PythonZipLongDemo() {
   let slicedFillItems: ItemWithPosition[] = [];
   if (currentFillItemIndex !== null && currentFillItemIndex >= -1)
     slicedFillItems = fillItems.slice(currentFillItemIndex + 1);
-
-  console.log({
-    status,
-    currentFillItemIndex,
-    inputIterables,
-    outputIterables,
-    slicedFillItems,
-    fillItems,
-  });
 
   return (
     <Wrapper>

@@ -4,9 +4,13 @@ import { PythonCode } from "../PythonCode";
 
 interface Props {
   inputIterables: IterableObject[];
+  collapsed?: boolean;
 }
 
-export function InputIterablesCode({ inputIterables }: Props) {
+export function InputIterablesCode({
+  inputIterables,
+  collapsed = false,
+}: Props) {
   const pythonCode = inputIterables
     .map((iterable, itertableIndex) => {
       return `iterable${itertableIndex} = [${iterable.items
@@ -23,7 +27,13 @@ export function InputIterablesCode({ inputIterables }: Props) {
     .concat("\n)\n")
     .concat("print(list(zipped))\n");
 
-  return <PythonCode title="Code Representation" pythonCode={pythonCode} />;
+  return (
+    <PythonCode
+      title="Code Representation"
+      pythonCode={pythonCode}
+      collapsed={collapsed}
+    />
+  );
 }
 
 export function OutputPrintedValueCode({

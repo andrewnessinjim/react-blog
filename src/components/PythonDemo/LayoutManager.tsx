@@ -1,7 +1,6 @@
 import { MEDIA_QUERIES } from "@/constants";
 import { LayoutGroup } from "framer-motion";
 import styled from "styled-components";
-import Spacer from "../Spacer";
 
 interface Props {
   inputBoard: React.ReactNode;
@@ -36,9 +35,9 @@ function LayoutManager({
             )}
           </InputFlexWrapper>
         </InputBoardWrapper>
-        <InputCodeWrapper>{inputCode}</InputCodeWrapper>
         {outputBoard && <OutputBoardWrapper>{outputBoard}</OutputBoardWrapper>}
         <AnimationControlsWrapper>{animationControls}</AnimationControlsWrapper>
+        <InputCodeWrapper>{inputCode}</InputCodeWrapper>
         <OutputPrintValueWrapper>{outputPrintedValue}</OutputPrintValueWrapper>
       </Wrapper>
     </LayoutGroup>
@@ -72,15 +71,8 @@ const Wrapper = styled.div`
     padding: 24px;
     gap: 12px;
 
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto auto auto;
-    grid-template-areas:
-      "extras"
-      "input-board"
-      "output-board"
-      "controls"
-      "printed-value"
-      "code";
+    display: flex;
+    flex-direction: column;
   }
 `;
 

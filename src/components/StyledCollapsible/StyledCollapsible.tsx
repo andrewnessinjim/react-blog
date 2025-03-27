@@ -27,7 +27,6 @@ function StyledCollapsible({ title, collapsed = false, children }: Props) {
     setOpen(!collapsed);
   }, [collapsed]);
 
-  console.log({ title, collapsed });
   function animations() {
     if (hydrated) {
       return {
