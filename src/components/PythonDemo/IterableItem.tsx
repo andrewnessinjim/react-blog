@@ -97,7 +97,6 @@ function IterableItem({ iterableItem, onChange, allowMutation = true }: Props) {
     <Wrapper>
       <UnderlayItem
         layoutId={underlayLayoutId}
-        data-layout-id={underlayLayoutId}
         {...animations(animateEntry, boop, prefersReducedMotion)}
       >
         <Cell
@@ -110,7 +109,6 @@ function IterableItem({ iterableItem, onChange, allowMutation = true }: Props) {
       {overlayOutput && (
         <OverlayItem
           layoutId={overlayOutputLayoutId}
-          data-layout-id={overlayOutputLayoutId}
           {...animations(false, boop, prefersReducedMotion)}
         >
           <Cell value={value} editable={allowMutation} />
@@ -119,7 +117,6 @@ function IterableItem({ iterableItem, onChange, allowMutation = true }: Props) {
       {overlayFill && (
         <OverlayItem
           layoutId={overlayFillLayoutId}
-          data-layout-id={overlayFillLayoutId}
           {...animations(false, boop, prefersReducedMotion)}
         >
           <Cell value={fillValue} editable={allowMutation} />

@@ -48,7 +48,6 @@ function FillCell({
             <OverlayItemWrapper
               key={item.id}
               layoutId={item.id}
-              data-layoutid={item.id}
             >
               <Cell editable={false} key={item.id} value={item.value} />
             </OverlayItemWrapper>

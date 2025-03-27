@@ -17,10 +17,8 @@ export function useZipLongIterables() {
     setInputIterables,
     setOutputIterables,
     longestIterableLength,
-    moveFromInputToOutput: moveFromInputToOutputNoFill,
     updateInputItemStatus,
     upsertOutput,
-    updateOutputItemStatus,
     ...rest
   } = useMoveableIterables();
 
