@@ -70,19 +70,19 @@ function reducer(state: IterableObject[], action: Action) {
                 value: "0",
                 id: crypto.randomUUID(),
                 animateEntry: false,
-                status: "pending",
+                status: "not_started",
               },
               {
                 value: "0",
                 id: crypto.randomUUID(),
                 animateEntry: false,
-                status: "pending",
+                status: "not_started",
               },
               {
                 value: "0",
                 id: crypto.randomUUID(),
                 animateEntry: false,
-                status: "pending",
+                status: "not_started",
               },
             ],
           });
