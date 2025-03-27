@@ -1,9 +1,7 @@
 import styled from "styled-components";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { a11yDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
-import { range } from "lodash-es";
 import React from "react";
-import { IterableObject } from "./types";
 import { motion } from "framer-motion";
 
 export function PythonCode({
