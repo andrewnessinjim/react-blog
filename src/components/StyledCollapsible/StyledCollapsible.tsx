@@ -23,6 +23,11 @@ function StyledCollapsible({ title, collapsed = false, children }: Props) {
     setHydrated(true);
   }, []);
 
+  React.useEffect(() => {
+    setOpen(!collapsed);
+  }, [collapsed]);
+
+  console.log({ title, collapsed });
   function animations() {
     if (hydrated) {
       return {
@@ -70,7 +75,6 @@ const TriggerWrapper = styled(Collapsible.Trigger)`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px;
   width: 100%;
   /* background-color: var(--color-decorative-300); */
   background-color: transparent;

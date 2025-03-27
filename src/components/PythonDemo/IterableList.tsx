@@ -4,6 +4,7 @@ import Iterable from "./Iterable";
 import { IterableObject } from "./types";
 import Button from "../Button";
 import React from "react";
+import { MEDIA_QUERIES } from "@/constants";
 
 interface Props {
   addItem?: (paramIndex: number) => void;
@@ -31,54 +32,52 @@ function IterableList({
   title,
 }: Props) {
   return (
-
-      <Wrapper>
-        <Title>{title}</Title>
-        {iterables.map((iterable, iterableIndex) => {
-          return (
-            <Iterable
-              key={iterable.id}
-              iterable={iterable}
-              iterableIndex={iterableIndex}
-              addItem={addItem}
-              removeItem={removeItem}
-              updateItem={updateItem}
-              allowMutation={allowMutation}
-              highlight={iterableIndex === highlightIndex}
-              onEdit={onEdit}
-            />
-          );
-        })}
-        <AnimatePresence>
-          {allowMutation && (
-            <IterableControls
-              layout={true}
-              exit={{ opacity: 0 }}
-              key={"controls"}
+    <Wrapper>
+      <Title>{title}</Title>
+      {iterables.map((iterable, iterableIndex) => {
+        return (
+          <Iterable
+            key={iterable.id}
+            iterable={iterable}
+            iterableIndex={iterableIndex}
+            addItem={addItem}
+            removeItem={removeItem}
+            updateItem={updateItem}
+            allowMutation={allowMutation}
+            highlight={iterableIndex === highlightIndex}
+            onEdit={onEdit}
+          />
+        );
+      })}
+      <AnimatePresence>
+        {allowMutation && (
+          <IterableControls
+            layout={true}
+            exit={{ opacity: 0 }}
+            key={"controls"}
+          >
+            <Button
+              variant="secondary"
+              size="regular"
+              onClick={() => {
+                addInputIterable && addInputIterable();
+              }}
             >
-              <Button
-                variant="secondary"
-                size="regular"
-                onClick={() => {
-                  addInputIterable && addInputIterable();
-                }}
-              >
-                Add
-              </Button>
-              <Button
-                variant="secondary"
-                size="regular"
-                onClick={() => {
-                  removeInputIterable && removeInputIterable();
-                }}
-              >
-                Remove
-              </Button>
-            </IterableControls>
-          )}
-        </AnimatePresence>
-      </Wrapper>
-
+              Add
+            </Button>
+            <Button
+              variant="secondary"
+              size="regular"
+              onClick={() => {
+                removeInputIterable && removeInputIterable();
+              }}
+            >
+              Remove
+            </Button>
+          </IterableControls>
+        )}
+      </AnimatePresence>
+    </Wrapper>
   );
 }
 
@@ -100,6 +99,10 @@ const IterableControls = styled(motion.div)`
   gap: var(--gap);
   align-self: center;
   position: relative;
+
+  @media ${MEDIA_QUERIES.phoneAndBelow} {
+    display: none;
+  }
 `;
 
 export default IterableList;

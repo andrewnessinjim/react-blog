@@ -5,9 +5,14 @@ import { IterableObject } from "../types";
 interface Props {
   inputIterables: IterableObject[];
   fillValue: string;
+  collapsed?: boolean;
 }
 
-export function InputIterablesCode({ inputIterables, fillValue }: Props) {
+export function InputIterablesCode({
+  inputIterables,
+  fillValue,
+  collapsed = false,
+}: Props) {
   const pythonCode = "from itertools import(\nzip_longest)\n\n"
     .concat(
       inputIterables
@@ -31,7 +36,13 @@ export function InputIterablesCode({ inputIterables, fillValue }: Props) {
     .concat("\n)\n")
     .concat("print(list(zipped))\n");
 
-  return <PythonCode title="Code Representation" pythonCode={pythonCode} />;
+  return (
+    <PythonCode
+      title="Code Representation"
+      pythonCode={pythonCode}
+      collapsed={collapsed}
+    />
+  );
 }
 
 export function OutputPrintedValueCode({

@@ -5,6 +5,7 @@ import styled from "styled-components";
 import Button from "../Button";
 
 import { AnimationStatus } from "./types";
+import { motion } from "framer-motion";
 
 interface Props {
   stepsEnded: () => boolean;
@@ -79,7 +80,7 @@ function AnimationStepController({ stepsEnded, onNextStep, onReset }: Props) {
   );
 
   return (
-    <Wrapper>
+    <Wrapper layout="position">
       {isPlaying && PauseButton}
       {isPaused && ResumeButton}
       {notStarted && PlayButton}
@@ -88,7 +89,7 @@ function AnimationStepController({ stepsEnded, onNextStep, onReset }: Props) {
   );
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled(motion.div)`
   display: flex;
   gap: var(--gap);
   justify-content: center;

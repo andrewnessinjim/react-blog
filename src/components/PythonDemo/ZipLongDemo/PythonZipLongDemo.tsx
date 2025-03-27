@@ -10,7 +10,7 @@ import { InputIterablesCode } from "./PythonIOCode";
 import { OutputPrintedValueCode } from "./PythonIOCode";
 import LayoutManager from "../LayoutManager";
 import IterableItemPosition from "../IterableItemPosition";
-import { useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import FillCell from "./FillCell";
 import { ZipLongDemoStatus } from "./types";
 import {
@@ -18,6 +18,8 @@ import {
   useZipLongIterables,
 } from "../hooks/useZipLongIterables";
 import { produce } from "immer";
+import { MEDIA_QUERIES } from "@/constants";
+import { is } from "date-fns/locale";
 
 const INIT_CURRENT_ITEM_POSITION = new IterableItemPosition(-1, 0);
 function PythonZipLongDemo() {
@@ -49,6 +51,9 @@ function PythonZipLongDemo() {
   >(-1);
 
   const prefersReducedMotion = useReducedMotion() ?? false;
+  const isMobile = window.matchMedia(MEDIA_QUERIES.phoneAndBelow).matches;
+
+  console.log({isMobile});
 
   function getNextItemPosition() {
     return (
@@ -109,8 +114,10 @@ function PythonZipLongDemo() {
           ? "moving"
           : prefersReducedMotion
           ? "resetting"
-          : "filling",
-      resetting: "filling",
+          : nextFillItemIndex != null
+          ? "filling"
+          : "viewing",
+      resetting: nextFillItemIndex != null ? "filling" : "viewing",
       filling: nextFillItemIndex != null ? "filling" : "viewing",
       viewing: "viewing",
     };
@@ -138,11 +145,14 @@ function PythonZipLongDemo() {
     }
   }
 
+  const inputBoardTitle = isEditing
+    ? "Configure Input Iterables:"
+    : "Input Iterables:";
   const inputBoard = (
-    <InputBoard>
+    <InputBoard layout="position">
       <IterableList
         key={"input"}
-        title="Configure Input Iterables:"
+        title={inputBoardTitle}
         iterables={inputIterables}
         addItem={addInputItem}
         removeItem={removeInputItem}
@@ -155,13 +165,15 @@ function PythonZipLongDemo() {
         addInputIterable={addInputIterable}
         removeInputIterable={removeInputIterable}
       />
-
-      <OutputLogs
-        status={status}
-        emptySlotsExists={emptySlotsExists}
-        maxIterableLength={longestIterableLength}
-      />
     </InputBoard>
+  );
+
+  const outputLogs = !isEditing && (
+    <OutputLogs
+      status={status}
+      emptySlotsExists={emptySlotsExists}
+      maxIterableLength={longestIterableLength}
+    />
   );
 
   const filledOutputIterables = produce(outputIterables, (draft) => {
@@ -174,14 +186,18 @@ function PythonZipLongDemo() {
     });
   });
 
-  const outputBoard = (
+  const outputBoard = !isEditing && (
     <OutputBoard>
-      {!isEditing && <OutputIterables outputIterables={outputIterables} />}
+      <OutputIterables outputIterables={outputIterables} />
     </OutputBoard>
   );
 
   const inputCode = (
-    <InputIterablesCode inputIterables={inputIterables} fillValue={fillValue} />
+    <InputIterablesCode
+      inputIterables={inputIterables}
+      fillValue={fillValue}
+      collapsed={isMobile && !isEditing}
+    />
   );
 
   const outputPrintedValue = isViewing && (
@@ -214,6 +230,7 @@ function PythonZipLongDemo() {
           />
         }
         inputBoard={inputBoard}
+        outputLogs={outputLogs}
         outputBoard={outputBoard}
         inputCode={inputCode}
         outputPrintedValue={outputPrintedValue}
@@ -235,7 +252,7 @@ const Wrapper = styled.div`
   gap: 16px;
 `;
 
-const InputBoard = styled.div`
+const InputBoard = styled(motion.div)`
   display: flex;
   flex-direction: column;
   gap: 16px;

@@ -1,3 +1,4 @@
+import { MEDIA_QUERIES } from "@/constants";
 import { motion } from "framer-motion";
 import styled from "styled-components";
 
@@ -17,6 +18,10 @@ export const OutputLogsWrapper = styled.div`
   display: flex;
   gap: 8px;
   flex-direction: column;
+
+  @media ${MEDIA_QUERIES.phoneAndBelow} {
+    gap: 4px;
+  }
 `;
 
 export const LogLabel = styled(motion.p)`
