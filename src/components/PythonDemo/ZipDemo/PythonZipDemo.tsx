@@ -37,8 +37,13 @@ function PythonZipDemo() {
     React.useState<IterableItemPosition | null>(INIT_CURRENT_ITEM_POSITION);
 
   const prefersReducedMotion = useReducedMotion() ?? false;
-  const isMobile =
-    window && window.matchMedia(MEDIA_QUERIES.phoneAndBelow).matches;
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsMobile(
+      window && window.matchMedia(MEDIA_QUERIES.phoneAndBelow).matches
+    );
+  }, []);
 
   function getNextItemPosition() {
     return (

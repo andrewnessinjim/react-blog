@@ -50,8 +50,13 @@ function PythonZipLongDemo() {
   >(-1);
 
   const prefersReducedMotion = useReducedMotion() ?? false;
-  const isMobile =
-    window && window.matchMedia(MEDIA_QUERIES.phoneAndBelow).matches;
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsMobile(
+      window && window.matchMedia(MEDIA_QUERIES.phoneAndBelow).matches
+    );
+  }, []);
 
   function getNextItemPosition() {
     return (
