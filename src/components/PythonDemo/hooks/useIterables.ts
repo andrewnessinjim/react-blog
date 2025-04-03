@@ -2,6 +2,7 @@ import { produce } from "immer";
 import React from "react";
 import { ItemStatus, IterableItemObject, IterableObject } from "../types";
 import IterableItemPosition from "../IterableItemPosition";
+import { range } from "lodash-es";
 
 const MIN_ITERABLES = 2;
 const MAX_ITERABLES = 3;
@@ -65,26 +66,12 @@ function reducer(state: IterableObject[], action: Action) {
             id: crypto.randomUUID(),
             animateEntry: true,
             exiting: false,
-            items: [
-              {
-                value: "0",
-                id: crypto.randomUUID(),
-                animateEntry: false,
-                status: "not_started",
-              },
-              {
-                value: "0",
-                id: crypto.randomUUID(),
-                animateEntry: false,
-                status: "not_started",
-              },
-              {
-                value: "0",
-                id: crypto.randomUUID(),
-                animateEntry: false,
-                status: "not_started",
-              },
-            ],
+            items: range(1, 4).map((value) => ({
+              id: crypto.randomUUID(),
+              value: `${value}`,
+              animateEntry: false,
+              status: "not_started",
+            })),
           });
         }
         break;
@@ -130,26 +117,12 @@ function initRandomIterable(): IterableObject {
     id: crypto.randomUUID(),
     animateEntry: false,
     exiting: false,
-    items: [
-      {
-        id: crypto.randomUUID(),
-        value: "1",
-        animateEntry: false,
-        status: "not_started",
-      },
-      {
-        id: crypto.randomUUID(),
-        value: "2",
-        animateEntry: false,
-        status: "not_started",
-      },
-      {
-        id: crypto.randomUUID(),
-        value: "3",
-        animateEntry: false,
-        status: "not_started",
-      },
-    ],
+    items: range(1, 4).map((value) => ({
+      id: crypto.randomUUID(),
+      value: `${value}`,
+      animateEntry: false,
+      status: "not_started",
+    })),
   };
 }
 
