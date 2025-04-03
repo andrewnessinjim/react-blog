@@ -27,7 +27,7 @@ function FillCell({
     <Wrapper>
       <Label htmlFor={inputId}>Fill Value:</Label>
       <CellWrapper
-        key={Math.random()}
+        key={isFilling ? Math.random() : undefined}
         animate={{
           scale: isFilling ? [0.95, 1.05, 1] : 1,
           boxShadow:
@@ -45,10 +45,7 @@ function FillCell({
         {fillItemWithPositions.map((itemWithPosition) => {
           const { item } = itemWithPosition;
           return (
-            <OverlayItemWrapper
-              key={item.id}
-              layoutId={item.id}
-            >
+            <OverlayItemWrapper key={item.id} layoutId={item.id}>
               <Cell editable={false} key={item.id} value={item.value} />
             </OverlayItemWrapper>
           );
