@@ -14,6 +14,9 @@ class IterableItemPosition {
   }
 
   nextColWise(maxX: number, maxY: number): IterableItemPosition | null {
+    if(maxX <= 0 || maxY <= 0) {
+      return null;
+    }
     if (this.x + 1 < maxX) {
       return new IterableItemPosition(this.x + 1, this.y);
     } else if (this.y + 1 < maxY) {
