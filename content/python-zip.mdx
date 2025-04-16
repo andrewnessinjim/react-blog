@@ -3,6 +3,126 @@ title: "Visualize Python zip function"
 abstract: An interactive model to visualize and understand Python's built-in zip function
 ---
 
-<PythonZipLongDemo/>
+If you already understand how `zip()` and `zip_longest()` work just by looking at the examples in the first section, you probably don't need this visualization. But if you're curious to see them in action—or just enjoy visual explanations—stick around!
 
-<PythonZipDemo/>
+## Examples
+
+Go through the examples below and see if you can understand how the `zip()` and `zip_longest()` functions work. Expand the output to see if it matches your expectations.
+
+### Example 1: Pairing Elements with `zip()`
+
+```python
+from itertools import zip_longest
+
+numbers_1 = [1, 2, 3, 4]
+numbers_2 = [5, 6]
+
+paired = list(zip(numbers_1, numbers_2))
+print(paired)
+```
+
+#### Output
+
+<Revealable triggerText="Reveal">
+```python
+[(1, 5), (2, 6)]
+```
+</Revealable>
+
+### Example 2: Pairing Elements with `zip_longest()`
+
+```python
+from itertools import zip_longest
+
+numbers_1 = [1, 2, 3, 4]
+numbers_2 = [5, 6]
+
+paired = list(zip_longest(numbers_1, numbers_2, fillvalue=0))
+
+print(paired)
+```
+#### Output
+<Revealable triggerText="Reveal">
+```python
+  [(1, 5), (2, 6), (3, 0), (4, 0)] 
+```
+</Revealable>
+
+## Visualizing `zip()` 
+The `zip()` function takes two or more iterables and returns an iterator of tuples. Each tuple contains elements from the input iterables at the same index. If the input iterables are of different lengths, `zip()` stops creating tuples when the shortest iterable is exhausted.
+
+<NoMarginParagraph>This is better understood with a visualization. The following interactive model shows how `zip()` works. Use the `+` and `-` buttons to add or remove elements from the input lists, and the `Add` and `Remove` buttons to add or remove lists. The demo supports only numbers and the size is constrained to keep the animation smooth. The "Code Representation" section shows the corresponding code for your current configuration. Click "Play Animation" to see how the `zip()` function works with the current configuration. After the animation, you can see the output of the `zip()` function in the "Output" section. You can also click `Reset` to go back to the initial state.</NoMarginParagraph>
+<PythonZipDemo />
+
+## Visualizing `zip_longest()`
+
+The `zip_longest()` works almost like `zip()`, but it continues until the longest iterable is exhausted. It fills in missing values with a specified `fillvalue` (default is `None`). This is useful when you want to pair elements from iterables of different lengths without losing any data. Play around with the following demo to see how `zip_longest()` works. The demo is similar to the one for `zip()`, but it includes an additional input field for the `fillvalue`.
+<PythonZipLongDemo />
+
+
+## A Realistic Example: Transpose a Matrix
+The `zip()` function is often used to transpose a matrix. This means converting rows into columns and vice versa. Here's how you can do it:
+
+```python
+def transpose(matrix):
+    return list(map(list, zip(*matrix)))
+
+matrix = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+]
+
+transposed = transpose(matrix)
+for row in transposed:
+    print(row)
+
+```
+
+### Output
+
+The first row `[1, 2, 3]` in the input becomes the first column `[1, 4, 7]` in the output, the second row `[4, 5, 6]` becomes the second column `[2, 5, 8]`, and so on.
+
+```python
+[1, 4, 7]
+[2, 5, 8]
+[3, 6, 9]
+```
+
+## Another Realistic Example: Clubbing Values
+
+`zip()` and `zip_longest()` can be used with iterables with different data types, not just numbers like in the visualization demos. Here is a realistic example of how `zip()` can be used.
+
+```python
+from itertools import zip_longest
+
+raw_sensor_data = [
+    ("12:00", 20.1),
+    ("12:02", 20.3),  # No reading at 12:01
+    ("12:04", 20.2)   # No reading at 12:03
+]
+
+expected_timestamps = ["12:00", "12:01", "12:02", "12:03", "12:04"]
+
+# Convert to dictionary for easy lookup
+reading_dict = dict(raw_sensor_data)
+
+# Fill missing values (we're not using zip_longest. Guess why?)
+readings = [reading_dict.get(t, "Missing") for t in expected_timestamps]
+
+# Pairing timestamps with readings
+paired = list(zip(expected_timestamps, readings))
+print(paired)
+```
+
+### Output
+
+```python
+[
+    ('12:00', 20.1),
+    ('12:01', 'Missing'),
+    ('12:02', 20.3),
+    ('12:03', 'Missing'),
+    ('12:04', 20.2)
+]
+```

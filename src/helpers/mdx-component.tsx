@@ -19,6 +19,7 @@ import DesktopOnly from "@/components/DesktopOnly";
 import PythonZipDemo from "@/components/PythonDemo/ZipDemo/PythonZipDemo";
 import PythonZipLongDemo from "@/components/PythonDemo/ZipLongDemo/PythonZipLongDemo";
 import StyledCollapsible from "@/components/StyledCollapsible";
+import Revealable from "@/components/Revealable";
 
 const COMPONENTS = {
   Spacer,
@@ -42,6 +43,7 @@ const COMPONENTS = {
   PythonZipDemo,
   PythonZipLongDemo,
   Collapsible: StyledCollapsible,
+  Revealable,
 };
 
 export default COMPONENTS;
