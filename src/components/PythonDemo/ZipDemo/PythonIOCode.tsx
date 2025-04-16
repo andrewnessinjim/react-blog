@@ -56,7 +56,7 @@ export function OutputPrintedValueCode({
     .concat("]\n");
   return (
     <PythonCode
-      title="Printed Value"
+      title="Output"
       pythonCode={pythonCode}
       animateEntry={true}
     />
