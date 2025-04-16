@@ -41,6 +41,7 @@ function Iterable({
 }: Props) {
   const id = React.useId();
 
+  const isEmpty = iterable.items.length === 0;
   return (
     <Wrapper {...animations(iterable.animateEntry)}>
       <AnimatePresence>
@@ -50,6 +51,11 @@ function Iterable({
           }}
           key={id + "-items-wrapper"}
         >
+          {isEmpty && (
+            <EmptyIndicator initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+              Empty
+            </EmptyIndicator>
+          )}
           {iterable.items.map((iterableItem, itemIndex) => {
             return (
               <IterableItem
@@ -102,6 +108,15 @@ const ItemsWrapper = styled(Wrapper)`
   outline-width: 0px;
   outline-offset: 2px;
   outline-color: green;
+`;
+
+const EmptyIndicator = styled(motion.div)`
+  height: 48px;
+  border: 2px dashed var(--color-gray-500);
+  display: grid;
+  place-items: center;
+  padding-left: 8px;
+  padding-right: 8px;
 `;
 
 export default Iterable;
