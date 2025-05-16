@@ -1,0 +1,90 @@
+---
+title: "My First Usability Test"
+abstract: In his book Rocket Surgery Made Easy, Steve Krug says much of what he does as part of usability testing is common sense! I was very skeptical about this, until I experienced it myself!
+publishedOn: "2025-05-16T22:49:00+0530"
+---
+
+Okay, I didn't actually conduct my first usability test. However, that made things even more interesting because I realized once you grasp the ideas in the book
+<span itemScope itemType="http://schema.org/Book"><cite itemProp="name">[Rocket Surgery Made Easy][3]</cite></span> by <span itemProp="author" itemScope itemType="http://schema.org/Person">
+    <span itemProp="name">Steve Krug</span></span>, you can't help but notice usability problems!
+
+## How It Happened
+
+I was building a simple app to practice [motion animations][1], which you can check out [here][2]. As I was building it, I kept showing it to my wife—not for usability testing, just to see what she thought. I'll refer to my wife as the user in the post so its feel more like a usability test 😁. Something she did piqued my interest and a few minutes later, I realized I had just detected a usability problem!
+
+## Problem 1: This Looked Fine—Until Someone Used It
+
+During development, I used the app several times and never noticed this! See if you can spot the problem. Below is the mobile screen, what would you do to start the game?
+
+<NextImage
+  alt="A mobile browser snapshot showing the home screen of a card game. Multiple buttons in the form of buttons are laid out, along with a banner that says Click Start to begin. The banner is styled like a button."
+  src="/images/first-usability-test/usability-wrong-affordance.png"
+  fill={true}
+  height={800}
+  phoneHeight={500}
+  caption="Homepage of the card game app with a usability problem. Can you find the problem?"
+/>
+<Spacer size="48" />
+
+If you guessed you would tap the "Start" card, you are right! However, maybe you were extra-conscious and actually read the text "Click Start to begin!". Now, guess what the user did?
+
+She tapped on the "Click Start to begin!" banner (maybe you thought this too). It immediately occurred to me that the banner looks like a button! How did I not see it though I tested it a 100 time? Because I was tied into the design. Now I truly understand this quote from the book:
+
+<CitedQuote
+    citation={<a href="https://sensible.com/rocket-surgery-made-easy/">Rocket Surgery Made Easy</a>}
+    author="Steve Krug"
+    >Many of the most serious problems are lying around in plain sight, and almost everyone will run into them.</CitedQuote>
+
+<Spacer size="32" />
+
+I fixed it by removing the styles that made it look like a button and placed an info icon next to it:
+<NextImage
+  alt="A mobile browser snapshot showing the home screen of a card game. Multiple buttons in the form of buttons are laid out, along with a banner that says Click Start to begin. The banner is no longer styled like a button, its styled like plain text with an info icon next to it."
+  src="/images/first-usability-test/usability-right-affordance.png"
+  fill={true}
+  height={800}
+  phoneHeight={500}
+  caption="Usability problem fixed by removing button-like styles from a non-button element."
+/>
+<Spacer size="48" />
+
+We should test usability fixes such as these in the real-world but as this is a hobby app, I didn't do it.
+
+## Problem 2: I Knew What It Was—She Didn’t
+
+The below screen appears when the About button is clicked:
+
+<NextImage
+  alt="A mobile view showing the About page with a close icon in the corner. There is no styles to indicate that this is a popup dialog."
+  src="/images/first-usability-test/usability-popup-wrong-styles.png"
+  fill={true}
+  height={800}
+  phoneHeight={500}
+  caption="About page with a usability problem. Can you find the problem?"
+/>
+<Spacer size="48" />
+
+Can you guess what the user did to get back to the game?
+
+She clicked the back button of the browser! This doesn't look like a popup dialog and so the user thought hitting back would get her back to the game. I fixed it by making it look like a popup:
+
+<NextImage
+  alt="A mobile view showing the About page with a close icon in the corner. There are styles to indicate this is a popup dialog."
+  src="/images/first-usability-test/usability-popup-right-styles.png"
+  fill={true}
+  height={800}
+  phoneHeight={500}
+  caption="Usability problem fixed by making the popup dialog look like a dialog instead of a page."
+/>
+<Spacer size="48" />
+
+Again, such usability fixes must be tested in the real-world. We are unsure whether people refrain from hitting the back button to return from a popup dialog. Given that the [ARIA guidelines][4] don't mention the support for back button for closing a dialog, we can safely assume its not required.
+
+## Conclusion
+
+Even though it’s been a few months since I read Rocket Surgery Made Easy, actually experiencing these usability problems firsthand really drove the point home. We definitely cannot replace professional usability testing, but sometimes all it takes is watching someone else use your app to spot problems you didn’t notice after a hundred tries. I’m definitely convinced now that simple usability testing is super worth it, even when you are not a professional!
+
+[1]: https://motion.dev/docs/react-quick-start
+[2]: https://card-trick.andrewnessin.com/
+[3]: https://sensible.com/rocket-surgery-made-easy/
+[4]: https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/dialog/
